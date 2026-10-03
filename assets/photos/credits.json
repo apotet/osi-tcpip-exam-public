@@ -1,0 +1,178 @@
+[
+  {
+    "slug": "lc-connector",
+    "local": "assets/photos/lc-connector.webp",
+    "fileName": "LC-optical-fiber-connector-hdr-0a.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:LC-optical-fiber-connector-hdr-0a.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/LC-optical-fiber-connector-hdr-0a.jpg/1920px-LC-optical-fiber-connector-hdr-0a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Adamantios",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "LC optical fiber connector."
+  },
+  {
+    "slug": "sc-connector",
+    "local": "assets/photos/sc-connector.webp",
+    "fileName": "SC-optical-fiber-connector-hdr-0a.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:SC-optical-fiber-connector-hdr-0a.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/SC-optical-fiber-connector-hdr-0a.jpg/1920px-SC-optical-fiber-connector-hdr-0a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Adamantios",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "SC optical fiber connector."
+  },
+  {
+    "slug": "st-connector",
+    "local": "assets/photos/st-connector.webp",
+    "fileName": "ST-optical-fiber-connector-hdr-0a.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:ST-optical-fiber-connector-hdr-0a.jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2a/ST-optical-fiber-connector-hdr-0a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "author": "Adamantios",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "ST optical fiber connector."
+  },
+  {
+    "slug": "fc-apc-patchcord",
+    "local": "assets/photos/fc-apc-patchcord.webp",
+    "fileName": "Optical-patch-fiber-FC-APC-connectors.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Optical-patch-fiber-FC-APC-connectors.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Optical-patch-fiber-FC-APC-connectors.jpg/1920px-Optical-patch-fiber-FC-APC-connectors.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Geek3",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "description": "Photograph of a single-mode optical fiber patch cable with FC connectors on an optical table."
+  },
+  {
+    "slug": "lc-sc-connectors",
+    "local": "assets/photos/lc-sc-connectors.webp",
+    "fileName": "Lc-sc-fiber-connectors.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Lc-sc-fiber-connectors.jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Lc-sc-fiber-connectors.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "author": "Wikimedia Commons contributor",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "description": ""
+  },
+  {
+    "slug": "sfp-multimode",
+    "local": "assets/photos/sfp-multimode.webp",
+    "fileName": "Multi mode sfp transceiver IMGP7817 wp.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Multi_mode_sfp_transceiver_IMGP7817_wp.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Multi_mode_sfp_transceiver_IMGP7817_wp.jpg/1920px-Multi_mode_sfp_transceiver_IMGP7817_wp.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "smial ( talk )",
+    "license": "FAL",
+    "licenseUrl": "http://artlibre.org/licence/lal/en",
+    "description": "LevelOne SFP-3001 Multi-Mode SFP Transceiver für den Einsatz in Gigabit Ethernet Umgebungen. Datenübertragungsraten von bis zu 1.25Gbps. Duplex-LC-Anschluß. Multi-Source Agreement (MSA) und 802.3z konform."
+  },
+  {
+    "slug": "sfp-rx-tx",
+    "local": "assets/photos/sfp-rx-tx.webp",
+    "fileName": "SFP-front-RX-TX.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:SFP-front-RX-TX.jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a3/SFP-front-RX-TX.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "author": "SFP-front.jpg : Adamantios derivative work: MichaelFrey ( talk )",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "description": "Front view of SFP module. RX and TX marked with Arrows"
+  },
+  {
+    "slug": "sm-mm-cords",
+    "local": "assets/photos/sm-mm-cords.webp",
+    "fileName": "Cordons monomode-multimode LC.JPG",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Cordons_monomode-multimode_LC.JPG",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Cordons_monomode-multimode_LC.JPG/1920px-Cordons_monomode-multimode_LC.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "photography taken by Christophe.Finot",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "Multimode and monomode optical fiber"
+  },
+  {
+    "slug": "dirty-fiber-end",
+    "local": "assets/photos/dirty-fiber-end.webp",
+    "fileName": "Single mode fiber1.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Single_mode_fiber1.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Single_mode_fiber1.jpg/1920px-Single_mode_fiber1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Quantumavik",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "description": "Cross section of a single-mode optical fiber patch cord end, viewed through a fiberscope , (i.e. an illuminated microscope for viewing the ends of fibers.) The large dark circle in the center is about 125 microns in diameter. Debris is also visible in the illuminated halo around the tip of the fiber, like a long strand."
+  },
+  {
+    "slug": "otdr",
+    "local": "assets/photos/otdr.webp",
+    "fileName": "OTDR - Yokogawa AQ7270 - 1.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:OTDR_-_Yokogawa_AQ7270_-_1.jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/OTDR_-_Yokogawa_AQ7270_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "author": "Electron",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "description": "Optical time-domain reflectometer Yokogawa AQ7270 on the calibration stand."
+  },
+  {
+    "slug": "fiber-cable-12",
+    "local": "assets/photos/fiber-cable-12.webp",
+    "fileName": "Fiberkabel.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Fiberkabel.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Fiberkabel.jpg/1920px-Fiberkabel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Gräsmark",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "description": "The cable G652D including 12 single-mode optical fibers."
+  },
+  {
+    "slug": "gbic-sfp",
+    "local": "assets/photos/gbic-sfp.webp",
+    "fileName": "GBIC und SFP.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:GBIC_und_SFP.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/GBIC_und_SFP.jpg/1920px-GBIC_und_SFP.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Joachim Müllerchen ( Jom at de.wikipedia )",
+    "license": "CC BY-SA 2.0 de",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/de/deed.en",
+    "description": "Two fiber optic transceivers, on the left a “Gigabit Interface Converter” (GBIC) for SC connectors and on the right a “Small Form-factor Pluggable” (SFP) for LC connectors"
+  },
+  {
+    "slug": "xfp-sfpplus",
+    "local": "assets/photos/xfp-sfpplus.webp",
+    "fileName": "10 Gbit XFP and SFP transceivers.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:10_Gbit_XFP_and_SFP_transceivers.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/10_Gbit_XFP_and_SFP_transceivers.jpg/1920px-10_Gbit_XFP_and_SFP_transceivers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "DroidBishop",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "description": "A 10 Gbit/s XFP transceiver and a 10 Gbit/s SFP transceiver side by side."
+  },
+  {
+    "slug": "fiber-patch-panel",
+    "local": "assets/photos/fiber-patch-panel.webp",
+    "fileName": "Fiber patch panel (14072890962).jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Fiber_patch_panel_(14072890962).jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/0/04/Fiber_patch_panel_%2814072890962%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "author": "Patrick Finnegan from Lafayette, IN, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "description": "Fiber patch panel for interbuilding fiber. From here it was patched into various routers and switches in the room."
+  },
+  {
+    "slug": "ethernet-switch",
+    "local": "assets/photos/ethernet-switch.webp",
+    "fileName": "Netgear ProSafe 16-Port 10-Gigabit Smart Managed Switch XS716T.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Netgear_ProSafe_16-Port_10-Gigabit_Smart_Managed_Switch_XS716T.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Netgear_ProSafe_16-Port_10-Gigabit_Smart_Managed_Switch_XS716T.jpg/1920px-Netgear_ProSafe_16-Port_10-Gigabit_Smart_Managed_Switch_XS716T.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Sergklim",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "description": "NETGEAR ProSAFE 16-Port 10-Gigabit Smart Managed Switch XS716T"
+  },
+  {
+    "slug": "optical-patchcords",
+    "local": "assets/photos/optical-patchcords.webp",
+    "fileName": "Optical fiber connectors-optical patch cable-01ASD.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Optical_fiber_connectors-optical_patch_cable-01ASD.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Optical_fiber_connectors-optical_patch_cable-01ASD.jpg/1920px-Optical_fiber_connectors-optical_patch_cable-01ASD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Asurnipal",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "description": "Fiber optic cable splice at the Feldkircher Hut (Naturfreunde) in Vorarlberg, Austria for drinking water supply. Optical fiber connectors."
+  }
+]

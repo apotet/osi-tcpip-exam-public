@@ -1,0 +1,2024 @@
+NET CLI — команды и рабочие сценарии
+https://osi-tcpip-exam.pages.dev/cli/
+Примеры относятся к указанным семействам и версиям ОС. Поддержка функций зависит от модели.
+
+## Проверить состояние портов
+Проверь физический линк, скорость и duplex. UP ещё не означает доступность IP.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show interfaces status
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=65
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show interfaces status
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces status
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display interface brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display interface brief
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть конкретный интерфейс
+Смотри состояние, счётчики ошибок и согласованную скорость. Номера портов — примеры.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show interfaces fastethernet 0/1
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=65
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show interfaces gigabitethernet 1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces GigabitEthernet1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display interface GigabitEthernet1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display interface GigabitEthernet0/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet monitor ether1 once
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть VLAN
+Найди VLAN и его участников. Само наличие VLAN не гарантирует прохождение по аплинкам.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show vlan
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=232
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show vlan
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show vlan brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display vlan
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display vlan
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge vlan print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить VLAN на портах
+Сравни членство VLAN, PVID и обработку тегов на обоих концах линка.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show vlan port config
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=235
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show interfaces switchport
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces switchport
+show interfaces trunk
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display port trunk
+display vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display port vlan
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge port print
+/interface bridge vlan print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+
+## Найти изученные MAC
+MAC изучается по адресу источника входящего кадра. Проверяй нужный VLAN и порт.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show mac-address-table
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=227
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show mac address-table
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show mac address-table
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display mac-address
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display mac-address
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge host print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Найти MAC по IP
+ARP-таблица показывает соседей IPv4 в локальных сегментах устройства. Для удалённого IP ищи на его шлюзе.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ip arp
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=468
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show arp
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip arp
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display arp
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display arp
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip arp print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть соседние коммутаторы
+Сопоставь локальный порт с именем и портом соседа. Отсутствие LLDP не доказывает отсутствие линка.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show lldp neighbors
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=68
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show lldp neighbors
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show lldp neighbors
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display lldp neighbor-information
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display lldp neighbor brief
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip neighbor print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить STP / RSTP
+Найди root bridge, роли портов и блокировки. Заблокированный резервный порт может быть нормой.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show spanning-tree
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=285
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show spanning-tree
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show spanning-tree
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display stp brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display stp brief
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge monitor bridge1 once
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить промышленное кольцо
+Проверь протокол, роль менеджера и ring ports. Active у менеджера может означать открытие резервного пути при разрыве.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ring-redundancy
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=506
+Для этих SCALANCE команда относится к ring redundancy. Поддержку MRP нельзя переносить на все серии других вендоров.
+
+## Посмотреть переключения кольца
+Сопоставь число переключений с временем аварии и журналом событий.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ring-redundancy manager counters
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=507
+
+## Проверить агрегацию
+Проверь участвующие порты и состояние партнёра. Один поток обычно не использует суммарную скорость всех линков.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show lacp neighbor detail
+show lacp counters
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=281
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show lacp port-channel
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show etherchannel summary
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display link-aggregation verbose
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display eth-trunk
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bonding monitor bond1 once
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть текущую конфигурацию
+Это рабочая конфигурация. Перед изменениями сохрани копию и сравни с загружаемой после перезапуска.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show running-config
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=140
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show running-config
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show running-config
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display current-configuration
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display current-configuration
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/export
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management
+
+## Сохранить конфигурацию
+Сохрани проверенные изменения, чтобы они сохранились после перезапуска.
+EXEC # / user view; RouterOS — терминал
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+write startup-config
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=144
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+copy running-config startup-config
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+copy running-config startup-config
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+save
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+save
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system backup save name=before-change
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992852/Backup
+RouterOS применяет и сохраняет настройки автоматически; backup здесь создаёт отдельный бинарный снимок. Comware/VRP могут запросить подтверждение.
+
+## Посмотреть журнал событий
+Ищи время смены состояния порта, кольца и перезагрузки. Проверь синхронизацию часов.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show logbook
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=712
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show logging
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show logging
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display logbuffer
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display logbuffer
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/log print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328094/Log
+
+## Узнать версию и модель
+Запиши точную модель и версию ПО перед выбором синтаксиса.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show device information
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=62
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show version
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show version
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display version
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display version
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system resource print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть IP-интерфейсы
+Проверь адреса и состояние SVI. IP управления L2-коммутатора не делает его маршрутизатором между VLAN.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ip interface
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=67
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ip interface
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip interface brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display ip interface brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display ip interface brief
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip address print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Посмотреть таблицу маршрутов
+Ищи маршрут к адресу назначения и next hop. Побеждает наиболее длинный совпавший префикс.
+Просмотр: EXEC / display / терминал RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ip route
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip route
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display ip routing-table
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display ip routing-table
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip route print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328084/IP+Routing
+L3-функции зависят от модели и лицензии. Для XC200 не подставляем команды L3-серий.
+
+## Проверить доступность IPv4
+Успешный ping проверяет ICMP-путь в обе стороны. Неуспешный может быть следствием фильтрации.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+ping 10.120.0.10
+Пример для профиля; требует сверки на модели
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+ping 10.120.0.10
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+ping 10.120.0.10
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+ping 10.120.0.10
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+ping 10.120.0.10
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ping 10.120.0.10 count=4
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить синхронизацию времени
+Сравни время устройства с сервером: это нужно для сопоставления событий.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ntp info
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=191
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show sntp status
+show sntp configuration
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ntp associations
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display ntp-service status
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display ntp-service status
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system ntp client print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992869/NTP
+
+## Посмотреть multicast-группы
+Проверь группу, VLAN и порты подписчиков. Затем проверь наличие querier.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show ip igmp snooping groups
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=486
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ip igmp snooping groups
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip igmp snooping groups
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display igmp-snooping group
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display igmp-snooping port-info
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge mdb print
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить оптический модуль
+Сравни Rx/Tx и пороги конкретного модуля. DDM доступен не у каждого SFP.
+Просмотр: EXEC / display / терминал RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show fiber-ports optical-transceiver
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces transceiver detail
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display transceiver diagnosis interface GigabitEthernet1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display transceiver diagnosis interface GigabitEthernet0/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet monitor sfp-sfpplus1 once
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Для SCALANCE используй диагностику SFP в WBM конкретной модели; неподтверждённую CLI-команду не подставляем.
+
+## Проверить резервирование шлюза
+Сверь VRID, виртуальный IP, роль и priority на обоих узлах.
+Просмотр: EXEC / display / терминал RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show vrrp brief
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show vrrp brief
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display vrrp verbose
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display vrrp brief
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface vrrp print detail
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/81362945/VRRP
+Только устройства с поддержкой VRRP. Eltex: по руководству MES 6.6.13.4, только для моделей с VRRP.
+
+## Проверить соседей OSPF
+Проверь состояние соседства и интерфейс. Для двух DROTHER на broadcast-сегменте 2-Way может быть нормой.
+Просмотр: EXEC / display / терминал RouterOS
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip ospf neighbor
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display ospf peer
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display ospf peer
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/routing ospf neighbor print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/9863229/OSPF
+OSPF — для поддерживаемых L3-моделей.
+
+## Посмотреть правила NAT/PAT
+Отдельно проверь правила, счётчики и соединения. NAT не заменяет маршрут и разрешение firewall.
+Просмотр: EXEC / display / терминал RouterOS
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip firewall nat print stats
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/3211299/NAT
+RouterOS: NAT на маршрутизаторе. Для Catalyst, MES и XC200 не предполагаем наличие NAT.
+
+## Создать VLAN 120
+Создай новый VLAN. В RouterOS пример добавляет запись для уже существующего bridge1 и двух аплинков.
+Режим конфигурации → VLAN; RouterOS — терминал
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+vlan 120
+name OFFICE
+Пример для профиля; требует сверки на модели
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+vlan database
+vlan 120 name OFFICE
+exit
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+vlan 120
+name OFFICE
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+vlan 120
+name OFFICE
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+vlan 120
+description OFFICE
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge vlan add bridge=bridge1 vlan-ids=120 tagged=ether1,ether2
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+SCALANCE: только 802.1Q VLAN Bridge; FastEthernet/GigabitEthernet выбирай по модели и порту. RouterOS: bridge и порты уже существуют, VLAN filtering настроен; повторный add не нужен для существующей записи.
+
+## Добавить VLAN в существующий тракт
+Пример для уже настроенного trunk. Добавь VLAN на обоих концах каждого используемого линка.
+Глобальная конфигурация → VLAN / интерфейс
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+vlan 120
+ports fastethernet 0/1-2
+Пример для профиля; требует сверки на модели
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface gigabitethernet 1/0/1
+switchport trunk allowed vlan add 120
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface GigabitEthernet1/0/1
+switchport trunk allowed vlan add 120
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface GigabitEthernet1/0/1
+port trunk permit vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface GigabitEthernet0/0/1
+port trunk allow-pass vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge vlan set [find bridge=bridge1 vlan-ids=120] tagged=ether1,ether2
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+SCALANCE: ports ЗАМЕНЯЕТ список в VLAN 120. Пример для нового VLAN и двух tagged-портов; при существующем VLAN перечисли всех нужных участников. Cisco/Eltex: add сохраняет прежние VLAN. PVID аплинков для нового tagged VLAN менять не надо. RouterOS: VLAN 120 уже существует; set заменяет полный список tagged. Сохрани всех прежних участников, включая bridge1, если CPU уже участвует.
+
+## Назначить конечный порт VLAN 120
+Пример для нового VLAN и порта устройства без тегов. Аплинки в примере — tagged.
+Глобальная конфигурация → VLAN / интерфейс
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+vlan 120
+ports fastethernet 0/1-2 untagged fastethernet 0/3
+exit
+interface fastethernet 0/3
+switchport pvid 120
+Пример для профиля; требует сверки на модели
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface gigabitethernet 1/0/5
+switchport mode access
+switchport access vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface GigabitEthernet1/0/5
+switchport mode access
+switchport access vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface GigabitEthernet1/0/5
+port link-type access
+port access vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface GigabitEthernet0/0/5
+port link-type access
+port default vlan 120
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge vlan set [find bridge=bridge1 vlan-ids=120] tagged=ether1,ether2 untagged=ether5
+/interface bridge port set [find interface=ether5] pvid=120
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+SCALANCE: перечисли полный состав VLAN в ports. До изменения конечного порта проверь его прежнее назначение. RouterOS: VLAN 120 уже создан; set задаёт полный состав этой записи, перечисли всех участников.
+
+## Войти в режим конфигурации
+Команды ниже меняют режим CLI, но сами по себе не меняют настройки сети.
+Из начального приглашения CLI
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+enable
+configure terminal
+Пример для профиля; требует сверки на модели
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+enable
+configure terminal
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+enable
+configure terminal
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+system-view
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+system-view
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+RouterOS использует меню и абсолютные пути команд, отдельного configure terminal нет.
+
+## Посмотреть конфигурацию порта
+Сравни режим порта, разрешённые VLAN и параметры с соседним устройством.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show running-config
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=140
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show running-config interfaces gigabitethernet 1/0/1
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf#page=146
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show running-config interface GigabitEthernet1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+display current-configuration interface GigabitEthernet1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+display current-configuration interface GigabitEthernet0/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge port print detail
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+SCALANCE: найди блок нужного интерфейса в выводе.
+
+## Проверить сигнал неисправности
+Для SCALANCE проверь текущие faults: питание, контролируемые порты и другие события.
+Просмотр: EXEC / display / терминал RouterOS
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show events faults status
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=711
+
+## Проверить HSRP на Cisco
+HSRP использует роли Active/Standby. Сверь группу, виртуальный IP, priority и tracking. Это отдельный протокол, а не другое имя VRRP.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show standby brief
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipapp_fhrp/configuration/xe-16-12/fhp-xe-16-12-book/fhp-hsrp.html
+
+## Доступ к CPU / L3 в VLAN на MikroTik
+Для доступа к самому RouterOS в VLAN 120 bridge1 участвует как CPU-порт. Пример для уже существующей записи VLAN и настроенного bridge.
+RouterOS — терминал; изменение конфигурации
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge vlan set [find bridge=bridge1 vlan-ids=120] tagged=bridge1,ether1,ether2
+/interface vlan add name=vlan120 interface=bridge1 vlan-id=120
+/ip address add address=10.120.0.2/24 interface=vlan120
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+set задаёт полный tagged-список: сохрани всех участников. VLAN-интерфейс и IP добавляй только если их ещё нет. Доступ зависит также от firewall и IP service. Для чистого L2-транзита CPU-членство не требуется.
+
+## Отдельно проверить счётчики ошибок
+Сравни прирост за одинаковый интервал. Не очищай счётчики перед фиксацией исходного состояния.
+Просмотр: EXEC / терминал
+SCALANCE — XC/XB/XP-200 · CLI V4.4 (руководство); V4.3.1 — сверять help
+show interfaces counters
+По руководству; на устройстве не проверено
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=66
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show interfaces counters
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces counters errors
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet print stats
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+
+## Проверить PoE и бюджет питания
+Сверь состояние порта и суммарный бюджет PoE. Команда применима только к моделям с соответствующим PoE.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show power inline
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show power inline
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-8/command_reference/b_178_9300_cr/interface_and_hardware_commands.html
+
+## Проверить CPU и память
+Сопоставь нагрузку CPU/памяти с моментом сбоя. Высокая CPU не обязательно означает перегрузку аппаратного forwarding.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show cpu utilization
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show processes cpu sorted
+show processes memory sorted
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system resource print
+/tool profile
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Eltex: здесь загрузка CPU; команда подробной памяти требует сверки модели. RouterOS tool profile работает до остановки Ctrl+C.
+
+## Найти порт в err-disable
+Сначала найди причину в журнале и настройках защиты. Восстановление порта без устранения причины может снова отключить его.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show interfaces status err-disabled
+show errdisable recovery
+show logging
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+
+## Проверить Port Security
+Сверь число разрешённых MAC, learned/sticky MAC и причину violation. Удаление защиты не является диагностикой.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show port-security interface GigabitEthernet1/0/5
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+
+## Проверить Storm Control
+Сверь порог, действие и счётчики. Порог должен соответствовать ожидаемой нагрузке сервиса.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show storm-control
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show storm-control
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+
+## Посмотреть ACL и счётчики
+Проверь порядок правил и точку применения. Доступность счётчиков аппаратного ACL зависит от модели.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show access-lists
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip firewall filter print stats
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+RouterOS firewall и ACL коммутатора — разные механизмы. Нулевой счётчик не всегда означает, что трафик не проходил аппаратный тракт.
+
+## Проверить DHCP Snooping и DAI
+Сверь VLAN, trusted-порты и DHCP bindings; DAI использует доверенные привязки и настройки проверки ARP.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip dhcp snooping
+show ip dhcp snooping binding
+show ip arp inspection statistics
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-18/configuration_guide/sec/b_1718_sec_9300_cg/configuring_dynamic_arp_inspection.html
+Для статических IP нужна подходящая разрешающая привязка/ARP ACL по документации. Не отмечай все аплинки trusted автоматически.
+
+## Задать описание порта
+Пример имени соседа и порта. Подставь фактическое подключение.
+Режим глобальной конфигурации → интерфейс / RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface gigabitethernet 1/0/5
+description TO-SW2-GI1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface GigabitEthernet1/0/5
+description TO-SW2-GI1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface GigabitEthernet1/0/5
+description TO-SW2-GI1/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface GigabitEthernet0/0/5
+description TO-SW2-GI0/0/1
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet set [find name=ether5] comment=TO-SW2
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Сначала войди в режим конфигурации соответствующей ОС.
+
+## Административно выключить порт
+Команда выключает выбранный порт. До применения проверь, не является ли он путём управления или рабочим аплинком.
+Глобальная конфигурация → интерфейс / RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface gigabitethernet 1/0/5
+shutdown
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface GigabitEthernet1/0/5
+shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface GigabitEthernet1/0/5
+shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface GigabitEthernet0/0/5
+shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet set [find name=ether5] disabled=yes
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Это изменение, а не просмотр. Используй план возврата доступа.
+
+## Административно включить порт
+Сначала устрани причину отключения, особенно при срабатывании защиты.
+Глобальная конфигурация → интерфейс / RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface gigabitethernet 1/0/5
+no shutdown
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface GigabitEthernet1/0/5
+no shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface GigabitEthernet1/0/5
+undo shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface GigabitEthernet0/0/5
+undo shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface ethernet set [find name=ether5] disabled=no
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+При Cisco err-disable после устранения причины может потребоваться shutdown/no shutdown.
+
+## Назначить IP на SVI
+Пример IP-интерфейса VLAN 120. Это не включает автоматически маршрутизацию между VLAN и не создаёт маршрут по умолчанию.
+Глобальная конфигурация → SVI
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+interface vlan 120
+ip address 10.120.0.1 /24
+no shutdown
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface Vlan120
+ip address 10.120.0.1 255.255.255.0
+no shutdown
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+interface Vlan-interface120
+ip address 10.120.0.1 255.255.255.0
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+interface Vlanif120
+ip address 10.120.0.1 255.255.255.0
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+Только поддерживаемые модели. VLAN уже создан; адрес должен быть свободен. UP зависит от условий активности VLAN. Если это шлюз хостов, маршрутизация и политики должны быть настроены отдельно.
+
+## Добавить статический маршрут
+Маршрут к 10.130.0.0/24 через достижимый next hop 10.120.0.254. Проверь также обратный маршрут.
+Глобальная конфигурация / RouterOS
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+ip route 10.130.0.0 255.255.255.0 10.120.0.254
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+H3C — Коммутаторы · Comware 7
+ip route-static 10.130.0.0 255.255.255.0 10.120.0.254
+Пример для профиля; требует сверки на модели
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-19995/05/202410/2284492_294551_0.htm
+Huawei — Коммутаторы · VRP (поддержка зависит от серии)
+ip route-static 10.130.0.0 255.255.255.0 10.120.0.254
+Пример для профиля; требует сверки на модели
+Руководство: https://support.huawei.com/enterprise/en/doc/EDOC1100459384
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip route add dst-address=10.130.0.0/24 gateway=10.120.0.254
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328084/IP+Routing
+Только L3-устройства. Это учебные адреса; повторный add может создать лишнюю запись.
+
+## Настроить шлюз управления L2 Cisco
+Пример default gateway для L2 Catalyst с выключенной IP-маршрутизацией. Адрес шлюза должен быть в подсети управления.
+Глобальная конфигурация
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+ip default-gateway 10.120.0.254
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+При включённом ip routing нужен маршрут по умолчанию, а не этот механизм. Не меняй адрес шлюза без проверки возврата доступа.
+
+## Пример настройки LACP Cisco
+Пример двух свободных и совместимых портов к одному логическому партнёру. VLAN на агрегате настраиваются отдельно.
+Глобальная конфигурация
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+interface range GigabitEthernet1/0/1 - 2
+channel-group 1 mode active
+exit
+interface Port-channel1
+switchport mode trunk
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+Не переноси занятые порты в LAG без плана. Сверь настройки на другом конце и полный allowed VLAN на Port-channel1.
+
+## Пример включения RSTP
+Изменение протокола затрагивает топологию. Cisco Rapid-PVST — RSTP по VLAN; RouterOS RSTP работает в bridge.
+Глобальная конфигурация / RouterOS
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+spanning-tree mode rapid-pvst
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/interface bridge set [find name=bridge1] protocol-mode=rstp
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Не применяй автоматически в MRP-кольце. Согласуй root, совместимость и роли портов.
+
+## Зеркалирование порта Cisco
+Пример копирования Rx/Tx Gi1/0/5 на выделенный Gi1/0/24 для анализатора.
+Глобальная конфигурация
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+monitor session 1 source interface GigabitEthernet1/0/5 both
+monitor session 1 destination interface GigabitEthernet1/0/24
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+Session 1 и порт назначения должны быть свободны. Порт назначения перестаёт быть обычным рабочим портом. Удаление созданной сессии: no monitor session 1.
+
+## Отправлять Syslog на сервер
+Пример сервера 10.120.0.50: проверь путь, часы и принимаемый уровень сообщений.
+Глобальная конфигурация / RouterOS
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+logging host 10.120.0.50
+logging trap informational
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system logging action add name=remote-log target=remote remote=10.120.0.50
+/system logging add topics=info action=remote-log
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328094/Log
+RouterOS: имя action должно быть свободно. Уровни/topics подбирай под события; info не заменяет остальные категории.
+
+## Назначить NTP-сервер
+Пример доверенного сервера времени 10.120.0.50.
+Глобальная конфигурация / RouterOS
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+sntp server 10.120.0.50
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+ntp server 10.120.0.50
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/system ntp client set enabled=yes
+/system ntp client servers add address=10.120.0.50
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992869/NTP
+Проверь достижимость и фактическое synchronized/selected-server. RouterOS: не добавляй существующую запись повторно. Eltex: режим клиента сверяй с текущей конфигурацией.
+
+## Проверить настройки SNMP
+Проверь доступность агента, версию и ограничения источников. Секреты могут попадать в конфигурационный вывод.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show snmp
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/snmp print
+/snmp community print
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/8978519/SNMP
+Для создания SNMPv3 нужны согласованные user/group, права и auth/privacy. Универсальный шаблон с общим паролем не используем.
+
+## Проверить SSH-доступ
+Проверь, что служба слушает и вход разрешён нужным администраторам.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ip ssh
+show running-config | section line vty
+Пример для профиля; требует сверки на модели
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-14/command_reference/b_1714_9500_cr/b_1714_9500_cr.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ip service print where name=ssh
+Пример для профиля; требует сверки на модели
+Руководство: https://manual.mikrotik.com/docs/bridging-and-switching/
+Включение SSH требует локальной/AAA-аутентификации, ключей и правил доступа по конкретной ОС. Проверку TCP-порта 22 делай также с административного хоста.
+
+## Сохранить текстовую копию RouterOS
+Export удобен для сравнения и аудита; бинарный backup и export решают разные задачи.
+Просмотр: EXEC / терминал
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/export file=before-change
+По руководству; на устройстве не проверено
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management
+Скачай .rsc на свой компьютер. Export не является полным снимком всех файлов/ключей. Не включай show-sensitive для пересылки файла.
+
+## Cisco: перезагрузка по таймеру
+В согласованное окно таймер может вернуть сохранённую startup-config после потери доступа. Это перезагрузка с прерыванием трафика, а не безразрывный откат.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+reload in 5
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/performing_device_setup_configuration.html
+До запуска проверь startup-config, boot и доступ через консоль. На запрос сохранения не записывай непроверенные изменения. При успешной проверке отдельно выполни reload cancel, проверь show reload, затем сохрани конфигурацию. Пять минут — учебный интервал; он может оказаться слишком коротким.
+
+## Cisco: отменить таймер перезагрузки
+После подтверждения доступа отмени ранее запланированную перезагрузку и проверь её состояние.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+reload cancel
+show reload
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/performing_device_setup_configuration.html
+
+## Восстановить проверенную конфигурацию
+Команда заменяет текущую конфигурацию заранее подготовленным совместимым файлом. Она способна изменить управление и рабочий трафик.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+configure replace flash:before-change.cfg
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios/ios_xe/fundamentals/configuration/guide/TIPs_conversion/config_mgmt_xe_3s_Book/cf_config-rollback_xe.html
+H3C — Коммутаторы · Comware 7
+configuration replace file flash:/before-change.cfg
+По руководству; на устройстве не проверено
+Руководство: https://www.h3c.com/en/Support/Resource_Center/EN/Home/Public/00-Public/Technical_Documents/Reference_Guides/Command_References/H3C_CR-20108/01/202406/2204873_294551_0.htm
+Файл должен существовать на устройстве и быть создан/проверен для этой ОС. Это отдельная операция возврата, не команда страховки сама по себе. Cisco configure replace поддерживается не всеми платформами; H3C — по руководству Comware 7 указанного семейства.
+
+## Проверить IPv6-адреса интерфейсов
+Сверь IPv6-адрес, длину префикса и состояние интерфейса. Link-local fe80:: нормален, но не обеспечивает связь с удалённой сетью.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ipv6 interface brief
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf#page=195
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ipv6 interface brief
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios/ipv6/command/reference/ipv6_book/ipv6_14.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ipv6 address print detail
+Пример RouterOS 7; сверить help на версии
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992815/IPv6+Neighbor+Discovery
+IPv6 должен поддерживаться конкретной моделью. Здесь просмотр адресов устройства; адрес клиента проверяй на самом клиенте.
+
+## Проверить соседей IPv6 / NDP
+Кэш NDP связывает локального IPv6-соседа с MAC. Для удалённой сети нужен next hop; состояние STALE само по себе не означает неисправность.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ipv6 neighbors vlan 120
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf#page=195
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ipv6 neighbors
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios/ipv6/command/reference/ipv6_book/ipv6_14.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ipv6 neighbor print
+Пример RouterOS 7; сверить help на версии
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992815/IPv6+Neighbor+Discovery
+Eltex: пример кэша VLAN 120, этот VLAN должен быть явно выбран в задании. NS без NA: проверь соседа, VLAN и фильтрацию ICMPv6.
+
+## Проверить маршруты IPv6
+Сверь маршрут назначения и ::/0, интерфейс и next hop. IPv4-маршруты не обеспечивают IPv6-доступ.
+Просмотр: EXEC / терминал
+Eltex — MES2300/3300/53xx · руководство ПО 6.6.13.4
+show ipv6 route
+По руководству; на устройстве не проверено
+Руководство: https://eltex.ru/storage/upload_center/files/17/MES_Series_user_manual_6.6.13.4.pdf#page=195
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ipv6 route
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios/ipv6/command/reference/ipv6_book/ipv6_14.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ipv6 route print detail
+Пример RouterOS 7; сверить help на версии
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992815/IPv6+Neighbor+Discovery
+Шлюз клиента, получаемый из RA, проверяй также на самом клиенте. Link-local next hop требует правильного исходящего интерфейса.
+
+## Проверить параметры RA на шлюзе VLAN 120
+На шлюзе сравни объявляемый префикс, A/L, lifetime и параметры ND. Факт получения RA клиентом подтверждай захватом у клиента.
+Просмотр: EXEC / терминал
+Cisco — Catalyst · IOS / IOS XE (не NX-OS)
+show ipv6 interface Vlan120
+По руководству; на устройстве не проверено
+Руководство: https://www.cisco.com/c/en/us/td/docs/ios/ipv6/command/reference/ipv6_book/ipv6_14.html
+MikroTik — RouterOS 7 · Bridge VLAN Filtering (не SwOS)
+/ipv6 nd print detail
+/ipv6 nd prefix print detail
+Пример RouterOS 7; сверить help на версии
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/40992815/IPv6+Neighbor+Discovery
+Cisco: SVI Vlan120 должен существовать и поддерживать IPv6. RouterOS: настройки ND описывают отправку RA; их наличие не доказывает доставку. Для обычного SLAAC нужен пригодный /64 с A=1, для шлюза — ненулевой Router Lifetime.
+
+## IP, маска, интерфейсы
+Сверь адрес, маску, активный интерфейс и DNS.
+Windows
+ipconfig /all
+Get-NetIPConfiguration
+https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipconfiguration
+Linux
+ip -br address
+https://github.com/iproute2/iproute2/blob/main/man/man8/ip-address.8.in
+## Маршрут к серверу
+Проверь маршрут и исходящий интерфейс. Несколько адаптеров/VPN могут менять выбранный путь.
+Windows
+route print
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008
+Linux
+ip route
+ip route get 10.120.0.10
+https://github.com/iproute2/iproute2/blob/main/man/man8/ip-route.8.in
+## ARP и соседи
+Для удалённой подсети ищи MAC шлюза. ip neigh дополнительно показывает состояние соседства.
+Windows
+arp -a
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp
+Linux
+ip neigh
+https://github.com/iproute2/iproute2/blob/main/man/man8/ip-neighbour.8
+## Ping идёт, TCP-сервис нет
+Проверь именно порт 502. Успешный TCP connect ещё не означает правильный ответ Modbus.
+Windows
+Test-NetConnection -ComputerName 10.120.0.10 -Port 502 -InformationLevel Detailed
+https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection
+Linux
+nc -vz -w 3 10.120.0.10 502
+https://man.openbsd.org/nc
+Windows — PowerShell. Linux: пример OpenBSD netcat; другие реализации nc могут иметь иной набор ключей.
+## Слушает ли сервер нужный порт
+Выполняй на сервере: сравни LISTEN, адрес привязки и процесс.
+Windows
+Get-NetTCPConnection -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess
+netstat -ano
+https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection
+Linux
+sudo ss -tlnp
+https://github.com/iproute2/iproute2/blob/main/man/man8/ss.8
+OwningProcess и последний столбец netstat -ano дают PID: сопоставь его с Get-Process -Id 1234, подставив фактический PID. sudo нужен для просмотра чужих процессов; 127.0.0.1 не принимает подключения с сети.
+## Посмотреть маршрут по hops
+Звёздочки могут означать фильтрацию ответов, а не обрыв передачи транзитного трафика.
+Windows
+tracert -d 10.120.0.10
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert
+Linux
+tracepath -n 10.120.0.10
+https://github.com/iputils/iputils/blob/master/doc/tracepath.xml
+## Проверить DNS отдельно
+Запроси A и AAAA реального имени. dig и Resolve-DnsName проверяют DNS, getent — системное разрешение имён, включая hosts/NSS. Для проверки конкретного DNS укажи -Server в PowerShell или @адрес в dig.
+Windows
+Resolve-DnsName service.example.com -Type A -DnsOnly
+Resolve-DnsName service.example.com -Type AAAA -DnsOnly
+nslookup service.example.com
+https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname
+Linux
+dig service.example.com A
+dig service.example.com AAAA
+getent ahosts service.example.com
+https://bind9.readthedocs.io/en/latest/manpages.html#dig-dns-lookup-utility
+## Снять трафик TCP-сервиса
+Краткий захват у клиента или сервера поможет сравнить запросы и ответы.
+Linux
+sudo tcpdump -ni eth0 -c 100 -w service.pcap "host 10.120.0.10 and tcp port 502"
+https://www.tcpdump.org/manpages/tcpdump.1.html
+Windows
+pktmon start --capture --pkt-size 0
+pktmon stop
+pktmon etl2pcap PktMon.etl --out service.pcapng
+https://learn.microsoft.com/en-us/windows-server/networking/technologies/pktmon/pktmon
+Linux: подставь свой интерфейс вместо eth0. Windows: start, воспроизведение ошибки, затем stop и конвертация — отдельные этапы; нужны права администратора. Захват Windows здесь без фильтра, может содержать другой трафик.
+## IPv4 MTU: проверить пакет с DF
+Для IPv4 без опций payload 1472 + IP/ICMP 28 = 1500. Уменьшая размер, сравни результат в обе стороны.
+Windows
+ping -f -l 1472 10.120.0.10
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping
+Linux
+ping -M do -s 1472 -c 4 10.120.0.10
+https://github.com/iputils/iputils/blob/master/doc/ping.xml
+Неответ не доказывает MTU: ICMP может фильтроваться. Linux — iputils ping; проверяй поддержку параметров.
+## IPv6: адреса, DAD и маршруты
+Проверь адреса и их состояние, выбранный интерфейс и ::/0. Учебный адрес замени реальным; 2001:db8::/32 предназначен для документации.
+Windows
+Get-NetIPAddress -AddressFamily IPv6
+Get-NetRoute -AddressFamily IPv6
+https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipaddress
+Linux
+ip -6 address
+ip -6 route
+ip -6 route get 2001:db8:120::10
+https://github.com/iproute2/iproute2/blob/main/man/man8/ip-route.8.in
+Tentative — DAD ещё идёт; Duplicate/dadfailed — адрес не прошёл проверку. Для Linux с forwarding=1 приём RA зависит от accept_ra; не меняй sysctl наугад.
+## IPv6: кэш соседей
+Сравни IPv6, MAC, интерфейс и состояние соседа. Удалённый сервер обычно не появляется в локальном NDP-кэше.
+Windows
+Get-NetNeighbor -AddressFamily IPv6
+https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netneighbor
+Linux
+ip -6 neigh
+https://github.com/iproute2/iproute2/blob/main/man/man8/ip-neighbour.8
+STALE допустим. INCOMPLETE/FAILED вместе с повторными NS без NA требует проверки локального сегмента и соседа.
+## IPv6: проверить связь и link-local
+Первый ping — к реальному IPv6-адресу вместо примера. Во втором подставь фактический link-local шлюза и индекс/имя интерфейса.
+Windows
+ping -6 2001:db8:120::10
+ping -6 fe80::1%12
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping
+Linux
+ping -6 -c 4 2001:db8:120::10
+ping -6 -c 4 -I eth0 fe80::1
+https://github.com/iputils/iputils/blob/master/doc/ping.xml
+Windows: индекс 12 — пример, найди свой через Get-NetIPInterface -AddressFamily IPv6. Linux: eth0 — пример. Неответ на ping может быть фильтрацией ICMP Echo, а не потерей всех IPv6-пакетов.
+## IPv6: захват RA и NDP
+Начни захват, воспроизведи подключение клиента, затем останови. RA периодические: их отсутствие в слишком коротком захвате не доказывает сбой.
+Linux
+sudo tcpdump -ni eth0 -vv "icmp6"
+https://www.tcpdump.org/manpages/tcpdump.1.html
+Windows
+pktmon start --capture --pkt-size 0
+pktmon stop
+pktmon etl2pcap PktMon.etl --out ipv6.pcapng
+https://learn.microsoft.com/en-us/windows-server/networking/technologies/pktmon/pktmon
+Linux: Ctrl+C завершает захват. Windows: start → воспроизведение → stop → конвертация — отдельные этапы с правами администратора. Открой результат в Wireshark: icmpv6.type == 134 для RA, 133 для RS, 135/136 для NS/NA. Проверь Prefix Information A/L и Router Lifetime.
+## 802.1Q / VLAN
+Метка VLAN разделяет широковещательные домены. Tagged сохраняет метку на выходе, untagged снимает. PVID определяет VLAN входящего кадра без метки.
+
+## STP / RSTP / MSTP
+Предотвращают L2-петли. RSTP быстрее сходится; MSTP объединяет VLAN в экземпляры. Проверяй root и роли портов.
+
+## MRP
+Резервирование промышленного кольца. Менеджер управляет резервным трактом; при разрыве обеспечивает обход. VLAN должен проходить по обоим возможным путям.
+
+## LACP
+Согласует агрегацию линков. Проверяй партнёра и участвующие порты; VLAN обычно настраиваются на логическом агрегате.
+
+## LLDP
+Обмен сведениями о соседях на одном линке. Помогает восстановить физическую схему.
+
+## VRRP
+Резервирует виртуальный шлюз внутри сегмента. Хосты используют один виртуальный IP; роль Master может перейти к Backup.
+
+## OSPF
+Динамическая маршрутизация по состоянию каналов. Сначала проверь соседство, затем маршруты.
+
+## RIP
+Дистанционно-векторная маршрутизация; метрика — число переходов. Максимальный рабочий путь 15 hops.
+
+## Статические маршруты / SVI
+SVI — L3-интерфейс VLAN. Для связи между VLAN нужны маршрутизация, корректные шлюзы и разрешающие политики.
+
+## NAT / PAT
+NAT меняет адреса; PAT дополнительно использует порты, чтобы несколько соединений делили внешний адрес. Обычно это функция пограничного маршрутизатора.
+
+## ACL
+Правила разрешения и запрета трафика. Важны порядок правил, направление и место применения.
+
+## DHCP / Relay
+DHCP выдаёт адрес, маску и другие параметры. Relay передаёт запросы к серверу из другого IP-сегмента.
+
+## DNS
+Преобразует имена в адреса. Если IP доступен, а имя нет — проверь DNS отдельно.
+
+## NTP / SNTP
+Синхронизируют часы; помогают сравнивать время аварии на разных устройствах.
+
+## SNMP
+Позволяет мониторить состояние, счётчики и события. SNMPv3 поддерживает аутентификацию и шифрование.
+
+## Syslog
+Отправляет журналы на общий сервер. Нужны корректное время и достижимость сервера.
+
+## SSH / Telnet
+SSH шифрует управление. Telnet передаёт данные открыто; учитывай это при выборе доступа.
+
+## TFTP / SFTP
+Передача конфигураций и файлов. TFTP не предоставляет защиты SSH; SFTP работает поверх SSH.
+
+## IGMP / Snooping / Querier
+IGMP сообщает о подписчиках IPv4 multicast. Snooping ограничивает L2-рассылку; querier поддерживает актуальность подписок.
+
+## QinQ
+Добавляет внешнюю VLAN-метку поверх внутренней. Проверяй MTU и поддержку оборудования.
+
+## Port Security / Storm Control
+Ограничивают MAC и лавину broadcast/multicast/unknown unicast. Срабатывание защиты может объяснять потерю связи.
+
+## SPAN / Port Mirroring
+Копирует трафик на порт анализатора. Проверь направление и загрузку: зеркало может терять пакеты.
+
+## PROFINET
+Промышленный Ethernet; использует IP для части функций и прямую L2-передачу для RT. RT-трафик нельзя считать обычным TCP-потоком.
+
+## Modbus TCP
+Обмен запросами и ответами поверх TCP, обычно порт 502. Отдельно проверяй TCP-соединение и ответы приложения.
+
+## PROFIBUS
+Полевая шина, не Ethernet VLAN. Диагностика требует проверки шины, терминаторов и адресов станций.
+
+## PTP / IEEE 1588
+Точная синхронизация времени. Поддержка transparent/boundary clock и профиля зависит от модели.
+
+## PRP / HSR
+Передают дубли кадров по резервным путям и удаляют повтор на приёмнике. Требуют совместимых узлов и топологии.
+
+## Loop Detection
+Обнаруживает петли по механизмам конкретного вендора. Отличай от STP и не снимай блокировку, пока причина петли не устранена.
+
+## HSRP
+Cisco-протокол виртуального шлюза с ролями Active/Standby. Выбирай HSRP или VRRP по требованиям и поддержке, а не только по вендору.
+
+## 802.1X
+Контроль доступа к порту через supplicant, authenticator и сервер AAA/RADIUS. Физический UP не означает, что клиент авторизован.
+
+## DHCP Snooping
+Проверяет DHCP-обмен и строит bindings. Trusted указывает доверенный путь к серверу; неверная настройка может блокировать выдачу адреса.
+
+## DAI
+Dynamic ARP Inspection проверяет ARP по доверенным привязкам и политикам. Статические IP требуют отдельного учёта.
+
+## QoS · 802.1p / DSCP
+802.1p — PCP в VLAN-теге L2; DSCP — метка в IP L3. Доверие меткам, очереди и mapping настраиваются отдельно. Для PROFINET сверяй класс трафика и рекомендации устройств.
+
+## MTU / Jumbo
+MTU должен согласовываться по пути. Учитывай, что CLI может показывать L3 MTU или размер L2-кадра с другим учётом заголовков. Jumbo требует поддержки всего тракта.
+
+## BGP
+Обменивается маршрутами и атрибутами политики между автономными системами и внутри AS. Сначала проверь соседство, затем объявленные и принятые префиксы.
+
+## ECMP
+Несколько равноценных next hop. Распределение обычно зависит от хэша потока; один поток не обязан использовать все пути.
+
+## Сценарий: Добавить VLAN через 5–6 коммутаторов
+1. Зафиксируй VLAN, аплинки и резервный путь
+Сними конфигурации, выбери новый VLAN ID. Проверь схему через LLDP и текущие VLAN. Уточни, какие порты ведут по основному и резервному пути.
+2. Создай новый VLAN на каждом узле
+Добавь VLAN 120 на всех коммутаторах тракта. Не удаляй существующие VLAN и не меняй режим bridge в работающей сети.
+3. Добавь tagged-членство
+На каждом линке настрой оба конца. Для кольца добавь VLAN на все участки резервного пути; для LAG проверь логический интерфейс. PVID существующего trunk не меняй.
+4. Настрой конечный порт
+Если устройство не ставит тег: untagged/access VLAN 120 и PVID 120. Если оно передаёт tagged, согласуй членство и теги с его настройкой.
+5. Сгенерируй трафик и проверь путь
+От устройства-источника отправь трафик. Ищи его MAC в VLAN 120 по активному пути, проверь связь в обе стороны. Затем убедись, что прежние VLAN работают.
+6. Сохрани проверенные изменения
+Сохрани конфигурации всех изменённых устройств. Проверку переключения кольца выполняй в согласованное окно, а не обрывай рабочие линки ради теста.
+
+## Сценарий: VLAN не проходит: найти участок
+Создай трафик источника, затем проверяй один и тот же MAC в нужном VLAN последовательно по активному пути. Переход от узла с MAC к узлу без MAC указывает участок для проверки, но не доказывает причину. Учитывай aging и резервирование.
+
+## Сценарий: MRP: кольцо разомкнуто
+1. Проверь ring state и роль менеджера
+Проверь протокол, роль менеджера и ring ports. Active у менеджера может означать открытие резервного пути при разрыве.
+2. Сопоставь ring ports с линками и LLDP
+Сопоставь локальный порт с именем и портом соседа. Отсутствие LLDP не доказывает отсутствие линка.
+3. Проверь события и счётчики переключений
+Сопоставь число переключений с временем аварии и журналом событий.
+4. Проверь прохождение VLAN по резервному пути
+Сравни членство VLAN, PVID и обработку тегов на обоих концах линка.
+
+## Сценарий: Порт UP, устройство не пингуется
+1. Проверь линк, ошибки и speed/duplex
+Смотри состояние, счётчики ошибок и согласованную скорость. Номера портов — примеры.
+2. Сверь VLAN/PVID конечного порта
+Сравни членство VLAN, PVID и обработку тегов на обоих концах линка.
+3. Создай трафик и проверь MAC источника
+MAC изучается по адресу источника входящего кадра. Проверяй нужный VLAN и порт.
+4. Проверь IP, маску, шлюз и ARP
+ARP-таблица показывает соседей IPv4 в локальных сегментах устройства. Для удалённого IP ищи на его шлюзе.
+5. Проверь маршрут, обратный путь и ACL
+Ищи маршрут к адресу назначения и next hop. Побеждает наиболее длинный совпавший префикс.
+
+## Сценарий: Растут CRC / порт флапает
+1. Сравни прирост ошибок за одинаковый интервал
+Смотри состояние, счётчики ошибок и согласованную скорость. Номера портов — примеры.
+2. Проверь SFP, уровни Rx/Tx, патч-корд и разъёмы
+Сравни Rx/Tx и пороги конкретного модуля. DDM доступен не у каждого SFP.
+3. Сопоставь время флапов с журналом
+Ищи время смены состояния порта, кольца и перезагрузки. Проверь синхронизацию часов.
+4. Проверь скорость, duplex, питание и соседний порт
+Проверь физический линк, скорость и duplex. UP ещё не означает доступность IP.
+
+## Сценарий: Замена коммутатора
+1. Сохрани копию конфигурации и запиши версию
+Это рабочая конфигурация. Перед изменениями сохрани копию и сравни с загружаемой после перезапуска.
+2. Сверь модель, прошивку, нумерацию портов и SFP
+Запиши точную модель и версию ПО перед выбором синтаксиса.
+3. Восстанови VLAN, порты, IP управления и доступ
+Сравни членство VLAN, PVID и обработку тегов на обоих концах линка.
+4. Проверь роли кольца и соседей до возврата в тракт
+Проверь протокол, роль менеджера и ring ports. Active у менеджера может означать открытие резервного пути при разрыве.
+5. Проверь прежние сервисы и сохрани изменения
+Сохрани проверенные изменения, чтобы они сохранились после перезапуска.
+
+## Сценарий: VRRP: переключение шлюза
+Хосты используют виртуальный шлюз 10.120.0.1. SW-A: 10.120.0.2, priority 110; SW-B: 10.120.0.3, priority 100. После обнаружения отказа Master его роль принимает Backup. При включённом preemption SW-A возвращает роль после восстановления. Состояние вышестоящего пути требует tracking.
+
+## Сценарий: NAT/PAT: путь пакета
+Учебный пример TCP PAT: 10.10.10.25:53001 → 198.51.100.20:443. После трансляции: 203.0.113.5:40017 → 198.51.100.20:443. Ответ к внешнему порту 40017 по записи соединения возвращается к 10.10.10.25:53001. Внешний порт выбран для примера.
+
+## Сценарий: LACP: один линк не вошёл в агрегат
+Два аплинка должны работать в одном LAG. Один участник не передаёт трафик или суммарная скорость кажется ниже ожидаемой.
+1. Проверить участников
+Запиши агрегат и его физические порты на обоих устройствах. Отличай UP физического порта от включения в forwarding агрегата.
+Команды: Проверить агрегацию
+Что видно в состоянии агрегата?
+- Все участники активны: Перейди к VLAN и распределению потоков. Физическая агрегация уже работает.
+- Один порт вне агрегата: Сравни режим LACP, партнёра и настройки этого порта с рабочим участником.
+- Агрегат не поднялся: Проверь сначала физические линки и соответствие портов на обоих концах.
+2. Сравнить оба конца
+Сверь LACP active/passive, скорость, duplex и членство портов. Два passive-узла не инициируют переговоры. Все участники должны вести к одному логическому партнёру; два отдельных коммутатора требуют поддерживаемого стека/MLAG.
+Команды: Посмотреть конфигурацию порта
+Как настроены переговоры?
+- Passive с обеих сторон: Настрой active хотя бы на одной стороне в согласованном изменении. Проверь режимы обоих устройств.
+- Active есть, партнёр виден: Проверь совместимость участников: скорость, режим L2/L3, VLAN и параметры агрегата.
+- Партнёр отсутствует: Проверь кабельный тракт, LACP на соседнем порту и совпадение схемы подключения.
+3. Проверить VLAN на агрегате
+VLAN проверяй на логическом интерфейсе LAG и на соседнем устройстве. Не добавляй разрозненные настройки VLAN на физические участники, если модель наследует их от агрегата.
+Команды: Проверить VLAN на портах
+Что происходит с VLAN?
+- Проходит только часть VLAN: Сверь allowed VLAN и native/PVID на обоих логических интерфейсах.
+- Все VLAN проходят: Перейди к нагрузке и распределению нескольких потоков.
+- Настройки участников различаются: Приведи их к совместимому виду по руководству модели и повторно проверь включение в агрегат.
+4. Проверить скорость и отказ
+Один TCP-поток обычно закрепляется за одним линком по хэшу. Оцени несколько независимых потоков и прирост счётчиков участников. Проверяй отказ линка в согласованное окно.
+Команды: Посмотреть конкретный интерфейс
+Как проводился замер?
+- Одним потоком: Скорость одного линка сама по себе не означает неисправность LAG. Проверь несколько потоков с разными адресами/портами.
+- Несколько потоков, один порт без трафика: Сверь алгоритм хэша и разнообразие потоков, затем состояние collecting/distributing участника.
+- При отказе связь сохраняется: Проверь прежние VLAN, зафиксируй состояние и сохрани только проверенные изменения.
+Руководство: https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/220367-troubleshoot-etherchannels-on-catalyst-9.html
+
+## Сценарий: L2-петля: сеть резко замедлилась
+Появились лавина broadcast, перемещения MAC или высокая загрузка портов. Нужно локализовать источник и сохранить резервирование.
+1. Сопоставить симптомы и время
+Запиши время начала, последние подключения и порты с быстрым ростом трафика. Большая нагрузка сама по себе ещё не доказывает петлю.
+Команды: Посмотреть журнал событий
+Какой симптом подтверждён?
+- MAC быстро меняет порты: Сопоставь эти порты с LLDP и схемой. Петля вероятна, но проверь также миграцию устройства и агрегацию.
+- Broadcast резко растёт: Сравни прирост на соседних портах и найди участок с наибольшим входящим потоком.
+- Только один сервис медленный: Сначала проверь его путь и конечные узлы. Без других признаков вывод о петле преждевременен.
+2. Проверить защиту топологии
+Сверь root, роли и состояние STP/RSTP, счётчики смены топологии. В промышленном кольце сначала уточни MRP и его роль: нельзя считать любой резервный порт ошибочно заблокированным.
+Команды: Проверить STP / RSTP
+Что обнаружено?
+- Резервный порт заблокирован: Это может быть штатная защита от петли. Не снимай блокировку без проверки схемы.
+- Оба пути forwarding: Уточни протокол резервирования, экземпляр STP и участие VLAN. Два forwarding-пути требуют объяснения по топологии.
+- На участке используется MRP: Открой сценарий кольца, проверь ring ports и менеджера. Настройки STP для ring ports сверяй с руководством.
+3. Локализовать лишний путь
+По LLDP и схеме найди недавнюю перемычку, неверный LAG или коммутатор без нужной защиты. Изолируй только подтверждённый подозрительный линк по принятому порядку, сохраняя управление и основной тракт.
+Команды: Посмотреть соседние коммутаторы
+Удалось локализовать участок?
+- Найдена лишняя перемычка: Проверь, какие сервисы использует линк, согласуй изоляцию и сравни нагрузку до/после.
+- LLDP не показывает соседей: Сверь маркировку, патч-панели и кабельную схему. Отсутствие LLDP не означает отсутствия соединения.
+- Схема неясна: Продолжи сбор наблюдений и сверку подключений. Не отключай порты последовательно наугад.
+4. Проверить восстановление
+После устранения причины сравни прирост broadcast, стабильность MAC и доступность прежних сервисов. Storm Control ограничивает ущерб, но не устраняет физическую петлю.
+Команды: Найти изученные MAC
+Что стало после изменения?
+- Нагрузка и MAC стабилизировались: Проверь резервный путь в согласованное окно, обнови схему и сохрани конфигурацию.
+- Симптомы остались: Причина ещё не подтверждена. Проверь другие пути и источник broadcast, сопоставь время наблюдений.
+- Один сервис пропал: Проверь его VLAN и резервный путь; локализация не завершена, пока прежние сервисы не восстановлены.
+Руководство: https://www.cisco.com/c/en/us/support/docs/lan-switching/etherchannel/20625-127.html
+
+## Сценарий: DHCP: устройство не получает адрес
+Клиент остаётся без IPv4 или получает адрес 169.254.x.x. Пройдём от порта до DHCP-сервера и ответного пути.
+1. Начать с клиента и VLAN
+Проверь, что клиент настроен на DHCP, физический линк поднят и untagged/PVID соответствует нужному VLAN. Действующую аренду не сбрасывай на работающем устройстве без необходимости.
+Команды: Проверить VLAN на портах
+Какой адрес у клиента?
+- 169.254.x.x или адреса нет: Переходи к захвату DHCP-обмена. Такой адрес не сообщает точную причину отсутствия аренды.
+- Адрес из чужой подсети: Сверь VLAN/PVID и сервер, отправивший Offer/ACK. Возможны неверный VLAN или посторонний DHCP-сервер.
+- Правильный адрес, связи нет: Проверь выданные маску, шлюз и DNS; затем обычный IP-путь. Это уже не обязательно сбой выдачи адреса.
+2. Посмотреть DHCP-обмен
+Захвати обмен у клиента при повторной попытке. Для начального получения аренды ожидаются Discover → Offer → Request → ACK. Продление может начинаться с Request; сопоставляй transaction ID и клиента.
+Фильтр отображения Wireshark: dhcp
+На каком этапе останавливается обмен?
+- Discover есть, Offer нет: Проверь, дошёл ли Discover до сервера/relay, есть ли свободные адреса и разрешён ли ответный трафик.
+- Offer есть, ACK нет: Сравни Request, выбранный server identifier и ответы сервера, включая NAK. Проверь обе стороны пути.
+- Запросов клиента не видно: Сверь точку захвата и интерфейс, настройки клиента и момент попытки. Пустой захват сам по себе не доказывает отказ клиента.
+3. Проверить сервер или Relay
+Если сервер в другом IP-сегменте, на шлюзе клиента нужен DHCP Relay. Проверь адрес сервера, интерфейс/VLAN клиента, маршруты в обе стороны, scope и политики DHCP Snooping/ACL. На транзитном L2-коммутаторе relay обычно не нужен.
+Команды: Посмотреть таблицу маршрутов
+Где находится DHCP-сервер?
+- В том же VLAN: Проверь L2-прохождение запросов и ответов, серверный пул и фильтры. Relay для этого обмена не требуется.
+- В другом сегменте: На шлюзе проверь relay и доступность сервера, обратный маршрут и пул для клиентской подсети.
+- Адреса в пуле закончились: Исправь размер/состояние пула по правилам сервера, затем повтори получение аренды.
+4. Проверить выданные параметры
+Сверь IP, маску, шлюз, DNS и сервер аренды. Проверь шлюз, затем нужный сервер по IP и по имени. Не подменяй исправление DHCP постоянным случайным статическим адресом.
+Команды: Проверить доступность IPv4
+Что не работает после ACK?
+- Шлюз недоступен: Сверь маску и VLAN, ARP, фильтры и возможный конфликт IP.
+- IP доступен, имя нет: Проверь DNS, выданный DHCP, запросы и ответы DNS.
+- Все проверки проходят: Зафиксируй причину и параметры аренды. Сохрани изменения на изменённых сетевых устройствах.
+Руководство: https://www.wireshark.org/docs/dfref/d/dhcp.html
+
+## Сценарий: Multicast: поток пропадает или заливает VLAN
+Видео или другой UDP multicast не приходит подписчику, пропадает спустя время либо попадает на лишние порты.
+1. Зафиксировать группу и источник
+Уточни multicast-группу, UDP-порт, адрес источника, VLAN и подписчика. Проверь трафик источника отдельно от подписки. Ping источника не проверяет доставку multicast.
+Фильтр отображения Wireshark: ip.dst == 239.1.1.10 && udp
+Поток источника виден?
+- Есть у источника, нет у подписчика: Проследи VLAN и членство группы по активному пути.
+- Нет и у источника: Проверь приложение-источник, интерфейс и правильность точки захвата.
+- Приходит на все порты: Проверь IGMP Snooping и политику unknown multicast. Flooding не всегда означает поломку.
+2. Проверить подписчика
+Сверь IGMP Membership Report и multicast-таблицу: нужные группа, VLAN и порт получателя. Пример 239.1.1.10 заменяй реальной группой; для SSM учитывай также источник.
+Команды: Посмотреть multicast-группы
+Фильтр отображения Wireshark: igmp
+Порт подписчика есть в таблице?
+- Нет, Report тоже не видно: Проверь приложение, VLAN и IGMP-обмен у клиента. Убедись, что захват охватывает его порт.
+- Report есть, записи нет: Сверь IGMP-версию, snooping и ограничения модели. Сравни таблицы на соседних узлах.
+- Запись есть: Проверь путь от источника и router ports, затем наличие регулярных Query.
+3. Проверить Querier и старение
+В VLAN должен быть доступный IGMP Querier, чтобы обновлять динамические подписки. Проследи Query/Report во времени. На RouterOS возможности встроенного querier зависят от режима bridge: не включай его автоматически для всех tagged VLAN.
+Фильтр отображения Wireshark: igmp
+Что происходит спустя время?
+- Query нет, записи исчезают: Проверь querier для конкретного VLAN и прохождение Query. Не включай несколько устройств наугад.
+- Query есть, клиент не отвечает: Проверь доставку Query клиенту, его приложение и фильтры.
+- Query и Report есть: Сопоставь таймеры и таблицу группы на всех участках пути. Проверь источник и потери отдельно.
+4. Проверить путь и потери
+В одном VLAN проверь snooping и членство портов. Между подсетями требуется поддерживаемая multicast-маршрутизация или подходящий proxy; одной unicast-маршрутизации недостаточно.
+Команды: Проверить VLAN на портах
+Какой путь нужен?
+- Внутри одного VLAN: Сверь tagged-членство, порт подписчика и прирост счётчиков потока.
+- Между IP-подсетями: Проверь multicast routing/proxy на поддерживаемом шлюзе и требования приложения.
+- Поток приходит с потерями: Сравни загрузку, ошибки и drops по тракту; захват на перегруженном зеркале также может терять пакеты.
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/59277403/Bridge%2BIGMP%2BMLD%2Bsnooping
+
+## Сценарий: Wireshark: найти уровень, где ломается связь
+Устройство не открывает сервис. Разберём ARP, TCP и ответы приложения по одному направлению и моменту ошибки.
+1. Выбрать точку захвата
+Захватывай на клиенте или на правильно настроенном зеркале его порта/аплинка. Ноутбук в соседнем порту не видит весь чужой unicast. Уточни направления зеркала; теги VLAN могут быть сняты драйвером или оборудованием.
+Команды: Посмотреть конфигурацию порта
+Где снят трафик?
+- На самом клиенте: Повтори ошибку и запиши время. Сверь выбранный сетевой интерфейс.
+- На зеркале порта: Сверь source/destination зеркала, направления Rx/Tx и пропускную способность порта анализатора.
+- На соседнем обычном порту: Перенеси захват на клиент или настрой поддерживаемое зеркалирование. Иначе отсутствие пакетов не показательно.
+2. Проверить локальную доставку
+Если IPv4-узел назначения вне подсети клиента, ARP нужен для шлюза, а не удалённого сервера. Отсутствие ARP в коротком захвате нормально при уже заполненном кэше.
+Фильтр отображения Wireshark: arp || icmp
+Как выглядит обмен?
+- Повторяются ARP Request без Reply: Уточни, ищется ли правильный сосед. Проверь VLAN, маску, доступность шлюза/узла и полноту захвата.
+- ARP Reply получен: MAC соседа найден. Переходи к TCP или нужному протоколу приложения.
+- ARP нет, другие пакеты есть: Проверь кэш ARP и продолжи анализ: новое разрешение адреса могло не потребоваться.
+3. Проверить TCP-соединение
+Выдели сервер и порт. В примере — 10.120.0.10:502 (Modbus TCP). Замени адрес/порт под свою задачу. Смотри SYN → SYN/ACK → ACK и обратный путь.
+Фильтр отображения Wireshark: ip.addr == 10.120.0.10 && tcp.port == 502
+Что видно в TCP?
+- SYN повторяется, SYN/ACK нет: Проверь маршрут, ACL/firewall, сервер и обратный путь. По одному клиентскому захвату точный участок потери не определяется.
+- В ответ приходит RST: Узел или промежуточное устройство активно отвергает соединение. Проверь порт, службу и политики, уточни отправителя RST.
+- Handshake завершён: Транспортное соединение установлено. Теперь проверь запрос/ответ приложения; TCP не гарантирует успешную операцию Modbus.
+4. Отличить потери от сбоя приложения
+Сопоставь отмеченные повторы с sequence/ACK, временем и полнотой захвата. Retransmission — повод проверить путь, но зеркало и неполный захват тоже влияют на анализ. Follow TCP Stream помогает видеть разговор приложения.
+Фильтр отображения Wireshark: tcp.analysis.retransmission || tcp.analysis.duplicate_ack
+Какой результат?
+- Повторы есть, ответ запаздывает: Сверь ошибки/drops/загрузку по тракту и захват с другой стороны. Не объявляй кабель причиной только по метке Wireshark.
+- TCP работает, приложение возвращает ошибку: Проверь код ответа, параметры запроса и состояние сервера/контроллера.
+- В захвате только одно направление: Проверь точку зеркала и маршрут ответа. Без второй стороны вывод о потерях может быть неполным.
+Руководство: https://www.wireshark.org/docs/wsug_html/
+
+## Сценарий: Порт в err-disable
+Линк отключён защитой. Найди причину до восстановления порта.
+1. Зафиксировать причину
+Сопоставь статус порта, журнал и время отключения. Для других ОС ищи аналогичный механизм защиты по модели.
+Команды: Найти порт в err-disable
+Что сообщает устройство?
+- BPDU Guard: Проверь, не подключён ли коммутатор к порту для конечного устройства. Согласуй роль порта; не убирай защиту автоматически.
+- Port Security violation: Сверь допустимые MAC и реально подключённые устройства. Проверь замену оборудования или лишний коммутатор.
+- Причина неясна: Сохрани журнал и конфигурацию порта. Проверь питание, флапы, защиту и доступные причины в руководстве.
+2. Устранить источник
+Проверь схему подключения и настройки выбранной защиты. Recovery timer не устраняет источник нарушения.
+Команды: Проверить Port Security
+Причина устранена?
+- Подключение исправлено: Восстанови только согласованный порт и проверь отсутствие новых событий.
+- Настройки не соответствуют задаче: Подготовь изменение политики по фактической роли порта. Не отключай все защиты сразу.
+- Нарушение продолжается: Оставь порт изолированным и продолжи проверку источника.
+3. Проверить восстановление
+Для Cisco после устранения причины может потребоваться shutdown, затем no shutdown в интерфейсном режиме. Проверь линк, VLAN и журнал.
+Команды: Административно включить порт
+Что после восстановления?
+- Снова err-disable: Вернись к причине: источник нарушения сохранился или есть второй.
+- Порт UP, сервис не работает: Проверь VLAN, MAC, IP и путь сервиса отдельно.
+- Порт и сервис работают: Зафиксируй причину и проверенное изменение; сохрани конфигурацию.
+Руководство: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-8/command_reference/b_178_9300_cr/interface_and_hardware_commands.html
+
+## Сценарий: STP: неожиданно сменился root
+Изменился активный путь или выросли задержки. Сравни Root ID, Bridge ID и время событий.
+1. Определить область
+Проверь нужный VLAN/экземпляр STP на нескольких узлах. В MST важно совпадение региона и mapping VLAN.
+Команды: Проверить STP / RSTP
+Что изменилось?
+- Новый Root ID: Найди владельца Bridge ID и последнее подключение. Проверь priority и доступность прежнего root.
+- Root прежний, порт сменился: Проверь стоимость пути, отказ линка и topology changes. Смена порта не обязательно означает смену root.
+- Разные root в одной ожидаемой области: Проверь границы региона/экземпляра, прохождение BPDU и разделение сети.
+2. Проверить причину
+Сопоставь LLDP, журнал и конфигурации обоих концов. Root выбирается по Bridge ID; менять priority следует по проектной схеме.
+Команды: Посмотреть журнал событий
+Найдено объяснение?
+- Плановый резервный root: Проверь отказ основного, новый путь и восстановление сервисов.
+- Подключён новый коммутатор: Проверь его priority и роль. Подготовь согласованную коррекцию и защиту границ.
+- Прежний root недоступен: Проверь его питание и связность. Не возвращай роли изменением priority вслепую.
+3. Проверить последствия
+Сверь forwarding/blocking и доступность VLAN по новому пути. Не включай заблокированный резервный порт вручную.
+Команды: Проверить VLAN на портах
+Сервисы работают?
+- Все штатно: Зафиксируй смену и причину. Возврат root проверяй в согласованное окно.
+- Часть VLAN пропала: Сверь разрешённые VLAN по резервному пути и экземпляры STP.
+- Есть шторм или MAC flapping: Открой сценарий L2-петли, сопоставь схему и протокол резервирования.
+Руководство: https://www.cisco.com/c/en/us/support/docs/lan-switching/etherchannel/20625-127.html
+
+## Сценарий: Нет связи между VLAN
+Каждый VLAN отдельно работает. Для связи между подсетями нужен L3-шлюз с маршрутами и разрешёнными политиками.
+1. Проверить хост и шлюз
+Сверь IP/маску/шлюз клиента и сервера. Сначала проверь доступность собственного шлюза.
+Команды на хосте: host-ip
+Что доступно?
+- Свой шлюз недоступен: Проверь локальный VLAN, ARP, адрес шлюза и состояние SVI.
+- Свой шлюз доступен: Проверь маршрутизацию на шлюзе и обратный путь сервера.
+- Неверная маска или шлюз: Исправь параметры по адресному плану, затем повтори проверку.
+2. Проверить L3 и обратный путь
+Проверь оба IP-интерфейса, connected/static маршруты и включённую маршрутизацию. Наличие VLAN в L2-таблице её не заменяет.
+Команды: Посмотреть таблицу маршрутов
+Что в таблице маршрутов?
+- Нет маршрута к сети: Проверь SVI, состояние VLAN и настройку маршрута на поддерживаемом L3-устройстве.
+- Маршрут есть в обе стороны: Проверь ACL/firewall и ограничения сервиса.
+- Только прямой маршрут: Проверь шлюз сервера и маршруты обратного направления.
+3. Проверить политики и сервис
+Сравни адрес источника, порт и прирост счётчиков правил. Не снимай ACL целиком ради проверки.
+Команды: Посмотреть ACL и счётчики
+Команды на хосте: host-tcp
+Какой результат?
+- Правило блокирует обмен: Согласуй точечное разрешение требуемых адресов и сервиса.
+- TCP подключается: Проверь ответ приложения и его параметры.
+- TCP не подключается: Сравни захват с двух сторон, слушающий сервис и host firewall.
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328084/IP+Routing
+
+## Сценарий: MTU: малый ping идёт, большие пакеты теряются
+Проверь максимальный размер по пути, туннели и сообщения о необходимости фрагментации.
+1. Сравнить размеры
+Проверь небольшой IPv4 ping, затем пакет с DF. Для IPv4 без опций 1472 байта данных соответствуют IP-пакету 1500.
+Команды на хосте: host-mtu
+Как отличается результат?
+- Малый работает, большой нет: Уменьшай payload, сравни порог в обе стороны и ошибки ICMP.
+- Нет ответов любого размера: Сначала исключи недоступность и фильтрацию ICMP. Это ещё не доказательство MTU.
+- Большой работает: Проверь реальные размеры проблемного сервиса и его маршрут, включая туннели.
+2. Сверить тракт
+Сравни MTU интерфейсов и накладные расходы туннелей. L2 frame size и L3 MTU могут учитывать заголовки по-разному.
+Команды: Посмотреть конкретный интерфейс
+Что найдено?
+- Участок с меньшим MTU: Согласуй MTU/MSS с требованиями всего пути; не включай jumbo только на одном узле.
+- Везде ожидаемый MTU: Проверь туннели, PMTUD и фильтрацию ICMP fragmentation needed.
+- Проблема зависит от маршрута: Сравни MTU всех резервных/ECMP путей.
+3. Подтвердить по захвату
+Сравни DF, размер и ответы ICMP. Отсутствие ICMP в одном захвате не доказывает отсутствие сообщения на всём пути.
+Команды на хосте: host-capture
+Фильтр отображения Wireshark: icmp.type == 3 && icmp.code == 4
+Что видно?
+- ICMP fragmentation needed: Сверь сообщённый MTU и отправителя, проверь PMTUD на хосте.
+- Повторы TCP без ICMP: Проверь возможный black hole PMTUD, фильтры и захват у другой стороны.
+- Передача восстановилась: Проверь исходный сервис и резервный путь, зафиксируй согласованные значения.
+Руководство: https://github.com/iputils/iputils/blob/master/doc/ping.xml
+
+## Сценарий: Управление пропало после смены VLAN порта
+При смене PVID/tagged можно потерять путь к адресу управления. Возврат доступа должен быть подготовлен заранее.
+1. Использовать подготовленный доступ
+Проверь out-of-band/консоль, резервный путь или заранее установленный механизм возврата. Не повторяй изменения без наблюдаемого результата.
+Как можно подключиться?
+- Консоль доступна: Сними текущую конфигурацию и сравни изменённые VLAN, IP и порт с сохранённым состоянием.
+- Есть защищённый откат: Дождись подтверждённого механизма возврата по конкретной ОС и проверь доступ. Не сохраняй непроверенную конфигурацию.
+- Резервного доступа нет: Потребуется доступ через другой заранее разрешённый путь или локальная помощь. Сайт не может вернуть недоступное устройство.
+2. Сверить путь управления
+Проверь VLAN интерфейса управления, tagged/untagged обоих концов, PVID и IP. RouterOS bridge1 должен участвовать в VLAN для доступа к CPU.
+Команды: Проверить VLAN на портах
+Что нарушено?
+- Не совпадает tagging/PVID: Верни согласованное членство обоих концов через доступную сессию.
+- CPU не включён в VLAN RouterOS: Проверь bridge VLAN table и VLAN-интерфейс; сохрани полный состав tagged при set.
+- VLAN правильный: Проверь IP/маску, маршрут, firewall и ограничения SSH/SNMP.
+3. Подтвердить доступ до сохранения
+Проверь управление из административной сети новой сессией, затем прежние сервисы и резервный путь.
+Команды: Проверить SSH-доступ
+Что подтверждено?
+- Новая сессия работает: Отмени подготовленный таймер/освободи Safe Mode и сохрани проверенное состояние по ОС.
+- Работает только старая сессия: Не считай доступ восстановленным. Проверь новый TCP connect и политику доступа.
+- Сервисы нарушены: Вернись к плану возврата, сравни изменённые порты и VLAN.
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/28606465/Bridge+VLAN+Table
+
+## Сценарий: Страховка перед удалённым изменением
+Выбери механизм возврата для своей модели до изменения порта, VLAN, маршрутов или управления.
+1. Сохранить исходное состояние
+Зафиксируй версию, конфигурацию, startup и схему управления. Скачай копию за пределы устройства; проверь возможность её восстановления.
+Команды: Посмотреть текущую конфигурацию
+Есть проверенная копия?
+- Копия и консоль доступны: Выбери поддерживаемый механизм возврата и окно работ.
+- Копия только на устройстве: Скачай её и проверь читаемость до изменения.
+- Нет исходной конфигурации: Сначала сними её доступным штатным способом и уточни, как восстановить доступ.
+2. Подготовить механизм возврата
+Cisco reload timer прерывает трафик при срабатывании; configure replace и H3C replace — отдельные операции. Huawei зависит от серии и версии.
+Команды: Cisco: перезагрузка по таймеру
+RouterOS: Ctrl+X или F4 включает Safe Mode; приглашение содержит SAFE. При аварийном завершении сессии защищённые изменения откатываются после обработки потери сессии. Ctrl+X после успешной проверки освобождает Safe Mode и сохраняет изменения; Ctrl+D отменяет их. Есть лимит журнала изменений; следи, что SAFE остаётся активным. Это клавиши терминала, не строка команды. Huawei: rollback configuration to file подтверждён в руководстве NetEngine 8000 V800R024, а не для всех S5700 VRP. На коммутатор его автоматически не переносим. Уточни модель, версию и наличие механизма commit/rollback; безопасный план нужен до изменения.
+Какой механизм подтверждён?
+- RouterOS Safe Mode: Включи клавишами, убедись в SAFE и контролируй лимит журнала; проверь новую сессию после изменения.
+- Cisco таймер с проверенной startup: Проверь boot, достаточное время и порядок отмены. Не сохраняй непроверенные изменения по приглашению reload.
+- Нужен другой механизм: Открой руководство конкретной модели. Если автоматический откат не подтверждён, используй консоль/локальный доступ.
+3. Проверить и завершить
+Проверь новую административную сессию и рабочие сервисы. Только затем отменяй механизм возврата и сохраняй результат.
+Команды: Cisco: отменить таймер перезагрузки
+Как прошла проверка?
+- Доступ и сервисы работают: Отмени таймер, проверь show reload; для RouterOS освободи Safe Mode. Сохрани по правилам ОС.
+- Доступ потерян: Используй подготовленный возврат/консоль. Не пытайся сохранять непроверенное состояние.
+- Доступ есть, сервис нарушен: Выполни согласованный возврат или точечное исправление, затем повтори проверки.
+Руководство: https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management
+
+## Сценарий: Ping идёт, TCP-сервис не работает
+ICMP подтверждает лишь часть IP-связности. Проверь нужный TCP-порт, сервер и обмен приложения.
+1. Проверить нужный порт
+Пример — 10.120.0.10:502. Замени на адрес и порт сервиса. Проверяй также имя отдельно от IP.
+Команды на хосте: host-tcp
+TCP connect проходит?
+- Да: Перейди к протоколу приложения, параметрам и журналу сервера.
+- Нет, тайм-аут: Проверь путь, ACL/firewall и обратные пакеты по захвату.
+- Соединение отвергнуто: Проверь службу, порт и отправителя RST; отказ может исходить от промежуточной политики.
+2. Проверить сервер
+На сервере проверь LISTEN, адрес привязки и процесс. Сервис на 127.0.0.1 недоступен из сети.
+Команды на хосте: host-listen
+Что слушает сервер?
+- Нужный порт на сетевом адресе: Проверь host firewall, политики источников и захват входящих SYN.
+- Только loopback: Измени bind-address по требованиям приложения и доступа.
+- Порта в LISTEN нет: Проверь запуск службы, её конфигурацию и журнал ошибок.
+3. Сравнить запрос и ответ
+Захвати один воспроизводимый сбой у клиента и сервера, сравни SYN/SYN-ACK/ACK и ответ приложения.
+Команды на хосте: host-capture
+Фильтр отображения Wireshark: ip.addr == 10.120.0.10 && tcp.port == 502
+Что видно в обмене?
+- SYN не приходит на сервер: Локализуй участок по маршруту, ACL и промежуточным захватам.
+- Ответ сервера не возвращается: Проверь обратный маршрут, NAT и фильтры.
+- Handshake и ответ приложения есть: Разбери код ответа, параметры запроса и состояние приложения. TCP-связность уже подтверждена.
+Руководство: https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection
+
+## Сценарий: Путь VLAN неизвестен: восстановить тракт
+Начни с доступного коммутатора. Собери соседство и членство VLAN, затем отдели разрешённые ветви от активного пути к конкретному MAC. Пример — VLAN 120; команды просмотра выполняй отдельно на каждом узле.
+1. Определить VLAN и конечные устройства
+Запиши VLAN ID, первый коммутатор, порт подключения и, если известны, MAC источника и назначения. Определи цель: найти все разрешённые ветви VLAN или путь к конкретному устройству. Примеры команд могут показывать все VLAN — выбирай нужный в выводе.
+Команды: Проверить VLAN на портах
+С чего начинается проверка?
+- Известны VLAN и порт устройства: Сверь PVID/access или tagged-членство этого порта. Зафиксируй SW1 и исходную точку.
+- Известен VLAN, конечный порт неизвестен: Посмотри участников VLAN и MAC-таблицу. Начни с подтверждённого узла; не считай каждый порт VLAN аплинком.
+- Известен только IP: Уточни подсеть и её шлюз/SVI. ARP на шлюзе поможет получить MAC; VLAN ID нельзя надёжно вывести из IP-адреса.
+2. Найти соседа и его порт
+На текущем узле сопоставь local port, имя/Chassis ID соседа и remote port по LLDP. Записывай каждый линк как SW1:порт ↔ SW2:порт. LLDP показывает соседство, но не передаёт полный список VLAN соседа.
+Команды: Посмотреть соседние коммутаторы
+Что показывает соседство?
+- Сосед и оба порта определены: Подключись к этому соседу разрешённым способом и проверь VLAN на его указанном порту.
+- Есть несколько соседей: Сначала выбери порты с нужным VLAN. Для полной схемы проверяй каждую ветвь отдельно и отмечай уже посещённые узлы.
+- LLDP не показывает соседа: Проверь поддержку и включение LLDP, маркировку и кабельную схему. MAC и журналы дают подсказки, но не гарантируют имя и удалённый порт.
+3. Проверить VLAN на обоих концах
+Проверь существование VLAN 120 и его членство на двух концах найденного линка. Для tagged-транзита VLAN должен быть разрешён с обеих сторон. Для untagged/native сопоставь PVID и классификацию кадров. Разное назначение untagged может связывать разные VLAN ID — это фиксируй отдельно, а не называй единым трактом VLAN 120.
+Команды: Проверить VLAN на портах
+Что найдено на линке?
+- VLAN согласован с обеих сторон: Добавь линк в схему разрешённых ветвей. Далее проверь агрегат и фактическое forwarding.
+- VLAN есть только на одном конце: Тракт этого VLAN здесь не подтверждён. Проверь правильность порта, альтернативную ветвь и схему; ничего не меняй до согласования.
+- Не совпадают tagged/native/PVID: Зафиксируй расхождение и способ обработки кадров. Соседство LLDP само по себе не доказывает прохождение VLAN.
+4. Учесть LAG и логический порт
+Если аплинк входит в агрегат, сопоставь физические участники с логическим интерфейсом. VLAN проверяй на агрегате согласно ОС. LLDP может показывать физический порт; один MAC на Port-channel/bond не определяет, по какому участнику пойдёт каждый поток.
+Команды: Проверить агрегацию
+Как устроен аплинк?
+- Это обычный одиночный линк: Перейди к роли порта и протоколу резервирования.
+- Это рабочий агрегат: Запиши логический интерфейс, участников и партнёра. Проверь VLAN на обоих логических интерфейсах.
+- Участник вне агрегата или партнёр не тот: Открой сценарий LACP. Не считай такой участник рабочим путём, пока не подтверждена передача.
+5. Отделить активный путь от резервного
+Для STP проверь нужный VLAN/экземпляр и состояния forwarding/discarding на обоих концах. В MST учти mapping VLAN. Для MRP отдельно проверь ring state, manager и ring ports через сценарий кольца: STP-команда не заменяет диагностику MRP. Разрешённый VLAN на резервном линке ещё не означает активную передачу.
+Команды: Проверить STP / RSTP
+Какой путь обнаружен?
+- Линк forwarding: Отметь его как текущую активную ветвь и подтвердь направление по MAC. Это ещё не весь путь к цели.
+- Линк blocking/discarding: Сохрани его в схеме как резервный и продолжи по активной ветви. Не снимай блокировку.
+- Используется MRP или состояние неясно: Проверь соответствующий механизм резервирования и фактический активный тракт. Не объявляй кольцо петлёй по двум физически поднятым линкам.
+6. Подтвердить направление к конкретному MAC
+Создай разрешённый трафик от искомого устройства, затем ищи именно его MAC в нужном VLAN. Запись показывает порт, с которого приходят кадры этого MAC, то есть направление к нему. MAC источника ведёт к источнику, а не автоматически к получателю. Broadcast и неизвестный unicast могут идти по нескольким активным ветвям.
+Команды: Найти изученные MAC
+Где изучен искомый MAC?
+- На аплинке или агрегате: Перейди на подтверждённого LLDP/схемой соседа этого порта. Повтори членство, forwarding и поиск того же MAC.
+- На конечном порту: Проверь подключение устройства: за портом может быть ещё один коммутатор. При подтверждённом конечном устройстве эта ветвь прослежена.
+- MAC отсутствует или меняет порты: Проверь наличие исходящего трафика, aging и VLAN. Для flapping исключи петлю, миграцию и резервирование; не объявляй участок обрывом только по отсутствию записи.
+7. Повторить проверку и зафиксировать границу
+Веди таблицу: узел, локальный порт/LAG, сосед и его порт, VLAN/tagging, forwarding или резерв, наблюдаемый MAC и время. Для полной схемы обойди все подтверждённые ветви; для конкретного устройства следуй его MAC. Отмечай посещённые линки, чтобы не ходить по кольцу. После SVI/маршрутизатора начинается L3-путь: Ethernet MAC меняется, дальше нужны маршруты и обратный путь.
+Команды: Посмотреть таблицу маршрутов
+Где закончилась проверка?
+- Дошли до нужного устройства: Сохрани схему текущего пути и резервных ветвей, проверь связь в обе стороны. Команды дали наблюдения на этот момент, а не вечный маршрут VLAN.
+- Дошли до L3-шлюза: Зафиксируй границу VLAN. Дальше проверь маршрут к IP назначения, следующий L2-сегмент и обратный путь; MAC исходного хоста за шлюзом не ищи.
+- Есть недоступный или неизвестный узел: Отметь непроверенный участок и точные последние подтверждённые порты. Без доступа/схемы нельзя доказать весь тракт; продолжи после получения наблюдений.
+Руководство: https://cache.industry.siemens.com/dl/files/329/109817329/att_1130961/v1/PH_SCALANCE-XB-200-XC-200-XF-200BA-XP-200-XR-300WG-CLI_0.pdf#page=68
+
+## Сценарий: IPv6: есть fe80::, но SLAAC и шлюз не появились
+На клиенте ожидается SLAAC. Проверяй отдельно адрес, доставку RA, параметры префикса, DAD и маршрут. fe80:: сам по себе не ошибка.
+1. Проверить клиент и ожидаемый способ адресации
+Уточни нужный интерфейс/VLAN и проектный способ адресации: SLAAC, DHCPv6 или статический. Сверь IPv6-адреса, их состояние и ::/0.
+Команды на хосте: host-ipv6
+Что видно на клиенте?
+- Есть лишь link-local: Для ожидаемого SLAAC проверь получение RA и пригодный префикс. Link-local остаётся полезен для проверки шлюза.
+- Адрес есть, шлюза нет: Отдельно проверь Router Lifetime в RA и маршрут ::/0; адрес SLAAC не доказывает получение шлюза.
+- Адрес tentative или duplicate: Tentative может быть нормальным этапом DAD. При duplicate/dadfailed проверь NS/NA и источник конфликта, не отключай DAD как исправление.
+2. Посмотреть RA у клиента
+Снимай ICMPv6 на нужном интерфейсе во время подключения и достаточно долго для RA. Wireshark: 133 — RS, 134 — RA. Сравни захват у шлюза и клиента.
+Команды на хосте: host-ipv6-ra
+Фильтр отображения Wireshark: icmpv6.type == 133 || icmpv6.type == 134
+Приходит RA?
+- RA не приходит: Проверь VLAN по тракту, отправку RA на шлюзе, RA Guard и фильтры. Отсутствие пакета в одном захвате не локализует потерю.
+- RA виден у шлюза, но не у клиента: Сравни VLAN, разрешённые multicast/ICMPv6 и политики на промежуточных портах. Проверь полноту точки захвата.
+- RA приходит: Проверь Prefix Information, A/L и сроки жизни, затем состояние адреса и default route.
+3. Проверить префикс и шлюз в RA
+Для обычного SLAAC нужен пригодный /64, A=1 и действующий Valid Lifetime. L описывает on-link, а не разрешение SLAAC. Router Lifetime больше нуля разрешает использовать отправителя как default router; M/O — отдельные флаги DHCPv6.
+Команды: Проверить параметры RA на шлюзе VLAN 120
+Что не совпало?
+- Нет пригодного префикса с A=1: Сверь конфигурацию RA/префикса на фактическом шлюзе VLAN; DHCPv6 и SLAAC не подменяй друг другом.
+- Router Lifetime равен нулю: Этот RA не делает отправителя default router. Проверь проектную роль и другой доступный RA с ненулевым lifetime.
+- Параметры RA корректны: Проверь DAD, включённую автоконфигурацию клиента и его политику приёма RA.
+4. Проверить NDP и link-local шлюза
+Используй фактический link-local адрес шлюза с нужным интерфейсом. STALE допустим; повторные NS без NA и FAILED указывают на проблему соседства, но требуют сравнения захватов.
+Команды: Проверить соседей IPv6 / NDP
+Команды на хосте: host-ipv6-neigh
+Фильтр отображения Wireshark: icmpv6.type == 135 || icmpv6.type == 136
+Разрешается MAC шлюза?
+- Нет, NS повторяются без NA: Проверь адрес/интерфейс, VLAN, доступность шлюза и ICMPv6. Не блокируй весь ICMPv6.
+- Да, MAC известен: Проверь ping IPv6 и маршруты в обе стороны; ICMP Echo может фильтроваться отдельно от NDP.
+- Обнаружен конфликт DAD: Найди владельца спорного адреса по MAC и исправь адресацию. Повтори проверку DAD.
+5. Проверить удалённый адрес и DNS
+Проверь IPv6-связь с локальным шлюзом, затем реальным удалённым IPv6. Сверь ::/0 и обратный маршрут. После этого проверь AAAA имени сервиса.
+Команды: Проверить маршруты IPv6
+Команды на хосте: host-ipv6-ping
+Какой итог?
+- Шлюз доступен, удалённый IPv6 нет: Проверь маршрут, исходный адрес, IPv6-фильтры и обратный путь.
+- IPv6 по адресу работает, имя нет: Проверь AAAA через Resolve-DnsName/dig и системный DNS клиента.
+- Адрес, маршрут и сервис работают: Зафиксируй причину, параметры RA и проверку приложения. Сохрани согласованные изменения шлюза.
+Руководство: https://datatracker.ietf.org/doc/html/rfc4862#section-5.5.3
+
+## Сценарий: PoE: камера не включается или перезапускается
+Начни с питания, затем переходи к Ethernet и IP. Камера с достаточным питанием может оставаться недоступной из-за VLAN или сервиса.
+1. Проверить совместимость и режим порта
+Уточни, поддерживают ли порт и камера совместимый IEEE PoE/PoE+/PoE++, требуемую мощность и согласование. Пассивное питание имеет другие требования; не подключай его по предположению.
+Команды: Проверить PoE и бюджет питания
+Что показывает порт?
+- PoE отключён или порт не поддерживает питание: Сверь точную модель, порт, источник питания и административную настройку. Не подавай неизвестное пассивное напряжение.
+- PD не обнаружено или reported fault: Проверь кабель, разъёмы, совместимость PD/PSE и журнал ошибок. Не циклируй питание вслепую.
+- Питание разрешено и потребление видно: Сопоставь потребление, общий бюджет и время перезапуска камеры.
+2. Сверить бюджет и лимит
+Сравни доступную мощность PSE, уже выделенную мощность, класс PD и лимит порта. Пиковая нагрузка камеры при включении ИК-подсветки/нагревателя может отличаться от дневной.
+Команды: Проверить PoE и бюджет питания
+Как выглядит мощность?
+- Общий бюджет исчерпан: Проверь блок питания и проектную суммарную нагрузку. Перераспределяй питание по согласованному плану.
+- Общий запас есть, лимит порта недостаточен: Сверь стандарт порта и камеры, классификацию/LLDP power negotiation, лимит и допустимую мощность модели.
+- Бюджет и лимит достаточны: Проверь кабель, качество контактов и события перегрузки/отключения.
+3. Сопоставить кабель и журнал
+Запиши порт, время и причину power fault. В согласованное окно сравни камеру и кабель с заведомо исправными совместимыми экземплярами; меняй один фактор за раз.
+Команды: Посмотреть журнал событий
+За чем следует неисправность?
+- За камерой: Проверь её требования к питанию, прошивку и состояние; при необходимости передай на обслуживание.
+- За кабелем или трассой: Проверь все пары, разъёмы, длину и повреждения. Линк UP не гарантирует исправность всех цепей питания.
+- За портом при исправной камере и кабеле: Сверь PoE-настройки, аппаратные ошибки и поддержку порта; проверь PSE по руководству.
+4. После питания проверить сеть
+Если камера стабильно питается, проверь линк, VLAN/PVID, MAC, IP и приложение. Не объявляй проблему PoE только из-за отсутствия ping.
+Команды: Проверить состояние портов
+Что осталось?
+- Питание стабильно, линк DOWN: Проверь Ethernet-пары, скорость, порт и интерфейс камеры.
+- Линк UP, камера недоступна: Продолжи сценарий VLAN и проверки IP/сервиса.
+- Камера работает без перезапусков: Проверь работу под ожидаемой нагрузкой, включая ИК/нагреватель, и зафиксируй итог.
+Руководство: https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9200-series-switches/215636-troubleshooting-power-over-ethernet-poe.html
+

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1350" viewBox="0 0 1000 1350"><rect width="1000" height="1350" fill="#07111f"/>
+<text x="40" y="65" fill="#63ded4" font-family="sans-serif" font-size="34" font-weight="bold">L6 · Уровень представления</text>
+<text x="40" y="102" fill="#b8c8d7" font-family="sans-serif" font-size="20">Краткий справочник · OSI / TCP/IP</text>
+<rect x="30" y="130" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="165" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">1. Общая задача</text>
+<text x="50" y="199" fill="#eef5fc" font-family="sans-serif" font-size="22">Отправитель и получатель должны одинаково понимать байты: кодировку</text>
+<text x="50" y="226" fill="#eef5fc" font-family="sans-serif" font-size="22">текста, формат полей, порядок байтов и структуру сообщения. В OSI сюда</text>
+<text x="50" y="253" fill="#eef5fc" font-family="sans-serif" font-size="22">относят также сжатие и шифрование.</text>
+<rect x="30" y="322" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="357" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">2. Кодировка</text>
+<text x="50" y="391" fill="#eef5fc" font-family="sans-serif" font-size="22">UTF-8 кодирует символы последовательностями от 1 до 4 байт. Если принять</text>
+<text x="50" y="418" fill="#eef5fc" font-family="sans-serif" font-size="22">UTF-8 за другую кодировку, доставка может быть исправной, а текст —</text>
+<text x="50" y="445" fill="#eef5fc" font-family="sans-serif" font-size="22">нечитаемым.</text>
+<rect x="30" y="514" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="549" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">3. Формат и сериализация</text>
+<text x="50" y="583" fill="#eef5fc" font-family="sans-serif" font-size="22">JSON — текстовый формат. Protobuf использует бинарное кодирование. ASN.1</text>
+<text x="50" y="610" fill="#eef5fc" font-family="sans-serif" font-size="22">описывает типы и структуры; конкретное представление задают правила</text>
+<text x="50" y="637" fill="#eef5fc" font-family="sans-serif" font-size="22">кодирования, например BER или DER.</text>
+<rect x="30" y="706" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="741" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">4. TLS</text>
+<text x="50" y="775" fill="#eef5fc" font-family="sans-serif" font-size="22">Защищает обмен: конфиденциальность, целостность и аутентификация в</text>
+<text x="50" y="802" fill="#eef5fc" font-family="sans-serif" font-size="22">зависимости от режима. В учебной OSI-карте связан с L6; в TCP/IP обычно</text>
+<text x="50" y="829" fill="#eef5fc" font-family="sans-serif" font-size="22">реализуется библиотеками и прикладным стеком.</text>
+<rect x="30" y="898" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="933" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">5. Сертификат</text>
+<text x="50" y="967" fill="#eef5fc" font-family="sans-serif" font-size="22">Проверяй имя сервера, срок действия, цепочку доверия и часы клиента.</text>
+<text x="50" y="994" fill="#eef5fc" font-family="sans-serif" font-size="22">Расширение .cer или .crt само по себе не определяет, текстовый PEM внутри</text>
+<text x="50" y="1021" fill="#eef5fc" font-family="sans-serif" font-size="22">или бинарный DER.</text>
+<rect x="30" y="1090" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="1125" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">6. Сжатие и безопасность</text>
+<text x="50" y="1159" fill="#eef5fc" font-family="sans-serif" font-size="22">Сжатие без потерь позволяет восстановить исходные данные. Уже сжатый файл</text>
+<text x="50" y="1186" fill="#eef5fc" font-family="sans-serif" font-size="22">может почти не уменьшиться. Base64 — кодирование, а не шифрование. SSL</text>
+<text x="50" y="1213" fill="#eef5fc" font-family="sans-serif" font-size="22">устарел; для защищённого обмена используют TLS.</text>
+<text x="40" y="1320" fill="#91a9bf" font-family="sans-serif" font-size="18">Учебные примеры. Синтаксис CLI зависит от модели и версии ОС.</text></svg>

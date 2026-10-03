@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OSI Экзамен">
+  <meta name="description" content="Интерактивный экзамен по модели OSI и стеку TCP/IP">
+  <style>:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --surface: #0d1b2b;
+  --surface-2: #13253a;
+  --line: #243b54;
+  --text: #f5f8fb;
+  --muted: #a8b7c7;
+  --cyan: #35d0c8;
+  --blue: #5da9ff;
+  --green: #4ade80;
+  --red: #fb7185;
+  --amber: #fbbf24;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; min-height: 100svh; background: radial-gradient(circle at 85% -10%, #153a5c 0, transparent 38%), var(--bg); color: var(--text); }
+button, select, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.shell { width: min(100%, 760px); min-height: 100svh; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom)); }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+.brand { display: flex; align-items: center; gap: 11px; }
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; color: #06131d; background: linear-gradient(145deg, var(--cyan), var(--blue)); font-weight: 900; font-size: 1.3rem; box-shadow: 0 8px 24px #35d0c833; }
+.brand strong, .brand small { display: block; }
+.brand strong { font-size: 1rem; letter-spacing: .02em; }
+.brand small { margin-top: 2px; color: var(--muted); font-size: .78rem; }
+.icon-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 14px; color: var(--text); background: #0d1b2bcc; cursor: pointer; }
+.icon-button svg { width: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.screen { display: none; }
+.screen.active { display: block; animation: enter .25s ease-out; }
+@keyframes enter { from { opacity: 0; transform: translateY(7px); } }
+.intro-card, .setup-card, .question-card, .result-hero, .topic-results, .mistakes { border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(155deg, #10243a, #0b1827); box-shadow: 0 18px 50px #02081466; }
+.intro-card { position: relative; overflow: hidden; padding: 26px 22px 150px; }
+.intro-card::after { content: ""; position: absolute; right: -60px; bottom: -90px; width: 230px; height: 230px; border-radius: 50%; background: #35d0c815; }
+.eyebrow { margin: 0 0 10px; color: var(--cyan); font-weight: 800; font-size: .82rem; letter-spacing: .11em; text-transform: uppercase; }
+h1 { margin: 0; max-width: 560px; font-size: clamp(2rem, 8vw, 3.6rem); line-height: 1.04; letter-spacing: -.045em; }
+.lead { color: var(--muted); line-height: 1.55; font-size: 1rem; }
+.intro-card .lead { max-width: 570px; margin: 18px 0 0; }
+.layer-stack { position: absolute; left: 22px; right: 22px; bottom: 19px; display: flex; align-items: end; gap: 5px; }
+.layer-stack span { display: grid; place-items: center; flex: 1; height: calc(30px + var(--i) * 7px); max-width: 76px; border: 1px solid #5da9ff55; border-radius: 8px 8px 3px 3px; color: #cbe5ff; background: linear-gradient(180deg, #2e7fc855, #173b6255); font-size: .74rem; font-weight: 800; }
+.setup-card { margin-top: 14px; padding: 20px; }
+.setup-card label { display: block; margin-bottom: 8px; color: var(--muted); font-size: .88rem; font-weight: 700; }
+.select-wrap { position: relative; }
+select { width: 100%; min-height: 54px; padding: 0 44px 0 15px; border: 1px solid var(--line); border-radius: 15px; color: var(--text); background: var(--surface-2); appearance: none; }
+.select-wrap::after { content: "⌄"; position: absolute; right: 17px; top: 13px; color: var(--cyan); font-size: 1.2rem; pointer-events: none; }
+.primary-button, .secondary-button, .danger-button { width: 100%; min-height: 56px; margin-top: 14px; border-radius: 16px; border: 0; font-weight: 850; cursor: pointer; }
+.primary-button { color: #041416; background: linear-gradient(135deg, var(--cyan), #60a5fa); box-shadow: 0 10px 28px #35d0c82e; }
+.primary-button:disabled { opacity: .38; cursor: not-allowed; box-shadow: none; }
+.secondary-button { color: var(--text); background: var(--surface-2); border: 1px solid var(--line); }
+.danger-button { color: #fecdd3; background: #4c1823; }
+.available { margin: 12px 0 0; text-align: center; color: var(--muted); font-size: .82rem; }
+.quiz-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 2px 2px 12px; color: var(--muted); font-size: .86rem; }
+.quiz-head > :last-child { text-align: right; color: var(--green); font-weight: 800; }
+.text-button { width: fit-content; padding: 8px 0; border: 0; color: var(--muted); background: transparent; }
+.progress-track { height: 7px; margin-bottom: 16px; overflow: hidden; border-radius: 99px; background: var(--surface-2); }
+.progress-track div { width: 10%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--blue)); transition: width .3s ease; }
+.question-card { padding: 21px; }
+.topic-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.topic-badge { padding: 7px 10px; border-radius: 9px; color: #baf7f3; background: #12413f; font-size: .76rem; font-weight: 850; }
+.choice-hint { color: var(--amber); font-size: .76rem; font-weight: 750; text-align: right; }
+.question-card h2 { margin: 20px 0; font-size: clamp(1.25rem, 5vw, 1.75rem); line-height: 1.35; letter-spacing: -.018em; }
+.answers { display: grid; gap: 10px; }
+.answer-option { position: relative; display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 11px; min-height: 60px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 15px; background: #0b1928; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+.answer-option:active { transform: scale(.99); }
+.answer-option input { position: absolute; opacity: 0; pointer-events: none; }
+.choice-marker { display: grid; place-items: center; width: 29px; height: 29px; border: 2px solid #4e6680; border-radius: 50%; color: transparent; font-size: .84rem; font-weight: 900; }
+.answer-option.multiple .choice-marker { border-radius: 8px; }
+.answer-option.selected { border-color: var(--blue); background: #132c46; }
+.answer-option.selected .choice-marker { border-color: var(--blue); color: #04121c; background: var(--blue); }
+.answer-option.correct { border-color: var(--green); background: #123624; }
+.answer-option.correct .choice-marker { border-color: var(--green); color: #052312; background: var(--green); }
+.answer-option.wrong { border-color: var(--red); background: #3a1720; }
+.answer-option.wrong .choice-marker { border-color: var(--red); color: #2b0710; background: var(--red); }
+.answer-text { line-height: 1.38; }
+.feedback { margin-top: 15px; padding: 14px; border-left: 4px solid var(--blue); border-radius: 4px 12px 12px 4px; color: #d9e7f5; background: #10263b; line-height: 1.45; }
+.feedback strong { display: block; margin-bottom: 4px; }
+.detail-button { width: 100%; min-height: 50px; margin-top: 11px; border: 1px solid #5da9ff88; border-radius: 14px; color: #cfe8ff; background: #102b45; font-weight: 850; cursor: pointer; }
+#ipv4PracticeLink:not([hidden]) { display: block; padding: 14px; text-align: center; text-decoration: none; box-sizing: border-box; }
+.detail-button:hover { border-color: var(--cyan); }
+.detail-panel { margin-top: 11px; padding: 17px; border: 1px solid #35516d; border-radius: 16px; color: #dce9f5; background: #091725; line-height: 1.58; }
+.detail-panel h3 { margin: 3px 0 15px; color: var(--text); font-size: 1.2rem; }
+.detail-panel h4 { margin: 18px 0 6px; color: var(--cyan); font-size: .9rem; text-transform: uppercase; letter-spacing: .045em; }
+.detail-panel p { margin: 6px 0; }
+.detail-panel ul { margin: 7px 0 0; padding-left: 20px; }
+.detail-panel li { margin: 9px 0; }
+.detail-kicker { color: var(--amber); font-size: .78rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+.remember-box { display: grid; gap: 5px; margin-top: 18px; padding: 13px; border-left: 4px solid var(--amber); border-radius: 5px 12px 12px 5px; background: #192b3e; }
+.remember-box strong { color: var(--amber); }
+.feedback.good { border-color: var(--green); }
+.feedback.bad { border-color: var(--red); }
+.result-hero { padding: 28px 22px; text-align: center; }
+.result-icon { display: grid; place-items: center; width: 74px; height: 74px; margin: 0 auto 16px; border-radius: 24px; font-size: 2.2rem; background: #12324c; }
+.result-hero h1 { max-width: none; }
+.result-hero .lead { margin-bottom: 0; }
+.result-hero.pass .result-icon { background: #123d2b; }
+.result-hero.fail .result-icon { background: #4b1d28; }
+.topic-results, .mistakes { margin-top: 14px; padding: 19px; }
+.topic-results h2, .mistakes h2, dialog h2 { margin: 0 0 15px; font-size: 1.12rem; }
+.topic-line { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
+.topic-line small { color: var(--muted); }
+.mini-track { grid-column: 1 / -1; height: 6px; border-radius: 99px; background: #1c3044; overflow: hidden; }
+.mini-track i { display: block; height: 100%; background: var(--cyan); }
+.mistake-item { padding: 15px 0; border-top: 1px solid var(--line); }
+.mistake-item:first-of-type { border-top: 0; padding-top: 0; }
+.mistake-item p { margin: 5px 0; line-height: 1.4; }
+.mistake-item .right-answer { color: #a7f3d0; font-size: .9rem; }
+.mistake-item .explanation { color: var(--muted); font-size: .9rem; }
+dialog { width: min(calc(100% - 28px), 520px); max-height: 85svh; padding: 20px; overflow: auto; border: 1px solid var(--line); border-radius: 22px; color: var(--text); background: var(--surface); box-shadow: 0 30px 80px #0009; }
+dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; }
+.dialog-head .icon-button { font-size: 1.5rem; }
+.stat-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.stat-box { padding: 13px 8px; border-radius: 14px; text-align: center; background: var(--surface-2); }
+.stat-box strong, .stat-box small { display: block; }
+.stat-box strong { font-size: 1.35rem; }
+.stat-box small { margin-top: 4px; color: var(--muted); font-size: .72rem; }
+.empty-state { color: var(--muted); text-align: center; padding: 24px 8px; }
+.main-nav { order: 3; display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; padding: 4px; border: 1px solid var(--line); border-radius: 15px; background: #091523; }
+.nav-button { display: grid; place-items: center; text-decoration: none; min-height: 44px; border: 0; border-radius: 11px; color: var(--muted); background: transparent; font-weight: 850; cursor: pointer; }
+.nav-button.active { color: #06131d; background: linear-gradient(135deg, var(--cyan), var(--blue)); }
+.learning-hero, .model-card, .layer-card { border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(155deg, #10243a, #0b1827); box-shadow: 0 18px 50px #02081455; }
+.learning-hero { padding: 26px 22px; }
+.learning-hero h1 { font-size: clamp(2rem, 8vw, 3.2rem); }
+.learning-hero .lead { margin-bottom: 0; }
+.learning-note { margin-top: 16px; padding: 13px 15px; border-left: 4px solid var(--cyan); border-radius: 5px 13px 13px 5px; color: #d9e7f5; background: #102a3e; line-height: 1.5; }
+.model-card { margin-top: 14px; padding: 20px; }
+.model-card h2, .learning-list > h2 { margin: 0 0 14px; font-size: 1.2rem; }
+.osi-map { display: grid; gap: 7px; }
+.osi-map-row { display: grid; grid-template-columns: 52px 1fr minmax(90px, .8fr); align-items: center; gap: 8px; min-height: 43px; padding: 7px 10px; border-radius: 11px; background: #12263a; }
+.osi-map-row strong { color: var(--cyan); }
+.osi-map-row small { color: var(--muted); text-align: right; }
+.learning-list { display: grid; gap: 12px; margin-top: 18px; }
+.layer-card { overflow: hidden; }
+.layer-card > summary { display: grid; grid-template-columns: 50px 1fr auto; align-items: center; gap: 11px; padding: 17px; cursor: pointer; list-style: none; }
+.layer-card > summary::-webkit-details-marker { display: none; }
+.layer-number { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; color: #06131d; background: linear-gradient(145deg, var(--cyan), var(--blue)); font-size: 1.15rem; font-weight: 950; }
+.layer-title strong, .layer-title small { display: block; }
+.layer-title small { margin-top: 3px; color: var(--muted); font-size: .78rem; }
+.layer-chevron { color: var(--cyan); font-size: 1.5rem; transition: transform .2s; }
+.layer-card[open] .layer-chevron { transform: rotate(180deg); }
+.layer-content { padding: 0 17px 20px; border-top: 1px solid var(--line); }
+.layer-explain { margin: 17px 0; color: #dce9f5; line-height: 1.58; }
+.quick-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+.fact { padding: 12px; border-radius: 13px; background: #13273b; }
+.fact strong, .fact span { display: block; }
+.fact strong { color: var(--cyan); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; }
+.fact span { margin-top: 5px; font-size: .9rem; line-height: 1.38; }
+.work-example { margin: 14px 0; padding: 13px; border-radius: 13px; color: #dbeafe; background: #132f49; line-height: 1.5; }
+.work-example strong { color: var(--amber); }
+.notes-preview { display: block; width: 100%; margin-top: 14px; padding: 0; border: 0; border-radius: 13px; background: transparent; cursor: zoom-in; }
+.notes-preview .cheat-preview { margin-top: 0; }
+.notes-preview:focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+.cheat-preview { display: block; width: 100%; height: auto; margin-top: 14px; border: 1px solid #45627d; border-radius: 13px; background: #fff; cursor: zoom-in; }
+.layer-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.layer-actions .primary-button, .layer-actions .secondary-button { margin-top: 11px; min-height: 50px; }
+#notesDialog { width: min(calc(100% - 24px), 800px); max-height: 90svh; padding: 16px; }
+.notes-actions { position: sticky; top: -16px; padding-bottom: 10px; background: var(--surface); }
+.notes-actions button { margin-top: 0; }
+#notesContent { font-size: 1rem; line-height: 1.6; overflow-wrap: anywhere; }
+#notesContent h2 { color: var(--cyan); font-size: 1.35rem; }
+.notes-section { padding: 16px; margin: 12px 0; border-radius: 13px; background: var(--surface-2); }
+.notes-section h3 { margin: 0 0 8px; color: var(--amber); font-size: 1.05rem; }
+.notes-section p { margin: 0; }
+@media (min-width: 720px) {
+  .shell { padding-left: 24px; padding-right: 24px; }
+  #startScreen.active { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; align-items: stretch; }
+  .intro-card { padding: 34px 30px 160px; }
+  .setup-card { margin-top: 0; padding: 24px; display: flex; flex-direction: column; justify-content: center; }
+  .question-card { padding: 30px; }
+  .model-card, .learning-hero { padding: 28px; }
+  .quick-facts { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+@media (max-width: 380px) {
+  .shell { padding-left: 12px; padding-right: 12px; }
+  .intro-card, .setup-card, .question-card, .result-hero, .topic-results, .mistakes { border-radius: 20px; }
+  .intro-card { padding-left: 17px; padding-right: 17px; }
+  .question-card { padding: 17px; }
+  .quick-facts, .layer-actions { grid-template-columns: 1fr; }
+  .osi-map-row { grid-template-columns: 46px 1fr; }
+  .osi-map-row small { grid-column: 2; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+#questionGraphic svg,.mistake-item svg{display:block;width:100%;height:auto} #questionGraphic{margin-bottom:18px} .question-photo,.mistake-photo{display:block;width:100%;max-height:480px;object-fit:contain;border:1px solid #35516d;border-radius:14px;background:#050b12} .photo-credit{margin:7px 0 0;text-align:center;font-size:.76rem;color:var(--muted)} .photo-credit a,.credits-list a{color:#8fd8ff} #zoomDialog{width:min(95vw,1000px)} #zoomContent{overflow:auto;margin-top:14px} #zoomContent svg{width:760px;max-width:none;display:block} #zoomContent img{display:block;width:100%;height:auto;max-height:80svh;object-fit:contain;border-radius:12px} .credits-card{margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#0d1b2b} .credits-card summary{cursor:pointer;font-weight:850} .credits-list{margin:14px 0 0;padding-left:20px;color:var(--muted);font-size:.82rem;line-height:1.5} </style>
+  <title>OSI & TCP/IP — обучение, шпаргалки и экзамен</title>
+<style>
+#zoomDialog { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; box-sizing: border-box; overflow: hidden; }
+#zoomDialog[open] { display: flex; flex-direction: column; }
+.zoom-toolbar { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+.zoom-toolbar button { min-height: 44px; padding: 8px 12px; border: 1px solid #45627d; border-radius: 10px; color: #e7f3ff; background: #142b40; font: inherit; cursor: pointer; }
+.zoom-toolbar .secondary-button { width: auto; margin: 0; }
+.zoom-toolbar button:disabled { opacity: .4; }
+.zoom-toolbar output { min-width: 48px; text-align: center; }
+.zoom-hint { margin: 8px 0; color: var(--muted); font-size: .82rem; }
+#zoomContent { flex: 1; min-height: 0; overflow: auto; margin: 0; touch-action: pan-x pan-y pinch-zoom; overscroll-behavior: contain; }
+#zoomContent img, #zoomContent svg { display: block; max-width: none; max-height: none; height: auto; border-radius: 0; }
+.question-photo { min-height: 100px; }
+#photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
+#retryPhoto { min-height: 44px; margin: 8px; }
+</style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="OSI и TCP/IP">
+        <span class="brand-mark">7</span>
+        <div><strong>OSI & TCP/IP</strong><small>обучение · экзамен · 343 вопроса</small></div>
+      </div>
+      <button id="statsButton" class="icon-button" type="button" aria-label="Статистика" title="Статистика">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/></svg>
+      </button>
+      <nav class="main-nav" aria-label="Основные разделы" style="grid-template-columns:repeat(5,1fr)">
+        <button id="examNav" class="nav-button active" type="button">Экзамен</button>
+        <button id="learnNav" class="nav-button" type="button">Обучение</button>
+        <a id="ipv4Nav" class="nav-button" href="ipv4.html">IPv4</a>
+        <a id="ipv6Nav" class="nav-button" href="ipv6.html">IPv6</a>
+        <a class="nav-button" href="cli/">CLI</a>
+      </nav>
+    </header>
+
+    <section id="startScreen" class="screen active" aria-labelledby="startTitle">
+      <div class="intro-card">
+        <p class="eyebrow">10 вопросов · зачёт от 8</p>
+        <h1 id="startTitle">Проверим, как устроена сеть?</h1>
+        <p class="lead">Вопросы и варианты меняются при каждом прохождении. Если правильных ответов несколько — это будет указано.</p>
+        <div class="layer-stack" aria-hidden="true">
+          <span style="--i:7">L7</span><span style="--i:6">L6</span><span style="--i:5">L5</span><span style="--i:4">L4</span><span style="--i:3">L3</span><span style="--i:2">L2</span><span style="--i:1">L1</span>
+        </div>
+      </div>
+
+      <div class="setup-card">
+        <label for="modeSelect">Режим</label>
+        <div class="select-wrap">
+          <select id="modeSelect">
+            <option value="visual-l1">L1 — по фотографиям: оптика и SFP</option><option value="mixed" selected>Смешанный экзамен</option>
+            <option value="l1-l2">L1–L2: физика и Ethernet</option>
+            <option value="l3">L3: IPv4 и маршрутизация</option>
+            <option value="l4">L4: TCP и UDP</option>
+            <option value="l5-l7">L5–L7: приложения и данные</option>
+            <option value="tcpip">Стек TCP/IP</option>
+            <option value="troubleshooting">Диагностика сети</option>
+          </select>
+        </div>
+        <button id="startButton" class="primary-button" type="button">Начать экзамен</button>
+        <p id="questionCount" class="available"></p>
+      </div>
+    </section>
+
+    <section id="quizScreen" class="screen" aria-live="polite">
+      <div class="quiz-head">
+        <button id="exitButton" class="text-button" type="button">Выйти</button>
+        <span id="questionNumber">Вопрос 1 из 10</span>
+        <span id="scoreMini" aria-label="Текущий результат">0 ✓</span>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+      <article class="question-card">
+        <div class="topic-row"><span id="topicBadge" class="topic-badge"></span><span id="choiceHint" class="choice-hint"></span></div>
+        <h2 id="questionText"></h2>
+        <div id="questionGraphic"></div><form id="answersForm" class="answers"></form>
+        <div id="feedback" class="feedback" hidden></div>
+        <button id="detailButton" class="detail-button" type="button" hidden>Понять подробнее</button>
+        <div id="detailPanel" class="detail-panel" hidden></div>
+        <a id="ipv4PracticeLink" class="detail-button" href="ipv4.html" target="_blank" rel="noopener" hidden>Практика адресов и масок в IPv4-тренажёре ↗</a>
+        <button id="checkButton" class="primary-button" type="button" disabled>Проверить ответ</button>
+        <button id="nextButton" class="primary-button" type="button" hidden>Следующий вопрос</button>
+      </article>
+    </section>
+
+    <section id="resultScreen" class="screen" aria-live="polite">
+      <div id="resultHero" class="result-hero">
+        <span id="resultIcon" class="result-icon"></span>
+        <p id="resultStatus" class="eyebrow"></p>
+        <h1 id="resultScore"></h1>
+        <p id="resultMessage" class="lead"></p>
+      </div>
+      <div id="topicResults" class="topic-results"></div>
+      <div id="mistakes" class="mistakes"></div>
+      <button id="retryButton" class="primary-button" type="button">Пройти ещё раз</button>
+      <button id="homeButton" class="secondary-button" type="button">Выбрать другой режим</button>
+    </section>
+
+    <section id="learningScreen" class="screen" aria-labelledby="learningTitle">
+      <div class="learning-hero">
+        <p class="eyebrow">От сигнала до приложения</p>
+        <h1 id="learningTitle">Обучение по модели OSI</h1>
+        <p class="lead">Сначала пойми задачу каждого уровня, затем свяжи её с адресами, устройствами и протоколами. Открывай уровни по порядку — от L1 к L7.</p>
+        <div class="learning-note"><strong>Главная логика диагностики:</strong> если сеть не работает, проверяй снизу вверх: питание и Link → VLAN и MAC → IP и маршрут → TCP/UDP → приложение.</div>
+      </div>
+
+      <div class="model-card">
+        <h2>OSI и TCP/IP: как они соотносятся</h2>
+        <div class="osi-map">
+          <div class="osi-map-row"><strong>L7</strong><span>Прикладной</span><small>Application TCP/IP</small></div>
+          <div class="osi-map-row"><strong>L6</strong><span>Представления</span><small>Application TCP/IP</small></div>
+          <div class="osi-map-row"><strong>L5</strong><span>Сеансовый</span><small>Application TCP/IP</small></div>
+          <div class="osi-map-row"><strong>L4</strong><span>Транспортный</span><small>Transport</small></div>
+          <div class="osi-map-row"><strong>L3</strong><span>Сетевой</span><small>Internet</small></div>
+          <div class="osi-map-row"><strong>L2</strong><span>Канальный</span><small>Network Access</small></div>
+          <div class="osi-map-row"><strong>L1</strong><span>Физический</span><small>Network Access</small></div>
+        </div>
+        <p class="learning-note">При отправке данные проходят L7 → L1 и получают заголовки: данные → сегмент → пакет → кадр → биты. На приёме процесс идёт обратно.</p>
+      </div>
+
+      <div class="learning-list">
+        <h2>Уровни модели</h2>
+
+        <details class="layer-card" open>
+          <summary><span class="layer-number">L1</span><span class="layer-title"><strong>Физический уровень</strong><small>Сигнал, среда, разъёмы, оптика и SFP</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L1 превращает нули и единицы в электрические, оптические или радиосигналы. Здесь ещё нет MAC и IP: уровень отвечает за то, чтобы сигнал физически дошёл между соседними устройствами.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Биты</span></div><div class="fact"><strong>Устройства</strong><span>Кабель, SFP, репитер, медиаконвертер</span></div><div class="fact"><strong>Проверяем</strong><span>Link, TX/RX, мощность, затухание</span></div><div class="fact"><strong>Типовые ошибки</strong><span>Обрыв, грязь, перегиб, неверный модуль</span></div></div>
+            <p class="work-example"><strong>На работе:</strong> если на SCALANCE нет Link — сначала питание, порт, патч-корд, полярность TX/RX, тип OS2/OM3 и совместимость SFP. До VLAN и IP пока не доходим.</p>
+            <button class="notes-preview" type="button" data-notes="1" aria-label="Увеличить краткий справочник L1"><img class="cheat-preview" src="assets/cheatsheets/l1.svg" loading="lazy" alt="Краткий справочник L1"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l1.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="visual-l1">Тест L1 по фотографиям</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L2</span><span class="layer-title"><strong>Канальный уровень</strong><small>Ethernet, MAC, VLAN и коммутация</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L2 доставляет Ethernet-кадры внутри одного широковещательного домена. Коммутатор изучает Source MAC на входящем порту и ищет Destination MAC в своей таблице.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Кадр</span></div><div class="fact"><strong>Адрес</strong><span>MAC, 48 бит</span></div><div class="fact"><strong>Устройства</strong><span>Bridge, L2-коммутатор</span></div><div class="fact"><strong>Технологии</strong><span>Ethernet, VLAN, STP/RSTP, LACP, MRP</span></div></div>
+            <p class="work-example"><strong>На работе:</strong> Link есть, но трафика нет — проверь VLAN порта, tagged/untagged, PVID, MAC-таблицу, блокировку STP/MRP и счётчики CRC.</p>
+            <button class="notes-preview" type="button" data-notes="2" aria-label="Увеличить краткий справочник L2"><img class="cheat-preview" src="assets/cheatsheets/l2.svg" loading="lazy" alt="Краткий справочник L2"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l2.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l1-l2">Тест L1–L2</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L3</span><span class="layer-title"><strong>Сетевой уровень</strong><small>IPv4, подсети, ARP и маршрутизация</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L3 обеспечивает логическую адресацию и доставку пакетов между сетями. Маска определяет границу сети и хоста, а маршрутизатор выбирает следующий переход по самому длинному совпавшему префиксу.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Пакет</span></div><div class="fact"><strong>Адрес</strong><span>IPv4/IPv6</span></div><div class="fact"><strong>Устройства</strong><span>Маршрутизатор, L3-коммутатор</span></div><div class="fact"><strong>Протоколы</strong><span>IP, ICMP; ARP связывает L3 и L2</span></div></div>
+            <p class="work-example"><strong>На работе:</strong> хост одной подсети ищет MAC получателя через ARP. Для другой подсети он отправляет кадр на MAC своего шлюза, сохраняя Destination IP удалённого узла.</p>
+            <button class="notes-preview" type="button" data-notes="3" aria-label="Увеличить краткий справочник L3"><img class="cheat-preview" src="assets/cheatsheets/l3.svg" loading="lazy" alt="Краткий справочник L3"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l3.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l3">Тест L3</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L4</span><span class="layer-title"><strong>Транспортный уровень</strong><small>TCP, UDP, порты и надёжность</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L4 доставляет данные нужному процессу по номеру порта. TCP устанавливает соединение, подтверждает получение, восстанавливает порядок и повторяет потери. UDP отправляет дейтаграммы без этих гарантий.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>TCP-сегмент / UDP-дейтаграмма</span></div><div class="fact"><strong>Адресация</strong><span>Порты 0–65535</span></div><div class="fact"><strong>TCP</strong><span>Надёжность, порядок, flow control</span></div><div class="fact"><strong>UDP</strong><span>Меньше накладных расходов</span></div></div>
+            <p class="work-example"><strong>На работе:</strong> ping проходит, но сервис недоступен — проверь нужный TCP/UDP-порт, состояние LISTEN, firewall и трёхстороннее рукопожатие TCP.</p>
+            <button class="notes-preview" type="button" data-notes="4" aria-label="Увеличить краткий справочник L4"><img class="cheat-preview" src="assets/cheatsheets/l4.svg" loading="lazy" alt="Краткий справочник L4"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l4.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l4">Тест L4</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L5</span><span class="layer-title"><strong>Сеансовый уровень</strong><small>Диалог, сеанс, синхронизация и восстановление</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L5 — концептуальный уровень управления диалогом приложений: открыть, поддерживать и завершить сеанс, поставить контрольные точки и восстановить обмен. В стеке TCP/IP эти функции обычно встроены в приложения и библиотеки.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Данные</span></div><div class="fact"><strong>Функции</strong><span>Сеанс, диалог, checkpoint</span></div><div class="fact"><strong>Режимы</strong><span>Simplex, half/full duplex</span></div><div class="fact"><strong>Примеры</strong><span>RPC, SMB-сессия, RDP-сеанс</span></div></div>
+            <p class="work-example"><strong>Важно:</strong> не ищи обязательный отдельный «протокол L5» в каждой сети. OSI разделяет функции для обучения, а реальные приложения часто объединяют L5–L7.</p>
+            <button class="notes-preview" type="button" data-notes="5" aria-label="Увеличить краткий справочник L5"><img class="cheat-preview" src="assets/cheatsheets/l5.svg" loading="lazy" alt="Краткий справочник L5"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l5.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l5-l7">Тест L5–L7</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L6</span><span class="layer-title"><strong>Уровень представления</strong><small>Формат, кодировка, сжатие и шифрование</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L6 приводит данные к форме, понятной принимающей стороне: кодирует символы, сериализует структуры, сжимает и шифрует. Он меняет представление, но не выбирает маршрут и не доставляет кадры.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Данные</span></div><div class="fact"><strong>Кодировки</strong><span>UTF-8, ASCII</span></div><div class="fact"><strong>Форматы</strong><span>JSON, XML, JPEG, ASN.1</span></div><div class="fact"><strong>Защита</strong><span>TLS, шифрование, сертификаты</span></div></div>
+            <p class="work-example"><strong>Пример:</strong> приложение формирует JSON в UTF-8, сжимает ответ и защищает обмен TLS. В TCP/IP это обычно считают частью прикладного уровня.</p>
+            <button class="notes-preview" type="button" data-notes="6" aria-label="Увеличить краткий справочник L6"><img class="cheat-preview" src="assets/cheatsheets/l6.svg" loading="lazy" alt="Краткий справочник L6"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l6.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l5-l7">Тест L5–L7</button></div>
+          </div>
+        </details>
+
+        <details class="layer-card">
+          <summary><span class="layer-number">L7</span><span class="layer-title"><strong>Прикладной уровень</strong><small>Сетевые сервисы для приложений пользователя</small></span><span class="layer-chevron">⌄</span></summary>
+          <div class="layer-content">
+            <p class="layer-explain">L7 описывает протоколы, с которыми непосредственно работают программы: веб, DNS, почта, удалённое управление, выдача адресов и мониторинг. Сам браузер — приложение, а HTTP — прикладной протокол.</p>
+            <div class="quick-facts"><div class="fact"><strong>PDU</strong><span>Данные</span></div><div class="fact"><strong>Веб</strong><span>HTTP/HTTPS</span></div><div class="fact"><strong>Инфраструктура</strong><span>DNS, DHCP, NTP, SNMP</span></div><div class="fact"><strong>Доступ</strong><span>SSH, SMTP, IMAP, FTP</span></div></div>
+            <p class="work-example"><strong>На работе:</strong> IP пингуется, TCP 443 устанавливается, но сайт отвечает 404 — нижние уровни работают, а ошибка уже относится к логике веб-сервиса L7.</p>
+            <button class="notes-preview" type="button" data-notes="7" aria-label="Увеличить краткий справочник L7"><img class="cheat-preview" src="assets/cheatsheets/l7.svg" loading="lazy" alt="Краткий справочник L7"></button>
+            <div class="layer-actions"><button class="secondary-button open-cheat" type="button" data-cheat="assets/cheatsheets/l7.webp">Открыть шпаргалку</button><button class="primary-button layer-quiz" type="button" data-quiz-mode="l5-l7">Тест L5–L7</button></div>
+          </div>
+        </details>
+      </div>
+      <details id="photoCredits" class="credits-card"><summary>Источники фотографий и лицензии</summary><p class="lead">Фотографии сохранены внутри сайта для офлайн-работы. Оригиналы — Wikimedia Commons.</p><ol class="credits-list"><li><a href="https://commons.wikimedia.org/wiki/File:LC-optical-fiber-connector-hdr-0a.jpg" target="_blank" rel="noopener">LC-optical-fiber-connector-hdr-0a.jpg</a> — Adamantios; CC BY-SA 3.0 (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:SC-optical-fiber-connector-hdr-0a.jpg" target="_blank" rel="noopener">SC-optical-fiber-connector-hdr-0a.jpg</a> — Adamantios; CC BY-SA 3.0 (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:ST-optical-fiber-connector-hdr-0a.jpg" target="_blank" rel="noopener">ST-optical-fiber-connector-hdr-0a.jpg</a> — Adamantios; CC BY-SA 3.0 (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Optical-patch-fiber-FC-APC-connectors.jpg" target="_blank" rel="noopener">Optical-patch-fiber-FC-APC-connectors.jpg</a> — Geek3; CC BY-SA 4.0 (<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Lc-sc-fiber-connectors.jpg" target="_blank" rel="noopener">Lc-sc-fiber-connectors.jpg</a> — Wikimedia Commons contributor; CC BY-SA 3.0 (<a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Multi_mode_sfp_transceiver_IMGP7817_wp.jpg" target="_blank" rel="noopener">Multi mode sfp transceiver IMGP7817 wp.jpg</a> — smial ( talk ); FAL (<a href="http://artlibre.org/licence/lal/en" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:SFP-front-RX-TX.jpg" target="_blank" rel="noopener">SFP-front-RX-TX.jpg</a> — SFP-front.jpg : Adamantios derivative work: MichaelFrey ( talk ); CC BY-SA 3.0 (<a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Cordons_monomode-multimode_LC.JPG" target="_blank" rel="noopener">Cordons monomode-multimode LC.JPG</a> — photography taken by Christophe.Finot; CC BY-SA 3.0 (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Single_mode_fiber1.jpg" target="_blank" rel="noopener">Single mode fiber1.jpg</a> — Quantumavik; CC BY 4.0 (<a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:OTDR_-_Yokogawa_AQ7270_-_1.jpg" target="_blank" rel="noopener">OTDR - Yokogawa AQ7270 - 1.jpg</a> — Electron; CC BY 3.0 (<a href="https://creativecommons.org/licenses/by/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Fiberkabel.jpg" target="_blank" rel="noopener">Fiberkabel.jpg</a> — Gräsmark; CC BY-SA 3.0 (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:GBIC_und_SFP.jpg" target="_blank" rel="noopener">GBIC und SFP.jpg</a> — Joachim Müllerchen ( Jom at de.wikipedia ); CC BY-SA 2.0 de (<a href="https://creativecommons.org/licenses/by-sa/2.0/de/deed.en" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:10_Gbit_XFP_and_SFP_transceivers.jpg" target="_blank" rel="noopener">10 Gbit XFP and SFP transceivers.jpg</a> — DroidBishop; CC BY-SA 4.0 (<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Fiber_patch_panel_(14072890962).jpg" target="_blank" rel="noopener">Fiber patch panel (14072890962).jpg</a> — Patrick Finnegan from Lafayette, IN, USA; CC BY 2.0 (<a href="https://creativecommons.org/licenses/by/2.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Netgear_ProSafe_16-Port_10-Gigabit_Smart_Managed_Switch_XS716T.jpg" target="_blank" rel="noopener">Netgear ProSafe 16-Port 10-Gigabit Smart Managed Switch XS716T.jpg</a> — Sergklim; CC BY-SA 4.0 (<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">лицензия</a>).</li><li><a href="https://commons.wikimedia.org/wiki/File:Optical_fiber_connectors-optical_patch_cable-01ASD.jpg" target="_blank" rel="noopener">Optical fiber connectors-optical patch cable-01ASD.jpg</a> — Asurnipal; CC BY-SA 4.0 (<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">лицензия</a>).</li></ol></details>
+    </section>
+  </main>
+
+  <dialog id="notesDialog" aria-labelledby="notesTitle"><div class="notes-actions"><button id="closeNotes" class="secondary-button" type="button">Закрыть пояснения</button></div><div id="notesContent"></div></dialog>
+  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button">По размеру</button></div><p class="zoom-hint">Увеличивай кнопкой +. Перемещай изображение прокруткой в любом направлении.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog">
+    <div class="dialog-head"><h2>Моя статистика</h2><button id="closeStats" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
+    <div id="statsContent"></div>
+    <button id="clearStats" class="danger-button" type="button">Сбросить статистику</button>
+  </dialog>
+
+  <script src="quiz/questions.js"></script>
+  <script src="quiz/engine.js"></script>
+  <script>(() => {
+  'use strict';
+  const bank = window.QUESTION_BANK || [];
+  const PASS_SCORE = 8;
+  const QUIZ_SIZE = 10;
+  const modeLabels = {
+    'visual-l1': 'L1 — фотографии', mixed: 'Смешанный экзамен', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4',
+    'l5-l7': 'L5–L7', tcpip: 'TCP/IP', troubleshooting: 'Диагностика'
+  };
+
+  const $ = id => document.getElementById(id);
+  const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen'];
+  const state = { mode: 'mixed', questions: [], index: 0, score: 0, answers: [], checked: false, shown: new Set() };
+
+  function shuffle(items) {
+    const out = [...items];
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+
+  function showScreen(id) {
+    screens.forEach(name => $(name).classList.toggle('active', name === id));
+    const learning = id === 'learningScreen';
+    $('learnNav').classList.toggle('active', learning);
+    $('examNav').classList.toggle('active', !learning);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  const LEVEL_NOTES = {"1":{"title":"L1 · Физический уровень","sections":[{"title":"1. Что передаётся","text":"Биты передаются электрическими, оптическими или радиосигналами. Способ кодирования зависит от физического стандарта; это не всегда простое «свет есть / света нет»."},{"title":"2. Что проверить при Link Down","text":"Питание, кабель и разъёмы, административное состояние порта, совместимость скорости и модулей, уровни оптического сигнала. Проверяй оба конца линии."},{"title":"3. Оптическая линия","text":"Согласуй тип волокна, длину волны, скорость, дальность и бюджет потерь. В duplex-линии TX одного конца должен приходить на RX другого. BiDi требует согласованной пары модулей."},{"title":"4. Разъёмы и волокно","text":"LC, SC, ST и FC — типы коннекторов. OS1/OS2 — одномодовое волокно; OM1–OM5 — многомодовое. Цвет — подсказка: окончательно сверяй маркировку. APC и UPC напрямую не соединяют."},{"title":"5. Измерения","text":"dBm — абсолютная оптическая мощность; dB — отношение мощностей, например потери. Power meter измеряет мощность. OTDR показывает события и расстояния вдоль волокна."},{"title":"6. Важные ограничения","text":"Дальность медной и оптической линии зависит от стандарта и условий. Link Up не доказывает отсутствие ошибок. Некоторые PHY применяют FEC — исправление ошибок возможно и на физическом уровне."}]},"2":{"title":"L2 · Канальный уровень","sections":[{"title":"1. Кадр и MAC","text":"Ethernet-коммутатор изучает Source MAC входящих кадров с учётом VLAN. Известный Destination MAC указывает выходной порт. Динамические записи стареют."},{"title":"2. Рассылка кадров","text":"Unknown unicast и broadcast обычно рассылаются на разрешённые forwarding-порты той же VLAN, кроме входного. Multicast может ограничиваться IGMP Snooping и другими механизмами."},{"title":"3. VLAN и 802.1Q","text":"VLAN разделяют широковещательные домены. Access-порт обычно обслуживает одну VLAN без тега. Trunk переносит несколько VLAN; native VLAN может передаваться без тега. Проверяй оба конца."},{"title":"4. Размер Ethernet-кадра","text":"Для нетегированного кадра минимум 64 байта: заголовок 14, данные с padding минимум 46, FCS 4. Преамбула и межкадровый интервал не входят. Тег 802.1Q занимает 4 байта."},{"title":"5. STP и LACP","text":"STP выбирает root по наименьшему Bridge ID и предотвращает петли. LACP согласует участников агрегата. Два линка по 1 Гбит/с дают суммарную ёмкость, но один поток обычно ограничен одним линком."},{"title":"6. Таблицы не взаимозаменяемы","text":"MAC-таблица коммутатора связывает MAC, VLAN и порт. ARP-кэш связывает IPv4 и MAC соседнего узла. LLDP показывает соседей. Ни одна из них сама по себе не доказывает весь путь VLAN."}]},"3":{"title":"L3 · Сетевой уровень","sections":[{"title":"1. Адрес и префикс","text":"IPv4 содержит 32 бита. /26 означает 26 сетевых бит и 6 хостовых. Маска /26 — 255.255.255.192, размер блока — 64 адреса."},{"title":"2. Пример: 192.168.10.70/26","text":"Сеть: 192.168.10.64. Broadcast: 192.168.10.127. Обычные адреса хостов: 192.168.10.65–192.168.10.126. Всего 64 адреса, из них 62 для хостов."},{"title":"3. Шаг и октет","text":"Для /25–/30 шаг в четвёртом октете: 128, 64, 32, 16, 8, 4. Для /24 соседняя сеть начинается с прибавления 1 к третьему октету. Всегда указывай, о каком октете идёт речь."},{"title":"4. Следующий узел и ARP","text":"Маршрут определяет следующий узел. Для локального назначения ARP ищет MAC получателя; для удалённого — MAC next hop. IP назначения обычно сохраняется, MAC меняются на каждом Ethernet-участке."},{"title":"5. Выбор маршрута","text":"Побеждает наиболее длинный подходящий префикс. Для 10.50.20.200 маршрут 10.50.20.128/25 точнее 10.50.20.0/24. Маршрут 0.0.0.0/0 используется, когда нет более точного."},{"title":"6. IPv6 и диагностика","text":"IPv6 — 128 бит; в обычной LAN часто /64. NDP использует ICMPv6. RA сообщает параметры маршрутизатора и префиксов. Проверяй адреса, маршрут туда и обратно, соседство и фильтры."}]},"4":{"title":"L4 · Транспортный уровень","sections":[{"title":"1. TCP","text":"Даёт приложению упорядоченный поток байтов, подтверждения и повторную передачу. Соединение может завершиться ошибкой: надёжность не означает, что любая сеть всегда доставит данные."},{"title":"2. UDP","text":"Передаёт датаграммы без установления соединения. Сам не гарантирует доставку и порядок. Скорость зависит от приложения и условий: утверждение «UDP всегда быстрее» неверно."},{"title":"3. Установка TCP-соединения","text":"Клиент → сервер: SYN. Сервер → клиент: SYN-ACK. Клиент → сервер: ACK. ACK подтверждает следующий ожидаемый номер байта. Повторы SYN требуют проверки пути, фильтров и службы."},{"title":"4. Порты","text":"TCP и UDP имеют отдельные пространства 16-битных портов. Примеры: SSH 22/TCP, DNS 53/UDP и TCP, NTP 123/UDP, Modbus TCP 502/TCP. Порт по умолчанию можно изменить в настройках службы."},{"title":"5. Проверка службы","text":"Успешный ping не подтверждает доступность TCP-порта. В Windows: Test-NetConnection -ComputerName 10.120.0.10 -Port 502. На Linux-сервере: sudo ss -tlnp. LISTEN проверяй на нужном адресе."},{"title":"6. MTU и MSS","text":"L3 MTU ограничивает размер IP-пакета. TCP MSS ограничивает данные сегмента без заголовков TCP/IP. При MTU 1500 и заголовках IPv4/TCP по 20 байт MSS составляет 1460."}]},"5":{"title":"L5 · Сеансовый уровень","sections":[{"title":"1. Функции в модели OSI","text":"Управление диалогом: установление, поддержание и завершение сеанса, синхронизация и контрольные точки. Модель описывает обязанности, а не отдельную программу для каждого уровня."},{"title":"2. Сеанс и TCP-соединение","text":"Прикладной сеанс может пережить разрыв TCP, если приложение умеет возобновление. Одно TCP-соединение также может обслуживать несколько прикладных диалогов."},{"title":"3. Контрольная точка","text":"Приложения согласовали обработку блока 100. После сбоя они продолжают с блока 101, если протокол и сохранённое состояние поддерживают такое восстановление."},{"title":"4. Как это устроено в TCP/IP","text":"Функции OSI L5–L7 обычно объединены в прикладном уровне TCP/IP. SIP, RPC, SMB и SSH не следует без оговорок объявлять исключительно протоколами L5."},{"title":"5. Что проверять","text":"Срок жизни сеанса, keepalive, повторную аутентификацию, состояние на сервере, журналы клиента и сервера. Совпадающее время событий помогает отделить сетевой разрыв от истечения сеанса."},{"title":"6. Не путать разные уровни","text":"Full-duplex Ethernet — режим линии. Управление очередностью сообщений — задача диалога. Наличие TCP ESTABLISHED ещё не доказывает, что пользовательский сеанс успешно создан."}]},"6":{"title":"L6 · Уровень представления","sections":[{"title":"1. Общая задача","text":"Отправитель и получатель должны одинаково понимать байты: кодировку текста, формат полей, порядок байтов и структуру сообщения. В OSI сюда относят также сжатие и шифрование."},{"title":"2. Кодировка","text":"UTF-8 кодирует символы последовательностями от 1 до 4 байт. Если принять UTF-8 за другую кодировку, доставка может быть исправной, а текст — нечитаемым."},{"title":"3. Формат и сериализация","text":"JSON — текстовый формат. Protobuf использует бинарное кодирование. ASN.1 описывает типы и структуры; конкретное представление задают правила кодирования, например BER или DER."},{"title":"4. TLS","text":"Защищает обмен: конфиденциальность, целостность и аутентификация в зависимости от режима. В учебной OSI-карте связан с L6; в TCP/IP обычно реализуется библиотеками и прикладным стеком."},{"title":"5. Сертификат","text":"Проверяй имя сервера, срок действия, цепочку доверия и часы клиента. Расширение .cer или .crt само по себе не определяет, текстовый PEM внутри или бинарный DER."},{"title":"6. Сжатие и безопасность","text":"Сжатие без потерь позволяет восстановить исходные данные. Уже сжатый файл может почти не уменьшиться. Base64 — кодирование, а не шифрование. SSL устарел; для защищённого обмена используют TLS."}]},"7":{"title":"L7 · Прикладной уровень","sections":[{"title":"1. Смысл сообщений","text":"Прикладной протокол задаёт запросы, ответы и их смысл. HTTP получает ресурсы, DNS запрашивает записи, SMTP передаёт почту. Исправный транспорт не гарантирует правильность прикладного ответа."},{"title":"2. HTTP и HTTPS","text":"HTTP 404 означает, что сервер не нашёл ресурс. HTTPS использует TLS. HTTP/1.1 и HTTP/2 обычно работают через TCP; HTTP/3 — через QUIC поверх UDP."},{"title":"3. DNS","text":"A — IPv4-адрес, AAAA — IPv6-адрес. Обычный DNS использует UDP или TCP 53. Для проверки: nslookup example.com; PowerShell: Resolve-DnsName example.com; Linux: dig example.com."},{"title":"4. DHCPv4","text":"Типичная первая выдача адреса: Discover → Offer → Request → ACK. Сервер может передать маску, шлюз, DNS и срок аренды. DHCPv6 отличается; IPv6-шлюз по умолчанию узнают из RA."},{"title":"5. Multicast: Query и Report","text":"IGMP Querier спрашивает, кому ещё нужна группа, сообщением Query. Получатели сообщают интерес через Report. Если подтверждения не доходят, динамические подписки могут истечь по таймеру."},{"title":"6. Порядок диагностики","text":"Проверь имя и адрес сервера, нужный транспорт и порт, затем TLS, права доступа, формат запроса и ответ приложения. Сопоставь журналы обеих сторон. Один успешный ping не проверяет всю службу."}]}};
+  function openNotes(level) {
+    const notes = LEVEL_NOTES[level];
+    if (!notes) return;
+    $('notesContent').innerHTML = `<h2 id="notesTitle">${escapeHtml(notes.title)}</h2>` + notes.sections.map(section => `<section class="notes-section"><h3>${escapeHtml(section.title)}</h3><p>${escapeHtml(section.text)}</p></section>`).join('');
+    $('notesDialog').showModal();
+    $('notesDialog').scrollTop = 0;
+  }
+  function openCheat(src) {
+    $('zoomDialog').setAttribute('aria-label', 'Просмотр шпаргалки');
+    $('zoomContent').innerHTML = '<img src="' + escapeHtml(src) + '" alt="Цветная шпаргалка по уровню OSI">';
+    $('zoomDialog').showModal();
+    photoFitWidth = $('zoomContent').clientWidth;
+    setPhotoZoom(2);
+    $('zoomContent').scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function getPool(mode) {
+    return mode === 'mixed' ? bank.filter(q=>q.group!=='visual-l1') : bank.filter(q => q.group === mode);
+  }
+
+  function pickQuestions(mode) { return QuizEngine.pick(bank,mode,loadStats()); }
+
+  function startQuiz(mode = $('modeSelect').value) {
+    const pool = getPool(mode);
+    if (pool.length < QUIZ_SIZE && mode !== 'mixed') return false;
+    state.mode = mode;
+    state.questions = pickQuestions(mode).map(question => {
+      const answerOrder = shuffle(question.answers.map((text, original) => ({ text, original })));
+      return { ...question, answerOrder };
+    });
+    state.index = 0; state.score = 0; state.answers = []; state.checked = false; state.shown = new Set();
+    showScreen('quizScreen');
+    renderQuestion();
+    return true;
+  }
+
+  function renderQuestion() {
+    const q = state.questions[state.index];
+    if (!state.shown.has(q.id)) { const stats=loadStats(); QuizEngine.shown(stats,q.id); writeStats(stats); state.shown.add(q.id); }
+    state.checked = false;
+    $('questionNumber').textContent = `Вопрос ${state.index + 1} из ${QUIZ_SIZE}`;
+    $('scoreMini').textContent = `${state.score} ✓`;
+    $('progressBar').style.width = `${((state.index + 1) / QUIZ_SIZE) * 100}%`;
+    $('topicBadge').textContent = q.topic;
+    $('choiceHint').textContent = q.correct.length > 1 ? 'Выберите все подходящие ответы' : 'Один правильный ответ';
+    $('questionText').textContent = q.text;
+    const visual = q.image
+      ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Проверь соединение. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
+      : (q.graphic ? q.graphic + '<button type="button" class="secondary-button" id="zoomGraphic">Увеличить схему</button>' : '');
+    $('questionGraphic').innerHTML = visual;
+    if(q.image) {
+      const photo = $('questionGraphic').querySelector('img');
+      const ready = () => { $('photoError').hidden = true; $('zoomGraphic').disabled = false; $('zoomGraphic').textContent = 'Увеличить фотографию'; };
+      const failed = () => { $('photoError').hidden = false; $('zoomGraphic').disabled = true; $('zoomGraphic').textContent = 'Фото недоступно'; };
+      photo.onload = ready; photo.onerror = failed;
+      $('retryPhoto').onclick = () => {
+        $('photoError').hidden = true;
+        $('zoomGraphic').textContent = 'Загрузка фотографии…';
+        photo.src = q.image.startsWith('data:') ? q.image : q.image + (q.image.includes('?') ? '&' : '?') + 'retry=' + Date.now();
+      };
+      if(photo.complete) { if(photo.naturalWidth) ready(); else failed(); }
+    }
+    if(q.image || q.graphic) $('zoomGraphic').onclick = () => openPhotoViewer(q);
+    $('feedback').hidden = true;
+    $('feedback').className = 'feedback';
+    $('detailButton').hidden = true;
+    $('ipv4PracticeLink').hidden = true;
+    $('detailButton').textContent = 'Понять подробнее';
+    $('detailPanel').hidden = true;
+    $('detailPanel').innerHTML = '';
+    $('checkButton').hidden = false;
+    $('checkButton').disabled = true;
+    $('nextButton').hidden = true;
+    $('nextButton').textContent = state.index === QUIZ_SIZE - 1 ? 'Показать результат' : 'Следующий вопрос';
+
+    const multiple = q.correct.length > 1;
+    $('answersForm').innerHTML = '';
+    q.answerOrder.forEach((answer, displayIndex) => {
+      const label = document.createElement('label');
+      label.className = `answer-option${multiple ? ' multiple' : ''}`;
+      label.innerHTML = `<input type="${multiple ? 'checkbox' : 'radio'}" name="answer" value="${answer.original}"><span class="choice-marker">✓</span><span class="answer-text"></span>`;
+      label.querySelector('.answer-text').textContent = answer.text;
+      label.querySelector('input').addEventListener('change', onChoiceChange);
+      $('answersForm').appendChild(label);
+    });
+  }
+
+  function onChoiceChange(event) {
+    if (state.checked) return;
+    const input = event.currentTarget;
+    if (input.type === 'radio') document.querySelectorAll('.answer-option').forEach(el => el.classList.remove('selected'));
+    input.closest('.answer-option').classList.toggle('selected', input.checked);
+    $('checkButton').disabled = selectedValues().length === 0;
+  }
+
+  function selectedValues() {
+    return [...document.querySelectorAll('#answersForm input:checked')].map(input => Number(input.value)).sort((a,b) => a-b);
+  }
+
+  function sameAnswers(a, b) {
+    return a.length === b.length && a.every((value, index) => value === [...b].sort((x,y) => x-y)[index]);
+  }
+
+  const DETAIL_LESSONS = {"base0": {"title": "CSMA/CD и дуплекс Ethernet", "plain": "CSMA/CD — механизм Ethernet для общей среды и half-duplex: узел слушает среду, обнаруживает коллизию и повторяет передачу после случайной паузы. В full-duplex передача и приём идут одновременно по выделенному линку: коллизий нет и CSMA/CD не используется.", "example": "ПК подключён напрямую к порту коммутатора. ПК одновременно отправляет файл и принимает ответы сервера. Оба направления работают параллельно. Если вместо коммутатора использовался бы старый hub и half-duplex, узлы делили бы одну среду и понадобился бы CSMA/CD."}, "base1": {"title": "VLAN и тегирование 802.1Q", "plain": "Каждая VLAN — отдельный широковещательный (broadcast) домен на L2. Обычный access-порт обслуживает одну VLAN без тега. Trunk переносит несколько VLAN с тегами 802.1Q; native VLAN может передаваться без тега, в зависимости от настройки. Нужная VLAN должна быть разрешена на обоих концах trunk. Между разными VLAN нужна маршрутизация.", "example": "Два ПК одной IP-подсети не видят друг друга. Проверь Link, VLAN/PVID конечных портов, разрешённые VLAN на всех аплинках и состояние STP. VLAN 20 на одном access-порту и VLAN 30 на другом не станут одной L2-сетью из-за одинаковой маски IP."}, "base2": {"title": "ARP: связь IPv4 и MAC", "plain": "ARP узнаёт MAC следующего узла по его IPv4-адресу в локальном broadcast-домене. При поиске неизвестного MAC ARP Request обычно рассылается на FF:FF:FF:FF:FF:FF, ответ владельца адреса — unicast. Соответствие IP–MAC сохраняется в ARP-кэше. Для удалённой сети нужен MAC следующего шлюза, а не удалённого сервера. Запись в кэше может устареть и не доказывает доступность узла или сети за шлюзом.", "example": "ПК 192.168.1.10 обращается к 8.8.8.8. Destination IP остаётся 8.8.8.8, а destination MAC первого кадра — MAC интерфейса маршрутизатора 192.168.1.1."}, "base4": {"title": "Маршрутизация и шлюз", "plain": "Маршрутизатор работает на сетевом уровне (L3) и передаёт IP-пакеты между сетями. Он выбирает маршрут по destination IP и таблице маршрутизации: среди подходящих записей сначала учитывается самый длинный префикс.", "example": "Для сети 10.20.30.0/24 маршрут /24 предпочтительнее общего 10.0.0.0/8, потому что его префикс длиннее."}, "base5": {"title": "TCP: надёжная транспортировка", "plain": "TCP — протокол транспортного уровня (L4): устанавливает соединение, нумерует байты и подтверждает получение. При истечении таймера ожидания ACK или признаках пропуска в подтверждениях отправитель повторяет передачу. Много retransmission — повод искать потери, задержки ACK или переупорядочивание; сам захват ещё не устанавливает причину.", "example": "При загрузке файла потерянный TCP-сегмент будет передан повторно, а приложение получит поток в правильном порядке."}, "base6": {"title": "UDP: передача датаграмм", "plain": "UDP — протокол транспортного уровня (L4). Он отправляет отдельные датаграммы без предварительного соединения. Сам UDP не подтверждает доставку, не повторяет потерянные сообщения и не восстанавливает порядок. Если это нужно, механизмы добавляет приложение.", "example": "В голосовом звонке запоздавший фрагмент звука часто уже бесполезен. Приложение может пропустить его и продолжить воспроизведение; UDP не задерживает следующие датаграммы ради повтора."}, "base7": {"title": "DHCP: автоматическая настройка узла", "plain": "DHCPv4 выдаёт IP-адрес, маску, шлюз, DNS и срок аренды. Он работает по UDP: сервер использует порт 67, клиент — 68. Новый клиент начинает с широковещательного Discover. Если получить настройки не удалось, Windows может назначить адрес 169.254.x.x (APIPA) для локальной связи; такой адрес не заменяет обычную настройку сети.", "example": "Новый клиент отправляет DHCP Discover, сервер предлагает адрес в Offer, клиент выбирает предложение через Request, сервер подтверждает аренду сообщением ACK. Это последовательность DORA."}, "base8": {"title": "DNS: имена вместо IP-адресов", "plain": "DNS — прикладной протокол (L7), сопоставляющий имена с записями, например A для IPv4 и AAAA для IPv6. Классический DNS использует UDP и TCP на порту 53; TCP нужен, в частности, при усечённом UDP-ответе и передаче зон. Проверяй имя через nslookup. Если ping по IP проходит, а имя не разрешается, сначала проверь DNS-сервер, его доступность и записи.", "example": "Для example.com клиент получает запись A, после чего уже устанавливает TCP- или QUIC-соединение с найденным адресом."}, "base9": {"title": "ICMP и диагностика", "plain": "ICMP — служебный протокол сетевого уровня (L3): сообщает об ошибках и состоянии IP-сети. Ping использует Echo Request/Reply. Traceroute получает ICMP Time Exceeded от промежуточных маршрутизаторов; сами пробы могут быть UDP, ICMP или TCP.", "example": "Если ping до шлюза проходит, а до внешнего адреса нет, локальный L1–L3 участок, вероятно, исправен и поиск можно переносить дальше."}, "base10": {"title": "Коммутация Ethernet", "plain": "Ethernet-коммутатор работает на L2: изучает Source MAC входящих кадров с учётом VLAN и ищет Destination MAC. Известный unicast идёт в найденный порт. Unknown unicast и broadcast обычно рассылаются на разрешённые forwarding-порты той же VLAN, кроме входного; блокировки и фильтры могут ограничивать рассылку. Это flooding.", "example": "Коммутатор получил кадр от ПК A на порту 1 и запомнил его Source MAC. Получив кадр от ПК B на порту 2, он изучил и B. Теперь известный unicast между ними идёт на соответствующий порт в этом VLAN."}, "base11": {"title": "Петли и STP", "plain": "Избыточные L2-связи полезны для отказоустойчивости, но без защиты создают петлю: Ethernet-кадр может циркулировать бесконечно.", "example": "Два коммутатора соединены двумя кабелями. STP блокирует один путь, а после обрыва первого активирует резервный."}, "base12": {"title": "MRP в промышленном Ethernet", "plain": "MRP резервирует кольцо промышленного Ethernet. В исправном кольце (closed) менеджер MRM блокирует передачу пользовательского трафика через один из своих кольцевых портов, предотвращая петлю. При разрыве кольца (open) менеджер снимает эту блокировку: связь восстанавливается по оставшемуся пути. Состояние open — повод искать разрыв или неисправность участка.", "example": "В кольце SCALANCE обрыв одного оптического участка не изолирует остальные коммутаторы: трафик идёт по оставшейся стороне."}, "base13": {"title": "SFP и оптический линк", "plain": "SFP — сменный трансивер для оптического или медного интерфейса. По внешнему виду нельзя надёжно определить длину волны, тип волокна и дальность: сверяй маркировку и спецификацию производителя. Для установки важны форм-фактор, скорость и совместимость с портом.", "example": "Пара BiDi 1310/1550 должна быть согласована зеркально: передача одного модуля совпадает с приёмом другого."}, "base17": {"title": "NAT и PAT", "plain": "NAT изменяет IP-адреса при прохождении пакета через пограничное устройство. PAT дополнительно различает соединения по портам.", "example": "Несколько устройств 192.168.1.0/24 одновременно выходят в Интернет через один публичный IPv4, используя разные внешние порты."}, "base19": {"title": "OSI, PDU и инкапсуляция", "plain": "Инкапсуляция — движение данных вниз по стеку: протоколы добавляют свою служебную информацию (Ethernet ещё и FCS в конце) вокруг блока верхнего уровня. Декапсуляция — обратный процесс на получателе: каждый уровень читает свой заголовок, снимает его и передаёт содержимое вверх. PDU (protocol data unit) — блок данных протокола, включая служебную информацию: сегмент, пакет, кадр.", "example": "HTTP-данные помещаются в TCP-сегмент, затем в IP-пакет, затем в Ethernet-кадр и передаются битами по среде. Получатель снимает слои в обратном порядке: Ethernet, IP, TCP и только потом читает HTTP."}, "tftp": {"title": "TFTP: простая передача файлов", "plain": "TFTP передаёт файлы поверх UDP. Первоначальный запрос чтения или записи поступает на порт сервера 69; затем стороны используют выбранные для этой передачи UDP-порты. Подтверждения блоков и повтор при потере выполняет сам TFTP, а не UDP.", "example": "Устройство запрашивает файл конфигурации. Сервер отправляет блок, клиент подтверждает его номер. Если подтверждение не пришло вовремя, блок отправляется повторно."}, "snmp": {"title": "SNMP: опрос оборудования", "plain": "SNMP позволяет системе мониторинга читать параметры сетевого устройства: состояние портов, счётчики трафика и ошибок. При обычном обмене по UDP агент устройства принимает запросы на порту 161.", "example": "Мониторинг периодически спрашивает коммутатор, сколько ошибок накопилось на порту. Агент возвращает значение счётчика; по его росту можно заметить проблему."}, "trap": {"title": "SNMP Trap: уведомление о событии", "plain": "Trap — уведомление, которое устройство само отправляет системе мониторинга, не дожидаясь опроса. Для приёма таких уведомлений обычно используется UDP-порт 162. Обычный Trap не требует подтверждения; подтверждаемые уведомления SNMP называются Inform.", "example": "На коммутаторе отключился порт. Устройство отправляет уведомление linkDown, и мониторинг показывает событие."}, "pop3": {"title": "POP3: получение почты", "plain": "POP3 даёт почтовому клиенту возможность получить сообщения из почтового ящика на сервере. Базовый порт — 110/TCP. Клиент может скачать письма, а удаление с сервера зависит от команд и настроек клиента.", "example": "Почтовая программа подключается к ящику, получает список писем и скачивает новые. Для POP3 с TLS с самого начала соединения обычно используется порт 995."}, "http": {"title": "HTTP: запрос и ответ", "plain": "HTTP — прикладной протокол (L7): клиент запрашивает ресурс, сервер возвращает статус и содержимое. Для обычного HTTP/1.1 без TLS стандартный порт — 80/TCP; TCP доставляет байты, а HTTP определяет смысл запросов и ответов.", "example": "Браузер запрашивает страницу. Статус 200 означает успешную обработку, а 404 — что сервер не нашёл запрошенный ресурс."}, "https": {"title": "HTTPS: защищённый HTTP", "plain": "HTTPS защищает HTTP-обмен с помощью TLS: шифрует содержимое, контролирует целостность и позволяет проверить сервер по сертификату. HTTP/1.1 и HTTP/2 через HTTPS обычно используют 443/TCP; HTTP/3 использует QUIC поверх UDP.", "example": "При отправке формы по HTTPS посторонний наблюдатель в сети не видит её содержимое. Браузер проверяет сертификат сервера перед обменом данными."}, "ssh": {"title": "SSH: защищённый удалённый доступ", "plain": "SSH обычно использует порт 22/TCP. Он позволяет безопасно войти на удалённое устройство и выполнять команды: аутентификация и работа терминала проходят по зашифрованному соединению.", "example": "Администратор подключается к коммутатору, смотрит состояние интерфейсов и изменяет настройки через удалённую командную строку."}, "telnet": {"title": "Telnet: удалённый терминал", "plain": "Telnet предоставляет удалённый текстовый терминал, обычно на порту 23/TCP. Классический Telnet не шифрует команды и учётные данные.", "example": "В учебной изолированной сети можно увидеть текст Telnet-сеанса в захвате трафика. Для защищённого администрирования используют SSH."}, "ftp": {"title": "FTP: команды и данные отдельно", "plain": "FTP использует отдельное соединение для управления: команды и ответы сервера идут через порт 21/TCP. Для содержимого файлов устанавливается другое TCP-соединение, зависящее от активного или пассивного режима.", "example": "Команда скачать файл идёт по управляющему соединению, а байты самого файла — по соединению данных. Поэтому порт 21 не описывает весь FTP-трафик."}, "smtp": {"title": "SMTP: передача почты", "plain": "SMTP передаёт электронную почту от одного почтового сервера к другому, обычно через 25/TCP. Для отправки письма пользовательским клиентом через свой сервер часто применяется отдельная служба submission на порту 587.", "example": "После отправки письма почтовый сервер передаёт его серверу получателя по SMTP. Получение писем почтовой программой обычно выполняется через IMAP или POP3."}, "ntp": {"title": "NTP: синхронизация времени", "plain": "NTP синхронизирует часы устройств по сети и обычно использует порт 123/UDP. По временным отметкам обмена клиент оценивает расхождение часов и задержку сети.", "example": "Если часы коммутатора и сервера согласованы, события в их журналах можно сопоставить по времени при поиске неисправности."}, "imap": {"title": "IMAP: работа с почтовым ящиком", "plain": "IMAP позволяет работать с письмами и папками на сервере, сохраняя их общее состояние для разных клиентов. Базовый порт — 143/TCP; для TLS с начала соединения обычно используется 993.", "example": "Письмо, прочитанное на телефоне, отображается прочитанным и на компьютере, когда клиенты синхронизируют состояние с сервером."}, "ldap": {"title": "LDAP: запросы к каталогу", "plain": "LDAP даёт доступ к каталогу — структурированным записям о пользователях, группах и других объектах. Для обычного LDAP используется 389/TCP; это не означает, что соединение автоматически защищено.", "example": "Приложение ищет запись пользователя в каталоге и получает список его групп. Защиту соединения настраивают отдельно, например через StartTLS."}, "rdp": {"title": "RDP: удалённый рабочий стол", "plain": "RDP передаёт изображение удалённого рабочего стола и действия пользователя. Основное TCP-соединение обычно использует порт 3389. Современный RDP может дополнительно применять UDP, если это поддерживают стороны и сеть.", "example": "Ты видишь рабочий стол удалённого компьютера и управляешь мышью и клавиатурой. Программы при этом выполняются на удалённом компьютере."}, "modbus": {"title": "Modbus TCP: запросы к регистрам", "plain": "Modbus TCP переносит команды Modbus поверх TCP, обычно через порт 502. Клиент запрашивает чтение или запись данных, сервер устройства возвращает результат.", "example": "SCADA запрашивает у контроллера регистр с измеренной температурой. Для правильного значения нужно знать адрес регистра, формат данных и коэффициент масштабирования."}, "physical": {"title": "L1: сигнал и среда передачи", "plain": "Физический уровень превращает биты в сигналы и обратно. Здесь важны кабель, разъём, мощность оптического сигнала и электрические характеристики. Повторитель восстанавливает сигнал; hub передаёт его на другие порты.", "example": "Повреждение кабеля может оборвать связь ещё до обмена кадрами и IP-пакетами. Настройка адреса не исправит разрыв проводника."}, "otdr": {"title": "OTDR: где повреждена оптика", "plain": "Оптический рефлектометр посылает импульсы и измеряет возвращающийся свет. Время возврата позволяет оценить расстояние до события, а изменение уровня — потери и отражения.", "example": "Резкое событие на расстоянии около 500 м подсказывает, где искать повреждение. Для точного расстояния важны настройки прибора и параметры волокна."}, "loss": {"title": "Чистота оптического соединения", "plain": "Пыль, повреждения торца и сильные изгибы увеличивают потери света. При нехватке принимаемой мощности линк нестабилен или не поднимается. Торцы проверяют подходящим видеомикроскопом, очищают и повторно осматривают.", "example": "После переподключения появилась потеря сигнала: сначала проверь чистоту обеих сторон соединения. Нельзя смотреть в волокно глазами — невидимое излучение может быть опасно."}, "autoneg": {"title": "Автосогласование Ethernet", "plain": "При auto-negotiation стороны сообщают поддерживаемые режимы и выбирают совместимый. Для соответствующих технологий согласуются скорость и дуплекс; доступные параметры зависят от стандарта и оборудования.", "example": "Если одна сторона настроена вручную, а другая автоматически, на старых 10/100-Мбит/с линках возможен duplex mismatch. Проверь настройки обоих концов."}, "link": {"title": "Начинай с физического линка", "plain": "Пока нет Link, сначала проверяют питание, состояние портов, кабель и совместимость модулей. Для оптики важны также чистота, уровень сигнала и соединение передачи одного конца с приёмом другого.", "example": "Если после замены заведомо исправного патч-корда Link появился, переходи к VLAN и адресам. Если нет — проверяй следующий участок физического тракта."}, "pdu": {"title": "Кадр, пакет и сегмент", "plain": "Название блока данных зависит от уровня: Ethernet формирует кадр, IP — пакет, TCP — сегмент. При передаче один блок помещается внутрь другого; каждый протокол добавляет нужную ему служебную информацию.", "example": "TCP-сегмент с частью файла становится полезной нагрузкой IP-пакета, а IP-пакет — полезной нагрузкой Ethernet-кадра."}, "broadcast": {"title": "Широковещательный MAC", "plain": "Адрес FF:FF:FF:FF:FF:FF состоит из 48 единиц и обозначает рассылку всем узлам данного Ethernet broadcast domain. Коммутатор распространяет такой кадр внутри VLAN, кроме порта приёма.", "example": "ARP Request обычно отправляется на этот адрес, чтобы найти владельца IPv4-адреса в локальном сегменте."}, "ttl": {"title": "TTL: ограничение пути пакета", "plain": "Маршрутизаторы уменьшают TTL IPv4-пакета при пересылке. Когда значение исчерпано, пакет отбрасывается; обычно отправителю возвращается ICMP Time Exceeded. Так пакеты не ходят по петле бесконечно.", "example": "Traceroute отправляет пробы с TTL 1, 2, 3 и далее. Ответы показывают промежуточные узлы, если те отвечают и сообщения не блокируются."}, "ports": {"title": "Порт: как найти нужную службу", "plain": "Транспортный порт помогает доставить данные нужному сокету приложения на узле. Сервер обычно слушает известный порт, а клиент выбирает временный порт для своего конца обмена.", "example": "При подключении к SSH сервер принимает соединение на TCP 22, а клиент может использовать временный порт 51000. Это два разных конца одного соединения."}, "rst": {"title": "TCP RST: сброс соединения", "plain": "Флаг RST сообщает о немедленном сбросе TCP-соединения или о невозможности принять сегмент в текущем состоянии. Это отличается от обычного завершения через FIN.", "example": "Если на сервере никто не слушает нужный TCP-порт, в ответ на SYN может прийти RST. Молчание вместо RST может быть связано с фильтрацией или потерей пакетов."}, "tuple": {"title": "Как различают соединения", "plain": "Для TCP соединение задаётся парой адресов и парой портов. При классификации трафика разных протоколов добавляют транспортный протокол — получается 5-tuple. NAT и прокси могут изменять эту картину.", "example": "Две вкладки могут обращаться к одному IP и порту сервера, но использовать разные исходные порты. Поэтому их TCP-соединения различимы."}, "session": {"title": "L5: управление сеансом", "plain": "В OSI сеансовый уровень описывает управление диалогом: начало, поддержание, завершение и синхронизацию. В реальных приложениях TCP/IP эти функции часто реализуются вместе с прикладной логикой.", "example": "Контрольная точка длительного обмена позволяет приложению согласовать, с какого места продолжить работу после сбоя, если такая возможность предусмотрена протоколом."}, "presentation": {"title": "L6: представление данных", "plain": "Важно не только доставить байты, но и одинаково их понять. Уровень представления OSI описывает кодировки, форматы, сжатие и шифрование. В TCP/IP это обычно функции приложений и библиотек. Это касается и порядка байтов многобайтных чисел (big-endian и little-endian): стороны должны одинаково его понимать.", "example": "Если отправитель кодирует текст в UTF-8, а получатель читает его в другой кодировке, байты могут дойти без ошибок, но текст окажется нечитаемым."}, "application": {"title": "L7: правила прикладного обмена", "plain": "Прикладные протоколы определяют смысл запросов и ответов: получить страницу, найти запись DNS или передать письмо. Ниже транспорт и сеть обеспечивают передачу данных.", "example": "HTTP-клиент понимает ответ 404 как отсутствие ресурса. TCP доставляет байты этого ответа, но не определяет смысл HTTP-статуса."}, "models": {"title": "OSI и TCP/IP", "plain": "OSI — эталонная модель для описания и сравнения сетевых функций. OSI выделяет семь уровней функций. В четырёхуровневой модели TCP/IP это Application, Transport, Internet и Link. Прикладной уровень TCP/IP объединяет функции OSI L5–L7, а Link охватывает локальную передачу.", "example": "HTTP относят к Application, TCP — к Transport, IP — к Internet, Ethernet — к Link. Это удобная карта обязанностей, а не требование иметь семь отдельных программ."}, "addressRoles": {"title": "MAC, IP и порт", "plain": "В Ethernet MAC-адрес используется для доставки кадра на текущем участке. IP определяет адресацию пакета между сетями, а TCP/UDP-порт — конец транспортного обмена на узле.", "example": "При переходе через маршрутизатор создаётся новый Ethernet-кадр с новыми MAC-адресами. Адрес назначения IP обычно сохраняется, если нет NAT."}, "mtu": {"title": "MTU и TCP MSS", "plain": "MTU ограничивает размер IP-пакета на канале. TCP MSS ограничивает только полезные данные TCP-сегмента, без заголовков TCP и IP. Для MTU 1500 и обычных заголовков IPv4/TCP по 20 байт типичное MSS — 1460.", "example": "Если пакет превышает MTU, IPv4 может фрагментироваться. При установленном DF он отбрасывается, а ICMP помогает отправителю уменьшить размер. Блокировка таких сообщений может ломать крупные передачи."}, "loopback": {"title": "Loopback проверяет сам компьютер", "plain": "Адрес 127.0.0.1 — локальный loopback. Обмен с ним обрабатывается внутри компьютера и не проходит через кабель, коммутатор или шлюз.", "example": "Успешный ping 127.0.0.1 подтверждает работу локального IP-стека. Для проверки внешней связи отдельно проверяют интерфейс и доступность шлюза."}, "filters": {"title": "Фильтр отображения Wireshark", "plain": "Display filter оставляет на экране пакеты, удовлетворяющие условию. Он не удаляет остальные пакеты из захвата. Поля ip.addr и tcp.port проверяют оба направления — источник и назначение.", "example": "ip.addr == 10.1.1.10 покажет обмен с этим IPv4-адресом; tcp.port == 502 — обмен через этот TCP-порт. Фильтры arp и icmp выбирают соответствующий протокол."}, "crc": {"title": "FCS: обнаружение повреждённых кадров", "plain": "В конце Ethernet-кадра находится FCS — контрольное значение, рассчитанное с помощью CRC. Получатель пересчитывает его; несовпадение означает, что кадр повреждён. FCS обнаруживает ошибку, но не исправляет её.", "example": "Рост FCS errors — повод проверить кабель, коннекторы, помехи и порты. Сам по себе счётчик не называет точную неисправную деталь."}, "learnMac": {"title": "Link есть, но MAC не изучен", "plain": "Link подтверждает физическое соединение. Чтобы изучить MAC-адрес, коммутатор должен принять кадр с этим Source MAC. Молчащее устройство не обязано появляться в таблице сразу.", "example": "Запусти трафик с устройства и проверь счётчики приёма, состояние порта и VLAN. Так можно отделить отсутствие кадров от неправильной настройки L2."}, "service": {"title": "Проверяй путь и службу отдельно", "plain": "Доступность локального шлюза не гарантирует доступность удалённого сервера. После локальной проверки проверяют маршрут до сервера, правила фильтрации и работу нужной службы.", "example": "Сервер может отвечать на ping, но не принимать TCP 443: веб-служба выключена или порт блокируется. Успех одного протокола не подтверждает другой."}, "ipconfig": {"title": "ipconfig /all: фактические настройки", "plain": "Команда показывает параметры интерфейсов Windows: адреса, маски, шлюзы, DNS-серверы, MAC-адреса и сведения о DHCP. Это помогает проверить, что компьютер действительно получил нужную конфигурацию.", "example": "Если имя сайта не разрешается, сравни указанные DNS-серверы с ожидаемыми. Сам вывод команды не доказывает, что серверы доступны."}, "logs": {"title": "Плавающая неисправность: собирай признаки", "plain": "Для редких сбоев важны точное время, затронутые устройства и наблюдаемый симптом. Сопоставление журналов и изменений счётчиков помогает найти общую причину.", "example": "В момент обрыва записываешь время. В журнале коммутатора находишь совпадающее событие Link Down и проверяешь конкретный порт."}, "protocol": {"title": "Протокол: общие правила", "plain": "Протокол определяет формат сообщений, их смысл и допустимую последовательность обмена. Оба участника должны понимать эти правила, чтобы взаимодействовать.", "example": "DNS-клиент формирует запрос по правилам DNS. Сервер распознаёт запрошенное имя и тип записи, затем формирует понятный клиенту ответ."}, "panel": {"title": "Патч-панель: организация кабелей", "plain": "Пассивная панель выводит линии на удобные разъёмы для подключения патч-кордов. Она не читает кадры, не изучает MAC-адреса и не выбирает маршруты.", "example": "Оптическая линия приходит в стойку, оканчивается на панели, а короткий патч-корд соединяет её с трансивером коммутатора."}, "connector": {"title": "Как различить оптические коннекторы", "plain": "LC — компактный разъём с защёлкой; SC — более крупный квадратный push-pull; ST использует байонет, а FC — резьбовую гайку. Тип корпуса не определяет тип волокна и полировки.", "example": "Подбирая патч-корд, проверь разъёмы обоих устройств, одномодовое или многомодовое волокно и полировку. Совпадения формы одного конца недостаточно."}, "polarity": {"title": "Duplex-оптика: передача встречает приём", "plain": "Обычная двухволоконная линия использует отдельные волокна для TX и RX. Выход передатчика одного устройства должен прийти на вход приёмника другого.", "example": "Если получилось TX→TX и RX→RX, линк не поднимется. Проверь полярность всей трассы, включая панели и промежуточные патч-корды."}, "formfactor": {"title": "Форм-фактор трансивера", "plain": "GBIC, SFP, SFP+ и XFP обозначают конструктивные семейства модулей. SFP компактнее GBIC, SFP+ компактнее XFP. Похожий разъём оптики не делает модули взаимозаменяемыми.", "example": "XFP нельзя вставить в слот SFP+: это разные размеры и интерфейсы модуля. Перед заменой проверь форм-фактор, скорость и поддерживаемый модуль в документации порта."}, "fiber": {"title": "Тип волокна проверяют по маркировке", "plain": "OS1/OS2 — одномодовые волокна, OM1–OM5 — многомодовые. Жёлтая оболочка типична для одномодовых шнуров, оранжевая — для OM1/OM2, но цвет является только подсказкой.", "example": "Для выбранного трансивера сначала находят допустимое волокно и длину линии в спецификации, затем сверяют маркировку патч-корда."}, "patchcord": {"title": "Патч-корд и пигтейл", "plain": "Патч-корд оконцован коннекторами с обеих сторон. У пигтейла коннектор с одной стороны, а свободное волокно с другой обычно приваривают к линии. Гибридный патч-корд имеет разные типы коннекторов.", "example": "Для соединения LC-порта модуля с SC-адаптером панели нужен подходящий LC–SC патч-корд с правильным типом волокна и полировкой."}, "apc": {"title": "APC: угловая полировка", "plain": "APC — полировка торца под углом, уменьшающая отражение обратно в волокно. Зелёный корпус обычно указывает на APC. UPC имеет другую геометрию торца; прямое соединение APC с UPC недопустимо.", "example": "Проверяй полировку с обеих сторон адаптера, даже если коннекторы физически вставляются. Несовпадение повышает потери и может повредить торцы."}, "cable": {"title": "Многоволоконный оптический кабель", "plain": "Под общей оболочкой кабеля могут находиться несколько отдельных волокон. Их цвета помогают различать волокна при разделке и сварке; это не число направлений передачи одного модуля.", "example": "При монтаже каждое нужное волокно сваривают с пигтейлом и выводят на подписанный порт панели, чтобы затем правильно собрать линию."}, "ethernetStd": {"title": "IEEE 802.3 — Ethernet", "plain": "IEEE 802.3 описывает Ethernet: формат кадра, работу MAC и множество физических вариантов линии. Похожие номера обозначают другие задачи: 802.1Q — VLAN-теги, 802.1D — мосты, 802.11 — беспроводная сеть.", "example": "Если выбираешь между 802.3 и 802.1Q, сначала спроси себя: речь об Ethernet в целом или именно о тегах VLAN?"}, "ethernetFrameSize": {"title": "Минимум Ethernet-кадра — 64 байта", "plain": "Нетегированный Ethernet-кадр содержит не менее 64 байт от MAC-адреса назначения до FCS: 14 байт заголовка, минимум 46 байт поля данных с заполнением и 4 байта FCS. Преамбула и межкадровый интервал в эти 64 байта не входят.", "example": "Если данных всего 20 байт, передатчик добавляет padding, чтобы поле данных достигло минимальных 46 байт."}, "ethernetCollision": {"title": "Коллизия в общей среде", "plain": "В half-duplex Ethernet несколько узлов делят одну среду. Если они начинают передавать одновременно, сигналы сталкиваются — это коллизия. Механизм CSMA/CD помогал обнаружить её и повторить передачу после паузы.", "example": "Старый hub создаёт общую среду для подключённых узлов. У выделенного full-duplex соединения с коммутатором столкновения передач нет."}, "lacp": {"title": "LACP и объединение линий", "plain": "LACP автоматически согласует состав группы агрегированных Ethernet-линий между соседними устройствами. Участники должны иметь совместимые настройки. Группа выглядит как один логический линк, но распределение потоков зависит от алгоритма хеширования.", "example": "Два физических кабеля между коммутаторами работают как одна логическая группа. При обрыве одного оставшийся может продолжить передачу с меньшей суммарной ёмкостью."}, "handshake": {"title": "Установление TCP-соединения", "plain": "Клиент отправляет SYN. Сервер отвечает SYN-ACK. Клиент подтверждает его через ACK. Стороны согласуют начальные номера последовательности, после чего соединение установлено.", "example": "При подключении к TCP 443 в захвате видны SYN → SYN-ACK → ACK. Повторы SYN без ответа направляют проверку к доступности сервера, фильтрам и обратному пути."}, "sequence": {"title": "TCP нумерует байты", "plain": "Sequence Number указывает положение байтов в TCP-потоке. ACK сообщает номер следующего ожидаемого байта. Так получатель замечает пропуски и собирает данные по порядку.", "example": "Сегмент содержит 100 байт начиная с номера 1000. Получив все эти байты, получатель подтверждает ACK 1100."}, "duplex": {"title": "Несовпадение duplex", "plain": "Оба конца Ethernet-линии должны работать в совместимых режимах. Если одна сторона half-duplex, а другая full-duplex, возможны ошибки, поздние коллизии и резкое падение скорости.", "example": "На одном конце вручную задано 100/full, а другой оставлен на автосогласовании. Проверь фактические speed/duplex на обоих концах; согласуй настройки, затем сравни прирост ошибок."}, "bottomUp": {"title": "Диагностика снизу вверх по OSI", "plain": "Каждый уровень опирается на нижний. Пока нет физического линка, бессмысленно искать ошибку в адресах; пока нет IP-связности, рано проверять приложение. Поэтому идут от L1 к L7: кабель и Link, затем VLAN, MAC и ARP, затем IP-адрес, шлюз и маршруты, затем порты и фильтрация, в конце имена и само приложение. На практике иногда начинают с середины (например, с ping) и по результату решают, куда двигаться: вниз или вверх.", "example": "Сайт не открывается. Проверь Link и ошибки порта, затем VLAN и получение кадров. Проверь ARP шлюза: сама запись может быть устаревшей. Проверь ping шлюза и удалённого адреса, затем TCP-порт 443. Если TCP работает, проверь DNS, TLS и HTTP-ответ."}, "gatewayRoutes": {"title": "Локальные узлы доступны, удалённые сети — нет", "plain": "Если ping внутри своей подсети работает, это подтверждает работоспособность проверенного локального пути, но не всего сегмента. Чтобы попасть в другую сеть, пакет должен уйти на шлюз, а у шлюза и дальше по пути должен быть маршрут. Поэтому проверяют адрес шлюза на хосте, доступность самого шлюза, default route или нужные маршруты на маршрутизаторе и обратный маршрут к исходной сети.", "example": "ПК 10.1.1.10 пингует шлюз 10.1.1.1, но не сервер 10.2.2.20. На ПК проверяют, задан ли default gateway (ipconfig или ip route). На маршрутизаторе проверяют маршрут к 10.2.2.0/24 и маршрут обратно к 10.1.1.0/24."}, "hopRewrite": {"title": "Что меняется на каждом маршрутизаторе", "plain": "MAC-адреса действуют только в пределах одного L2-сегмента. При переходе между Ethernet-сегментами маршрутизатор принимает кадр, снимает Ethernet-заголовок, по IP-адресу назначения выбирает следующий узел и собирает новый кадр с новыми Source и Destination MAC. IP-адреса отправителя и получателя при этом остаются прежними (если нет NAT), а TTL уменьшается на 1.", "example": "Пакет идёт от 10.1.1.10 к 10.2.2.20. На первом участке Destination MAC равен MAC шлюза, на следующем MAC следующего маршрутизатора или сервера. Без NAT IP-адреса на всём пути остаются 10.1.1.10 → 10.2.2.20."}, "linkLayer": {"title": "Что входит в Link-уровень TCP/IP", "plain": "Link (Network Access) отвечает за передачу кадров внутри одного сегмента: технологии доступа к среде (Ethernet, Wi-Fi) и L2-адресацию. ARP, который сопоставляет IPv4-адрес с MAC-адресом, в учебных схемах TCP/IP относят к этому же уровню, хотя формально он работает на стыке L2 и L3.", "example": "Хост знает IP шлюза и посылает ARP Request. Ответ даёт MAC шлюза, и хост может отправить Ethernet-кадр. Всё это происходит в пределах одного L2-сегмента."}, "layerIdea": {"title": "Уровень и иерархия протоколов", "plain": "Сетевые функции разделяют на уровни: каждый решает свою задачу, пользуется услугами нижнего уровня и предоставляет услуги верхнему. Набор таких уровней вместе с протоколами называют иерархией (стеком) протоколов. Одноимённые уровни двух узлов общаются по своему протоколу, а соседние уровни одного узла через интерфейс.", "example": "HTTP на клиенте разговаривает по правилам HTTP с HTTP на сервере. Для этого он отдаёт данные TCP, TCP отдаёт сегменты IP, IP отдаёт пакеты Ethernet. Каждый уровень решает только свою часть задачи."}, "endToEnd": {"title": "Что сохраняется от клиента до сервера", "plain": "При обычной IP-маршрутизации без NAT и прокси Source IP, Destination IP и транспортные порты сохраняются. На каждом маршрутизируемом Ethernet-участке формируется новый кадр с другими MAC-адресами. IPv4 TTL уменьшается на каждом маршрутизаторе.", "example": "Клиент 10.1.1.10:51000 обращается к серверу 10.2.2.20:443. Без NAT и прокси эти IP-адреса и порты сохраняются по пути. На первом участке кадр адресован MAC шлюза, а на последнем — MAC сервера."}};
+const DETAIL_BY_QUESTION = {"new-l2-full-duplex": "base0", "tr-09": "duplex", "new-ts-duplex": "duplex", "l2-06": "base1", "l2-07": "base1", "l2-08": "base1", "tr-04": "base1", "new-ts-vlan": "base1", "gen-diag-10": "base1", "gen-osi-a-5": "base1", "l2-10": "base2", "l2-11": "base2", "tr-05": "base2", "l3-03": "base2", "new-l3-arp-scope": "base2", "gen-diag-9": "base2", "l3-02": "base4", "l3-04": "base4", "l3-05": "base4", "l3-16": "base4", "tcp-05": "hopRewrite", "new-l3-next-hop": "base4", "new-tcpip-router": "hopRewrite", "gen-osi-a-8": "base4", "gen-osi-a-10": "base4", "l4-02": "handshake", "l4-03": "base5", "l4-09": "sequence", "tr-08": "base5", "new-l4-retransmit": "base5", "gen-osi-a-13": "base5", "l4-04": "base6", "new-l4-udp-pdu": "base6", "gen-osi-a-12": "base6", "l7-02": "base7", "l7-03": "base7", "new-l7-dhcp": "base7", "gen-diag-7": "base7", "l4-07": "base8", "l7-04": "base8", "new-l7-dns": "base8", "tr-03": "base8", "new-ts-dns": "base8", "gen-diag-12": "base8", "gen-osi-a-19": "base8", "l3-13": "base9", "gen-osi-a-9": "base9", "l2-02": "base10", "l2-03": "base10", "l2-04": "base10", "new-l2-switch-photo": "base10", "gen-osi-a-6": "base10", "k-12": "base10", "l2-09": "base11", "l2-12": "base12", "tr-11": "base12", "gen-diag-5": "base12", "photo-lc-sfp": "connector", "photo-sfp": "formfactor", "photo-sfp-appearance": "base13", "photo-formfactor-compat": "formfactor", "l4-06": "https", "new-l7-tls": "https", "l7-05": "http", "gen-osi-a-18": "http", "l7-06": "ssh", "l3-15": "base17", "tcp-03": "base19", "k-06": "base19", "k-07": "base19", "k-08": "base19", "new-tcpip-order": "base19", "new-tcpip-payload": "base19", "gen-port-0": "http", "gen-transport-0": "http", "gen-port-1": "https", "gen-transport-1": "https", "gen-port-2": "ssh", "gen-transport-2": "ssh", "gen-port-3": "telnet", "gen-transport-3": "telnet", "gen-port-4": "ftp", "gen-transport-4": "ftp", "gen-port-5": "smtp", "gen-transport-5": "smtp", "gen-port-6": "base8", "gen-transport-6": "base8", "gen-port-7": "base7", "gen-transport-7": "base7", "gen-port-8": "base7", "gen-transport-8": "base7", "gen-port-9": "tftp", "gen-transport-9": "tftp", "gen-port-10": "pop3", "gen-transport-10": "pop3", "gen-port-11": "ntp", "gen-transport-11": "ntp", "gen-port-12": "imap", "gen-transport-12": "imap", "gen-port-13": "snmp", "gen-transport-13": "snmp", "gen-port-14": "trap", "gen-transport-14": "trap", "gen-port-15": "ldap", "gen-transport-15": "ldap", "gen-port-16": "rdp", "gen-transport-16": "rdp", "gen-port-17": "modbus", "gen-transport-17": "modbus", "l1-01": "physical", "l1-02": "physical", "gen-osi-a-0": "physical", "gen-osi-a-1": "physical", "gen-osi-a-2": "physical", "l1-03": "otdr", "photo-otdr": "otdr", "photo-otdr-use": "otdr", "l1-04": "loss", "photo-dirty-end": "loss", "photo-cleaning": "loss", "l1-05": "autoneg", "l1-06": "link", "new-ts-photo-panel": "link", "tr-01": "bottomUp", "l2-01": "pdu", "l3-01": "pdu", "l4-01": "pdu", "k-09": "pdu", "k-10": "pdu", "k-11": "pdu", "gen-osi-a-4": "pdu", "l2-05": "broadcast", "l3-14": "ttl", "gen-diag-8": "ttl", "l4-05": "ports", "gen-osi-a-11": "ports", "l4-08": "rst", "l4-10": "tuple", "new-l4-flow": "tuple", "tcp-06": "endToEnd", "l5-01": "session", "l5-02": "session", "gen-osi-a-14": "session", "gen-osi-a-15": "session", "l6-01": "presentation", "l6-02": "presentation", "new-l6-format": "presentation", "gen-osi-a-16": "presentation", "gen-osi-a-17": "presentation", "l7-01": "application", "tcp-01": "models", "tcp-02": "models", "tcp-07": "models", "tcp-08": "linkLayer", "k-02": "layerIdea", "k-03": "layerIdea", "k-04": "models", "k-05": "models", "new-tcpip-map": "models", "tcp-04": "addressRoles", "gen-osi-a-3": "addressRoles", "gen-osi-a-7": "addressRoles", "tcp-09": "mtu", "tcp-10": "mtu", "new-ts-mtu": "mtu", "tr-02": "loopback", "tr-06": "filters", "tr-07": "filters", "gen-diag-3": "filters", "gen-diag-4": "filters", "tr-12": "crc", "gen-diag-1": "crc", "new-tcpip-trailer": "crc", "gen-diag-0": "learnMac", "gen-diag-2": "service", "tr-10": "gatewayRoutes", "gen-diag-11": "ipconfig", "gen-diag-13": "logs", "k-01": "protocol", "k-13": "base4", "new-l2-patch-passive": "panel", "photo-panel": "panel", "photo-lc": "connector", "photo-sc": "connector", "photo-st": "connector", "photo-fc": "connector", "photo-lc-sc-order": "connector", "photo-rxtx": "polarity", "photo-polarity": "polarity", "photo-xfp-sfp": "formfactor", "photo-gbic-sfp": "formfactor", "photo-sm-mm-colors": "fiber", "photo-color-warning": "fiber", "photo-hybrid": "patchcord", "photo-patchcord": "patchcord", "photo-apc": "apc", "photo-cable": "cable", "eth-std-8023": "ethernetStd", "eth-min-frame": "ethernetFrameSize", "eth-collision": "ethernetCollision", "eth-vlan-benefits": "base1", "eth-lacp": "lacp", "review-osi-31": "session", "review-osi-32": "session", "review-osi-33": "session", "review-osi-34": "session", "review-osi-35": "presentation", "review-osi-36": "presentation", "review-osi-37": "presentation", "review-osi-38": "presentation"};
+const IPV4_PRACTICE_IDS = new Set(["l3-06","l3-07","l3-08","l3-09","l3-10","l3-11","l3-12","gen-net-25-0","gen-bc-25-0","gen-net-25-1","gen-bc-25-1","gen-net-25-2","gen-bc-25-2","gen-net-25-3","gen-bc-25-3","gen-net-25-4","gen-bc-25-4","gen-mask-25","gen-hosts-25","gen-block-25","gen-net-26-0","gen-bc-26-0","gen-net-26-1","gen-bc-26-1","gen-net-26-2","gen-bc-26-2","gen-net-26-3","gen-bc-26-3","gen-net-26-4","gen-bc-26-4","gen-mask-26","gen-hosts-26","gen-block-26","gen-net-27-0","gen-bc-27-0","gen-net-27-1","gen-bc-27-1","gen-net-27-2","gen-bc-27-2","gen-net-27-3","gen-bc-27-3","gen-net-27-4","gen-bc-27-4","gen-mask-27","gen-hosts-27","gen-block-27","gen-net-28-0","gen-bc-28-0","gen-net-28-1","gen-bc-28-1","gen-net-28-2","gen-bc-28-2","gen-net-28-3","gen-bc-28-3","gen-net-28-4","gen-bc-28-4","gen-mask-28","gen-hosts-28","gen-block-28","gen-net-29-0","gen-bc-29-0","gen-net-29-1","gen-bc-29-1","gen-net-29-2","gen-bc-29-2","gen-net-29-3","gen-bc-29-3","gen-net-29-4","gen-bc-29-4","gen-mask-29","gen-hosts-29","gen-block-29","gen-net-30-0","gen-bc-30-0","gen-net-30-1","gen-bc-30-1","gen-net-30-2","gen-bc-30-2","gen-net-30-3","gen-bc-30-3","gen-net-30-4","gen-bc-30-4","gen-mask-30","gen-hosts-30","gen-block-30","gen-bin-dec-0","gen-dec-bin-0","gen-bin-dec-128","gen-dec-bin-128","gen-bin-dec-192","gen-dec-bin-192","gen-bin-dec-224","gen-dec-bin-224","gen-bin-dec-240","gen-dec-bin-240","gen-bin-dec-248","gen-dec-bin-248","gen-bin-dec-252","gen-dec-bin-252","gen-bin-dec-254","gen-dec-bin-254","gen-diag-6","new-l3-23"]);
+function buildDetailedExplanation(q){
+  const lesson = q.lesson || DETAIL_LESSONS[DETAIL_BY_QUESTION[q.id]];
+  if (!lesson) return '';
+  return '<h3>'+escapeHtml(lesson.title)+'</h3>'+
+    '<p>'+escapeHtml(lesson.plain)+'</p>'+
+    '<h4>Пример</h4><p>'+escapeHtml(lesson.example)+'</p>';
+}
+
+  let photoZoom = 1, photoFitWidth = 0;
+  function setPhotoZoom(value) {
+    photoZoom = Math.max(1, Math.min(4, value));
+    const media = $('zoomContent').firstElementChild;
+    if(media) media.style.width = Math.round(photoFitWidth * photoZoom) + 'px';
+    $('zoomLevel').textContent = Math.round(photoZoom * 100) + '%';
+    $('zoomOut').disabled = photoZoom <= 1;
+    $('zoomIn').disabled = photoZoom >= 4;
+  }
+  function openPhotoViewer(q) {
+    $('zoomDialog').setAttribute('aria-label', 'Просмотр фотографии');
+    const photo = $('questionGraphic').querySelector('img');
+    $('zoomContent').innerHTML = q.image
+      ? '<img src="' + escapeHtml(photo.currentSrc || photo.src) + '" alt="' + escapeHtml(q.imageAlt || 'Фото оборудования') + '">'
+      : q.graphic;
+    $('zoomDialog').showModal();
+    photoFitWidth = $('zoomContent').clientWidth;
+    setPhotoZoom(2);
+    $('zoomContent').scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+  }
+  $('zoomIn').onclick = () => setPhotoZoom(photoZoom + .5);
+  $('zoomOut').onclick = () => setPhotoZoom(photoZoom - .5);
+  $('zoomFit').onclick = () => { setPhotoZoom(1); $('zoomContent').scrollTo(0, 0); };
+  $('zoomDialog').addEventListener('close', () => { document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
+
+  function checkAnswer() {
+    if (state.checked) return;
+    const q = state.questions[state.index];
+    const chosen = selectedValues();
+    const isCorrect = sameAnswers(chosen, q.correct);
+    state.checked = true;
+    if (isCorrect) state.score += 1;
+    state.answers.push({ question: q, chosen, isCorrect });
+    const progress=loadStats(); QuizEngine.answered(progress,q.id,isCorrect); writeStats(progress);
+
+    document.querySelectorAll('#answersForm input').forEach(input => {
+      input.disabled = true;
+      const option = input.closest('.answer-option');
+      const value = Number(input.value);
+      option.classList.remove('selected');
+      if (q.correct.includes(value)) option.classList.add('correct');
+      else if (chosen.includes(value)) option.classList.add('wrong');
+    });
+
+    const feedback = $('feedback');
+    feedback.hidden = false;
+    feedback.classList.add(isCorrect ? 'good' : 'bad');
+    feedback.innerHTML = `<strong>${isCorrect ? 'Верно!' : 'Не совсем.'}</strong><span></span>`;
+    feedback.querySelector('span').textContent = q.explanation;
+    $('detailButton').hidden = !q.lesson && !DETAIL_BY_QUESTION[q.id];
+    if(q.lesson){$('detailPanel').innerHTML=buildDetailedExplanation(q);$('detailPanel').hidden=false;$('detailButton').textContent='Свернуть разбор';}
+    $('ipv4PracticeLink').hidden = !IPV4_PRACTICE_IDS.has(q.id);
+    $('scoreMini').textContent = `${state.score} ✓`;
+    $('checkButton').hidden = true;
+    $('nextButton').hidden = false;
+  }
+
+  function nextQuestion() {
+    if (state.index < QUIZ_SIZE - 1) { state.index += 1; renderQuestion(); }
+    else finishQuiz();
+  }
+
+  function finishQuiz() {
+    const passed = state.score >= PASS_SCORE;
+    $('resultHero').className = `result-hero ${passed ? 'pass' : 'fail'}`;
+    $('resultIcon').textContent = passed ? '✓' : '↻';
+    $('resultStatus').textContent = passed ? 'Экзамен сдан' : 'Пока не зачёт';
+    $('resultScore').textContent = `${state.score} из ${QUIZ_SIZE}`;
+    $('resultMessage').textContent = passed
+      ? (state.score === 10 ? 'Идеальный результат. Ты уверенно видишь сеть по уровням.' : 'Хороший результат. Порог 8 из 10 пройден.')
+      : `До зачёта не хватило ${PASS_SCORE - state.score}. Посмотри разбор и попробуй новый набор.`;
+    renderTopicResults();
+    renderMistakes();
+    saveAttempt();
+    showScreen('resultScreen');
+  }
+
+  function renderTopicResults() {
+    const byGroup = {};
+    state.answers.forEach(item => {
+      const key = item.question.group;
+      byGroup[key] ||= { right: 0, total: 0 };
+      byGroup[key].total += 1;
+      if (item.isCorrect) byGroup[key].right += 1;
+    });
+    $('topicResults').innerHTML = '<h2>Результат по темам</h2>' + Object.entries(byGroup).map(([key, value]) => {
+      const percent = Math.round(value.right / value.total * 100);
+      return `<div class="topic-line"><span>${modeLabels[key]}</span><small>${value.right}/${value.total}</small><div class="mini-track"><i style="width:${percent}%"></i></div></div>`;
+    }).join('');
+  }
+
+  function renderMistakes() {
+    const wrong = state.answers.filter(item => !item.isCorrect);
+    if (!wrong.length) { $('mistakes').innerHTML = '<h2>Ошибки</h2><p class="right-answer">Ошибок нет — чистые 10 из 10.</p>'; return; }
+    $('mistakes').innerHTML = '<h2>Разбор ошибок</h2>' + wrong.map(item => {
+      const q = item.question;
+      const right = q.correct.map(i => q.answers[i]).join('; ');
+      return `<div class="mistake-item">${q.image ? `<img class="mistake-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}">` : (q.graphic || '')}<p><strong>${escapeHtml(q.text)}</strong></p><p class="right-answer">Правильно: ${escapeHtml(right)}</p><p class="explanation">${escapeHtml(q.explanation)}</p></div>`;
+    }).join('');
+  }
+
+  function escapeHtml(text) {
+    const node = document.createElement('div'); node.textContent = text; return node.innerHTML;
+  }
+
+  function loadStats() {
+    try { return QuizEngine.stats(JSON.parse(localStorage.getItem('osiQuizStats'))); }
+    catch { return QuizEngine.stats(); }
+  }
+  function writeStats(stats){try{localStorage.setItem('osiQuizStats',JSON.stringify(stats))}catch{}}
+
+  function saveAttempt() {
+    const stats = loadStats();
+    stats.attempts.push({ date: new Date().toISOString(), mode: state.mode, score: state.score, wrongIds: state.answers.filter(a=>!a.isCorrect).map(a=>a.question.id), questionIds:state.questions.map(q=>q.id) });
+    stats.attempts = stats.attempts.slice(-100);
+    writeStats(stats); 
+  }
+
+  function showStats() {
+    const progress=loadStats(),attempts=progress.attempts;
+    const unresolved=bank.filter(q=>progress.questions[q.id]?.wrong && (progress.questions[q.id].streak||0)<2);
+    if (!attempts.length) $('statsContent').innerHTML = '<p class="empty-state">Здесь появятся результаты после первого экзамена.</p>';
+    else {
+      const best = Math.max(...attempts.map(a => a.score));
+      const average = (attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length).toFixed(1);
+      const passed = attempts.filter(a => a.score >= PASS_SCORE).length;
+      const recent = [...attempts].reverse().slice(0, 5);
+      $('statsContent').innerHTML = `<div class="stat-main"><div class="stat-box"><strong>${attempts.length}</strong><small>попыток</small></div><div class="stat-box"><strong>${best}/10</strong><small>лучший</small></div><div class="stat-box"><strong>${average}</strong><small>средний</small></div></div><h3>Последние попытки</h3>${recent.map(a => `<div class="topic-line"><span>${modeLabels[a.mode] || a.mode}</span><small>${a.score}/10</small></div>`).join('')}<p class="available">Зачтено попыток: ${passed}</p>`;
+    }
+    if(unresolved.length)$('statsContent').innerHTML+=`<h3>Темы для повторения</h3><p>${unresolved.length} вопросов с ошибками. После двух правильных ответов подряд усиленное повторение прекращается.</p>${unresolved.slice(0,10).map(q=>`<div class="topic-line"><span>${escapeHtml(q.text)}</span><small>${escapeHtml(q.topic)}</small></div>`).join('')}`;
+    $('statsDialog').showModal();
+  }
+
+  function updateAvailable() {
+    const mode = $('modeSelect').value;
+    $('questionCount').textContent = mode === 'mixed' ? `${getPool(mode).length} текстовых вопросов · отдельно ${bank.filter(q=>q.group==='visual-l1').length} с фотографиями` : `${getPool(mode).length} вопросов в этой теме`;
+  }
+
+  $('startButton').addEventListener('click', () => startQuiz());
+  $('examNav').addEventListener('click', () => showScreen('startScreen'));
+  $('learnNav').addEventListener('click', () => showScreen('learningScreen'));
+  $('checkButton').addEventListener('click', checkAnswer);
+  $('nextButton').addEventListener('click', nextQuestion);
+  $('detailButton').addEventListener('click', () => {
+    const panel = $('detailPanel');
+    const opening = panel.hidden;
+    if (opening) panel.innerHTML = buildDetailedExplanation(state.questions[state.index]);
+    panel.hidden = !opening;
+    $('detailButton').textContent = opening ? 'Свернуть разбор' : (state.questions[state.index].lesson ? 'Разбор на русском' : 'Понять подробнее');
+    if (opening) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  $('retryButton').addEventListener('click', () => startQuiz(state.mode));
+  $('homeButton').addEventListener('click', () => showScreen('startScreen'));
+  $('exitButton').addEventListener('click', () => { if (confirm('Прервать текущий экзамен?')) showScreen('startScreen'); });
+  $('modeSelect').addEventListener('change', updateAvailable);
+  $('statsButton').addEventListener('click', showStats);
+  $('closeStats').addEventListener('click', () => $('statsDialog').close());
+  $('clearStats').addEventListener('click', () => { if (confirm('Удалить всю статистику прохождений?')) { try { localStorage.removeItem('osiQuizStats'); } catch {}  showStats(); } });
+  $('closeZoom').onclick=()=> $('zoomDialog').close();
+  $('closeNotes').addEventListener('click', () => $('notesDialog').close());
+  document.querySelectorAll('[data-notes]').forEach(element => element.addEventListener('click', () => openNotes(element.dataset.notes)));
+  document.querySelectorAll('[data-cheat]').forEach(element => element.addEventListener('click', () => openCheat(element.dataset.cheat)));
+  document.querySelectorAll('.layer-quiz').forEach(button => button.addEventListener('click', () => startQuiz(button.dataset.quizMode)));
+  updateAvailable();
+
+  // Локальная версия требует соседние quiz/questions.js и quiz/engine.js; Service Worker не используется.
+
+  const context = document.modelContext;
+  if (context?.registerTool) {
+    const controller = new AbortController();
+    Promise.resolve(context.registerTool({
+      name: 'start_network_quiz', title: 'Начать сетевой экзамен',
+      description: 'Начинает новый экзамен из 10 вопросов по выбранной теме OSI/TCP-IP.',
+      inputSchema: { type:'object', properties:{ mode:{ type:'string', enum:Object.keys(modeLabels) } }, required:['mode'], additionalProperties:false },
+      annotations: { readOnlyHint:false, untrustedContentHint:false },
+      execute(input) { if (!modeLabels[input.mode]) throw new Error('Неизвестный режим'); startQuiz(input.mode); return { started:true, mode:input.mode, questions:QUIZ_SIZE, passScore:PASS_SCORE }; }
+    }, { signal: controller.signal })).catch(() => {});
+    Promise.resolve(context.registerTool({
+      name: 'read_network_quiz_status', title: 'Статус сетевого экзамена',
+      description: 'Возвращает текущий прогресс и результат без изменения экзамена.',
+      inputSchema: { type:'object', properties:{}, additionalProperties:false },
+      annotations: { readOnlyHint:true, untrustedContentHint:false },
+      execute() { return { active:$('quizScreen').classList.contains('active'), question:state.index + 1, total:QUIZ_SIZE, correct:state.score, completed:state.answers.length === QUIZ_SIZE }; }
+    }, { signal: controller.signal })).catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
+

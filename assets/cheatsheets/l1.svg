@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1350" viewBox="0 0 1000 1350"><rect width="1000" height="1350" fill="#07111f"/>
+<text x="40" y="65" fill="#63ded4" font-family="sans-serif" font-size="34" font-weight="bold">L1 · Физический уровень</text>
+<text x="40" y="102" fill="#b8c8d7" font-family="sans-serif" font-size="20">Краткий справочник · OSI / TCP/IP</text>
+<rect x="30" y="130" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="165" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">1. Что передаётся</text>
+<text x="50" y="199" fill="#eef5fc" font-family="sans-serif" font-size="22">Биты передаются электрическими, оптическими или радиосигналами. Способ</text>
+<text x="50" y="226" fill="#eef5fc" font-family="sans-serif" font-size="22">кодирования зависит от физического стандарта; это не всегда простое «свет</text>
+<text x="50" y="253" fill="#eef5fc" font-family="sans-serif" font-size="22">есть / света нет».</text>
+<rect x="30" y="322" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="357" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">2. Что проверить при Link Down</text>
+<text x="50" y="391" fill="#eef5fc" font-family="sans-serif" font-size="22">Питание, кабель и разъёмы, административное состояние порта,</text>
+<text x="50" y="418" fill="#eef5fc" font-family="sans-serif" font-size="22">совместимость скорости и модулей, уровни оптического сигнала. Проверяй</text>
+<text x="50" y="445" fill="#eef5fc" font-family="sans-serif" font-size="22">оба конца линии.</text>
+<rect x="30" y="514" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="549" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">3. Оптическая линия</text>
+<text x="50" y="583" fill="#eef5fc" font-family="sans-serif" font-size="22">Согласуй тип волокна, длину волны, скорость, дальность и бюджет потерь. В</text>
+<text x="50" y="610" fill="#eef5fc" font-family="sans-serif" font-size="22">duplex-линии TX одного конца должен приходить на RX другого. BiDi требует</text>
+<text x="50" y="637" fill="#eef5fc" font-family="sans-serif" font-size="22">согласованной пары модулей.</text>
+<rect x="30" y="706" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="741" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">4. Разъёмы и волокно</text>
+<text x="50" y="775" fill="#eef5fc" font-family="sans-serif" font-size="22">LC, SC, ST и FC — типы коннекторов. OS1/OS2 — одномодовое волокно;</text>
+<text x="50" y="802" fill="#eef5fc" font-family="sans-serif" font-size="22">OM1–OM5 — многомодовое. Цвет — подсказка: окончательно сверяй маркировку.</text>
+<text x="50" y="829" fill="#eef5fc" font-family="sans-serif" font-size="22">APC и UPC напрямую не соединяют.</text>
+<rect x="30" y="898" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="933" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">5. Измерения</text>
+<text x="50" y="967" fill="#eef5fc" font-family="sans-serif" font-size="22">dBm — абсолютная оптическая мощность; dB — отношение мощностей, например</text>
+<text x="50" y="994" fill="#eef5fc" font-family="sans-serif" font-size="22">потери. Power meter измеряет мощность. OTDR показывает события и</text>
+<text x="50" y="1021" fill="#eef5fc" font-family="sans-serif" font-size="22">расстояния вдоль волокна.</text>
+<rect x="30" y="1090" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="1125" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">6. Важные ограничения</text>
+<text x="50" y="1159" fill="#eef5fc" font-family="sans-serif" font-size="22">Дальность медной и оптической линии зависит от стандарта и условий. Link</text>
+<text x="50" y="1186" fill="#eef5fc" font-family="sans-serif" font-size="22">Up не доказывает отсутствие ошибок. Некоторые PHY применяют FEC —</text>
+<text x="50" y="1213" fill="#eef5fc" font-family="sans-serif" font-size="22">исправление ошибок возможно и на физическом уровне.</text>
+<text x="40" y="1320" fill="#91a9bf" font-family="sans-serif" font-size="18">Учебные примеры. Синтаксис CLI зависит от модели и версии ОС.</text></svg>

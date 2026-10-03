@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1350" viewBox="0 0 1000 1350"><rect width="1000" height="1350" fill="#07111f"/>
+<text x="40" y="65" fill="#63ded4" font-family="sans-serif" font-size="34" font-weight="bold">L3 · Сетевой уровень</text>
+<text x="40" y="102" fill="#b8c8d7" font-family="sans-serif" font-size="20">Краткий справочник · OSI / TCP/IP</text>
+<rect x="30" y="130" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="165" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">1. Адрес и префикс</text>
+<text x="50" y="199" fill="#eef5fc" font-family="sans-serif" font-size="22">IPv4 содержит 32 бита. /26 означает 26 сетевых бит и 6 хостовых. Маска</text>
+<text x="50" y="226" fill="#eef5fc" font-family="sans-serif" font-size="22">/26 — 255.255.255.192, размер блока — 64 адреса.</text>
+<rect x="30" y="322" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="357" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">2. Пример: 192.168.10.70/26</text>
+<text x="50" y="391" fill="#eef5fc" font-family="sans-serif" font-size="22">Сеть: 192.168.10.64. Broadcast: 192.168.10.127. Обычные адреса хостов:</text>
+<text x="50" y="418" fill="#eef5fc" font-family="sans-serif" font-size="22">192.168.10.65–192.168.10.126. Всего 64 адреса, из них 62 для хостов.</text>
+<rect x="30" y="514" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="549" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">3. Шаг и октет</text>
+<text x="50" y="583" fill="#eef5fc" font-family="sans-serif" font-size="22">Для /25–/30 шаг в четвёртом октете: 128, 64, 32, 16, 8, 4. Для /24</text>
+<text x="50" y="610" fill="#eef5fc" font-family="sans-serif" font-size="22">соседняя сеть начинается с прибавления 1 к третьему октету. Всегда</text>
+<text x="50" y="637" fill="#eef5fc" font-family="sans-serif" font-size="22">указывай, о каком октете идёт речь.</text>
+<rect x="30" y="706" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="741" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">4. Следующий узел и ARP</text>
+<text x="50" y="775" fill="#eef5fc" font-family="sans-serif" font-size="22">Маршрут определяет следующий узел. Для локального назначения ARP ищет MAC</text>
+<text x="50" y="802" fill="#eef5fc" font-family="sans-serif" font-size="22">получателя; для удалённого — MAC next hop. IP назначения обычно</text>
+<text x="50" y="829" fill="#eef5fc" font-family="sans-serif" font-size="22">сохраняется, MAC меняются на каждом Ethernet-участке.</text>
+<rect x="30" y="898" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="933" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">5. Выбор маршрута</text>
+<text x="50" y="967" fill="#eef5fc" font-family="sans-serif" font-size="22">Побеждает наиболее длинный подходящий префикс. Для 10.50.20.200 маршрут</text>
+<text x="50" y="994" fill="#eef5fc" font-family="sans-serif" font-size="22">10.50.20.128/25 точнее 10.50.20.0/24. Маршрут 0.0.0.0/0 используется,</text>
+<text x="50" y="1021" fill="#eef5fc" font-family="sans-serif" font-size="22">когда нет более точного.</text>
+<rect x="30" y="1090" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="1125" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">6. IPv6 и диагностика</text>
+<text x="50" y="1159" fill="#eef5fc" font-family="sans-serif" font-size="22">IPv6 — 128 бит; в обычной LAN часто /64. NDP использует ICMPv6. RA</text>
+<text x="50" y="1186" fill="#eef5fc" font-family="sans-serif" font-size="22">сообщает параметры маршрутизатора и префиксов. Проверяй адреса, маршрут</text>
+<text x="50" y="1213" fill="#eef5fc" font-family="sans-serif" font-size="22">туда и обратно, соседство и фильтры.</text>
+<text x="40" y="1320" fill="#91a9bf" font-family="sans-serif" font-size="18">Учебные примеры. Синтаксис CLI зависит от модели и версии ОС.</text></svg>

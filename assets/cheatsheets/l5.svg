@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1350" viewBox="0 0 1000 1350"><rect width="1000" height="1350" fill="#07111f"/>
+<text x="40" y="65" fill="#63ded4" font-family="sans-serif" font-size="34" font-weight="bold">L5 · Сеансовый уровень</text>
+<text x="40" y="102" fill="#b8c8d7" font-family="sans-serif" font-size="20">Краткий справочник · OSI / TCP/IP</text>
+<rect x="30" y="130" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="165" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">1. Функции в модели OSI</text>
+<text x="50" y="199" fill="#eef5fc" font-family="sans-serif" font-size="22">Управление диалогом: установление, поддержание и завершение сеанса,</text>
+<text x="50" y="226" fill="#eef5fc" font-family="sans-serif" font-size="22">синхронизация и контрольные точки. Модель описывает обязанности, а не</text>
+<text x="50" y="253" fill="#eef5fc" font-family="sans-serif" font-size="22">отдельную программу для каждого уровня.</text>
+<rect x="30" y="322" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="357" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">2. Сеанс и TCP-соединение</text>
+<text x="50" y="391" fill="#eef5fc" font-family="sans-serif" font-size="22">Прикладной сеанс может пережить разрыв TCP, если приложение умеет</text>
+<text x="50" y="418" fill="#eef5fc" font-family="sans-serif" font-size="22">возобновление. Одно TCP-соединение также может обслуживать несколько</text>
+<text x="50" y="445" fill="#eef5fc" font-family="sans-serif" font-size="22">прикладных диалогов.</text>
+<rect x="30" y="514" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="549" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">3. Контрольная точка</text>
+<text x="50" y="583" fill="#eef5fc" font-family="sans-serif" font-size="22">Приложения согласовали обработку блока 100. После сбоя они продолжают с</text>
+<text x="50" y="610" fill="#eef5fc" font-family="sans-serif" font-size="22">блока 101, если протокол и сохранённое состояние поддерживают такое</text>
+<text x="50" y="637" fill="#eef5fc" font-family="sans-serif" font-size="22">восстановление.</text>
+<rect x="30" y="706" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="741" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">4. Как это устроено в TCP/IP</text>
+<text x="50" y="775" fill="#eef5fc" font-family="sans-serif" font-size="22">Функции OSI L5–L7 обычно объединены в прикладном уровне TCP/IP. SIP, RPC,</text>
+<text x="50" y="802" fill="#eef5fc" font-family="sans-serif" font-size="22">SMB и SSH не следует без оговорок объявлять исключительно протоколами L5.</text>
+<rect x="30" y="898" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="933" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">5. Что проверять</text>
+<text x="50" y="967" fill="#eef5fc" font-family="sans-serif" font-size="22">Срок жизни сеанса, keepalive, повторную аутентификацию, состояние на</text>
+<text x="50" y="994" fill="#eef5fc" font-family="sans-serif" font-size="22">сервере, журналы клиента и сервера. Совпадающее время событий помогает</text>
+<text x="50" y="1021" fill="#eef5fc" font-family="sans-serif" font-size="22">отделить сетевой разрыв от истечения сеанса.</text>
+<rect x="30" y="1090" width="940" height="178" rx="14" fill="#10243a"/>
+<text x="50" y="1125" fill="#f6be54" font-family="sans-serif" font-size="25" font-weight="bold">6. Не путать разные уровни</text>
+<text x="50" y="1159" fill="#eef5fc" font-family="sans-serif" font-size="22">Full-duplex Ethernet — режим линии. Управление очередностью сообщений —</text>
+<text x="50" y="1186" fill="#eef5fc" font-family="sans-serif" font-size="22">задача диалога. Наличие TCP ESTABLISHED ещё не доказывает, что</text>
+<text x="50" y="1213" fill="#eef5fc" font-family="sans-serif" font-size="22">пользовательский сеанс успешно создан.</text>
+<text x="40" y="1320" fill="#91a9bf" font-family="sans-serif" font-size="18">Учебные примеры. Синтаксис CLI зависит от модели и версии ОС.</text></svg>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>IPv4 без магии — тренажёр подсетей</title>
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--card:#0d1b2b;--card2:#13253a;--line:#28435f;--text:#f5f8fb;--muted:#a8b7c7;--cyan:#35d0c8;--blue:#5da9ff;--green:#4ade80;--red:#fb7185;--amber:#fbbf24;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100svh;color:var(--text);background:radial-gradient(circle at 85% -10%,#153a5c 0,transparent 38%),var(--bg)}button,input,select{font:inherit}.shell{width:min(100%,820px);margin:auto;padding:max(16px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom))}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:11px}.mark{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;color:#06131d;background:linear-gradient(145deg,var(--cyan),var(--blue));font-weight:950}.brand strong,.brand small{display:block}.brand small{margin-top:2px;color:var(--muted);font-size:.78rem}.back{padding:11px 13px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:#0d1b2bcc;text-decoration:none;font-weight:800}.hero,.card,.practice{border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,#10243a,#0b1827);box-shadow:0 18px 50px #02081455}.hero{padding:24px}.eyebrow{margin:0 0 9px;color:var(--cyan);font-size:.78rem;font-weight:850;letter-spacing:.1em;text-transform:uppercase}h1{margin:0;font-size:clamp(2rem,9vw,3.5rem);line-height:1.02;letter-spacing:-.045em}h2{margin:0 0 13px;font-size:1.2rem}.lead{color:var(--muted);line-height:1.55}.formula{margin-top:16px;padding:13px 15px;border-left:4px solid var(--amber);border-radius:5px 13px 13px 5px;background:#182b3f;line-height:1.5}.formula strong{color:var(--amber)}.grid{display:grid;gap:13px;margin-top:13px}.card{padding:19px}.bits{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}.bit{min-width:0;padding:9px 2px;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:#0a1725;font-weight:900;cursor:pointer}.bit.on{color:#041416;border-color:var(--cyan);background:var(--cyan)}.weights{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:5px;color:var(--muted);text-align:center;font-size:clamp(.62rem,2.6vw,.78rem)}.octet-result{display:flex;justify-content:space-between;gap:10px;margin-top:13px;padding:12px;border-radius:12px;background:var(--card2)}.octet-result code{color:var(--cyan);font-size:1rem}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.chip{padding:9px 4px;border:1px solid var(--line);border-radius:10px;color:#cfe8ff;background:#102237;font-size:.78rem;font-weight:750;cursor:pointer}.table-wrap{overflow-x:auto;border-radius:13px;border:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:560px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:center;font-size:.84rem}th{color:var(--cyan);background:#0a1725;position:sticky;top:0}tr:last-child td{border-bottom:0}td:first-child{font-weight:900;color:var(--amber)}.memory{margin:10px 0 0;color:var(--muted);font-size:.86rem;line-height:1.5}.practice{margin-top:13px;padding:20px}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mode{min-height:56px;padding:9px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:#0b1928;font-weight:800;cursor:pointer}.mode.active{color:#041416;border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--blue))}.progress-row{display:flex;justify-content:space-between;gap:10px;margin:18px 2px 8px;color:var(--muted);font-size:.84rem}.track{height:7px;overflow:hidden;border-radius:99px;background:var(--card2)}.track i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .25s}.question{margin:19px 0 13px;font-size:clamp(1.3rem,5.8vw,1.8rem);line-height:1.35}.question code{color:var(--amber)}.answer-area{display:grid;gap:9px}.field label{display:block;margin-bottom:6px;color:var(--muted);font-size:.82rem;font-weight:750}.field input{width:100%;min-height:52px;padding:0 13px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:#0a1725}.field input:focus{outline:2px solid #35d0c866;border-color:var(--cyan)}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.primary,.secondary{width:100%;min-height:54px;margin-top:12px;border-radius:15px;font-weight:900;cursor:pointer}.primary{border:0;color:#041416;background:linear-gradient(135deg,var(--cyan),var(--blue))}.secondary{border:1px solid var(--line);color:var(--text);background:var(--card2)}.feedback{margin-top:13px;padding:14px;border-left:4px solid var(--blue);border-radius:5px 13px 13px 5px;background:#10263b;line-height:1.5}.feedback.good{border-color:var(--green)}.feedback.bad{border-color:var(--red)}.feedback strong{display:block;margin-bottom:4px}.steps{margin:8px 0 0;padding-left:20px;color:#d9e7f5}.steps li{margin:5px 0}.hidden{display:none!important}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stat{padding:12px 6px;border-radius:12px;background:var(--card2);text-align:center}.stat strong,.stat small{display:block}.stat strong{font-size:1.25rem}.stat small{margin-top:3px;color:var(--muted);font-size:.7rem}.special{margin-top:12px;color:var(--muted);font-size:.82rem;line-height:1.45}.special strong{color:var(--amber)}
+    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}.practice{padding:26px}.answer-area.full{grid-template-columns:1fr 1fr}.mode-grid{grid-template-columns:repeat(5,1fr)}}
+    @media(max-width:390px){.shell{padding-left:11px;padding-right:11px}.hero,.card,.practice{border-radius:18px}.hero{padding:19px}.two{grid-template-columns:1fr}.back{font-size:.82rem}.mode-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand"><span class="mark">/24</span><div><strong>IPv4 без магии</strong><small>считаем подсети в уме</small></div></div>
+    <a class="back" href="index.html">← К OSI-тесту</a>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">От простого к сложному</p>
+    <h1>Шаг сети станет очевидным</h1>
+    <p class="lead">Сначала запомни восемь весов бита, затем маски. Для любой непривычной маски используй одно правило.</p>
+    <div class="formula"><strong>Шаг = 256 − октет маски.</strong><br>Например, /27 → 255.255.255.224 → 256 − 224 = 32. Сети: 0, 32, 64, 96…</div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1. Пойми один октет</h2>
+      <p class="lead">Нажми на последний сетевой бит: слева автоматически будут только единицы, справа — только нули.</p>
+      <div id="bits" class="bits" aria-label="Восемь битов"></div>
+      <div class="weights"><span>128</span><span>64</span><span>32</span><span>16</span><span>8</span><span>4</span><span>2</span><span>1</span></div>
+      <div class="octet-result"><code id="binary">00000000</code><strong id="decimal">0</strong></div>
+      <div class="quick"><button class="chip" data-prefix="1">128</button><button class="chip" data-prefix="2">192</button><button class="chip" data-prefix="3">224</button><button class="chip" data-prefix="4">240</button><button class="chip" data-prefix="5">248</button><button class="chip" data-prefix="6">252</button></div>
+    </section>
+
+    <section class="card">
+      <h2>2. Таблица для памяти</h2>
+      <div class="table-wrap"><table><thead><tr><th>CIDR</th><th>Маска</th><th>Шаг · октет</th><th>Адресов</th><th>Адресов для хостов*</th></tr></thead><tbody>
+        <tr><td>/0</td><td>0.0.0.0</td><td>—</td><td>4294967296</td><td>4294967294</td></tr>
+        <tr><td>/1</td><td>128.0.0.0</td><td>128 · 1-й</td><td>2147483648</td><td>2147483646</td></tr>
+        <tr><td>/2</td><td>192.0.0.0</td><td>64 · 1-й</td><td>1073741824</td><td>1073741822</td></tr>
+        <tr><td>/3</td><td>224.0.0.0</td><td>32 · 1-й</td><td>536870912</td><td>536870910</td></tr>
+        <tr><td>/4</td><td>240.0.0.0</td><td>16 · 1-й</td><td>268435456</td><td>268435454</td></tr>
+        <tr><td>/5</td><td>248.0.0.0</td><td>8 · 1-й</td><td>134217728</td><td>134217726</td></tr>
+        <tr><td>/6</td><td>252.0.0.0</td><td>4 · 1-й</td><td>67108864</td><td>67108862</td></tr>
+        <tr><td>/7</td><td>254.0.0.0</td><td>2 · 1-й</td><td>33554432</td><td>33554430</td></tr>
+        <tr><td>/8</td><td>255.0.0.0</td><td>1 · 1-й</td><td>16777216</td><td>16777214</td></tr>
+        <tr><td>/9</td><td>255.128.0.0</td><td>128 · 2-й</td><td>8388608</td><td>8388606</td></tr>
+        <tr><td>/10</td><td>255.192.0.0</td><td>64 · 2-й</td><td>4194304</td><td>4194302</td></tr>
+        <tr><td>/11</td><td>255.224.0.0</td><td>32 · 2-й</td><td>2097152</td><td>2097150</td></tr>
+        <tr><td>/12</td><td>255.240.0.0</td><td>16 · 2-й</td><td>1048576</td><td>1048574</td></tr>
+        <tr><td>/13</td><td>255.248.0.0</td><td>8 · 2-й</td><td>524288</td><td>524286</td></tr>
+        <tr><td>/14</td><td>255.252.0.0</td><td>4 · 2-й</td><td>262144</td><td>262142</td></tr>
+        <tr><td>/15</td><td>255.254.0.0</td><td>2 · 2-й</td><td>131072</td><td>131070</td></tr>
+        <tr><td>/16</td><td>255.255.0.0</td><td>1 · 2-й</td><td>65536</td><td>65534</td></tr>
+        <tr><td>/17</td><td>255.255.128.0</td><td>128 · 3-й</td><td>32768</td><td>32766</td></tr>
+        <tr><td>/18</td><td>255.255.192.0</td><td>64 · 3-й</td><td>16384</td><td>16382</td></tr>
+        <tr><td>/19</td><td>255.255.224.0</td><td>32 · 3-й</td><td>8192</td><td>8190</td></tr>
+        <tr><td>/20</td><td>255.255.240.0</td><td>16 · 3-й</td><td>4096</td><td>4094</td></tr>
+        <tr><td>/21</td><td>255.255.248.0</td><td>8 · 3-й</td><td>2048</td><td>2046</td></tr>
+        <tr><td>/22</td><td>255.255.252.0</td><td>4 · 3-й</td><td>1024</td><td>1022</td></tr>
+        <tr><td>/23</td><td>255.255.254.0</td><td>2 · 3-й</td><td>512</td><td>510</td></tr>
+        <tr><td>/24</td><td>255.255.255.0</td><td>1 · 3-й</td><td>256</td><td>254</td></tr>
+        <tr><td>/25</td><td>255.255.255.128</td><td>128 · 4-й</td><td>128</td><td>126</td></tr>
+        <tr><td>/26</td><td>255.255.255.192</td><td>64 · 4-й</td><td>64</td><td>62</td></tr>
+        <tr><td>/27</td><td>255.255.255.224</td><td>32 · 4-й</td><td>32</td><td>30</td></tr>
+        <tr><td>/28</td><td>255.255.255.240</td><td>16 · 4-й</td><td>16</td><td>14</td></tr>
+        <tr><td>/29</td><td>255.255.255.248</td><td>8 · 4-й</td><td>8</td><td>6</td></tr>
+        <tr><td>/30</td><td>255.255.255.252</td><td>4 · 4-й</td><td>4</td><td>2</td></tr>
+        <tr><td>/31</td><td>255.255.255.254</td><td>2 · 4-й</td><td>2</td><td>2*</td></tr>
+        <tr><td>/32</td><td>255.255.255.255</td><td>1 · 4-й</td><td>1</td><td>1*</td></tr>
+      </tbody></table></div>
+      <p class="memory">Полная таблица /0–/32. В заданиях используются /8–/30. Шаг указан вместе с номером октета: <b>/23 → 2 в третьем, /22 → 4, /21 → 8</b>. Например, соседние /23: 192.168.0.0, 192.168.2.0, 192.168.4.0. При переходе к следующему блоку младшие октеты обнуляются.</p>
+      <p class="special">Для /0–/30 показан обычный расчёт 2^(32−префикс)−2; это арифметическая ёмкость, не число публично доступных адресов. /0 охватывает всё пространство IPv4, соседнего блока нет. <strong>* /31 и /32 — особые случаи:</strong> /31 применяется на point-to-point без обычных network/broadcast, /32 обозначает один адрес.</p>
+    </section>
+  </div>
+
+  <section class="practice">
+    <p class="eyebrow">Тренировка · мгновенная проверка</p>
+    <h2>3. Выбери навык</h2>
+    <div id="modes" class="mode-grid">
+      <button class="mode active" data-mode="mask">CIDR → маска</button>
+      <button class="mode" data-mode="cidr">Маска → CIDR</button>
+      <button class="mode" data-mode="step">Шаг сети</button>
+      <button class="mode" data-mode="network">Адрес сети</button>
+      <button class="mode" data-mode="full">Полный расчёт</button>
+      <button class="mode" data-mode="vlsm">VLSM / агрегация</button>
+    </div>
+    <div class="progress-row"><span id="round">Задание 1 из 10</span><span id="score">0 верно</span></div>
+    <div class="track"><i id="bar"></i></div>
+    <div id="question" class="question"></div>
+    <div id="answers" class="answer-area"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="check" class="primary" type="button">Проверить</button>
+    <button id="next" class="primary hidden" type="button">Следующее задание</button>
+    <button id="restart" class="secondary hidden" type="button">Ещё 10 заданий</button>
+    <div class="stats"><div class="stat"><strong id="doneStat">0</strong><small>решено всего</small></div><div class="stat"><strong id="rightStat">0</strong><small>верных</small></div><div class="stat"><strong id="bestStat">0/10</strong><small>лучший подход</small></div></div>
+  </section>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), weights=[128,64,32,16,8,4,2,1];let bits=Array(8).fill(0);
+function renderBits(){ $('bits').innerHTML=bits.map((b,i)=>`<button class="bit ${b?'on':''}" data-bit="${i}" type="button" aria-label="${weights[i]}: ${b?'сетевой бит':'хостовый бит'}">${b}</button>`).join('');$('binary').textContent=bits.join('');$('decimal').textContent=bits.reduce((s,b,i)=>s+b*weights[i],0);document.querySelectorAll('[data-bit]').forEach(x=>x.onclick=()=>{const i=+x.dataset.bit,prefix=bits[i]?i:i+1;bits=bits.map((_,n)=>n<prefix?1:0);renderBits()}) }
+document.querySelectorAll('[data-prefix]').forEach(x=>x.onclick=()=>{const n=+x.dataset.prefix;bits=bits.map((_,i)=>i<n?1:0);renderBits()});renderBits();
+
+function maskInt(prefix){return prefix===0?0:(0xffffffff<<(32-prefix))>>>0}
+function intToIp(n){n>>>=0;return [n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join('.')}
+function ipToInt(ip){return ip.split('.').reduce((n,o)=>((n<<8)|Number(o))>>>0,0)}
+function maskText(prefix){return intToIp(maskInt(prefix))}
+function subnet(ip,prefix){const value=ipToInt(ip),mask=maskInt(prefix),network=(value&mask)>>>0,broadcast=(network|(~mask>>>0))>>>0;return{network:intToIp(network),broadcast:intToIp(broadcast),first:intToIp((network+1)>>>0),last:intToIp((broadcast-1)>>>0)}}
+function interesting(prefix){const octet=Math.floor(prefix/8)+1,bitsIn=prefix%8;if(bitsIn===0)return{octet:Math.max(1,octet-1),mask:255,step:1};const value=256-Math.pow(2,8-bitsIn);return{octet,mask:value,step:256-value}}
+function randomIp(){return [10,rand(0,255),rand(0,255),rand(1,254)].join('.')}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function norm(s){return String(s??'').trim().replace(/[，,]/g,'.').replace(/^\//,'')}
+function field(id,label,placeholder=''){const dotted=placeholder.includes('.');return `<div class="field"><label for="${id}">${label}</label><input id="${id}" inputmode="${dotted?'url':'numeric'}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${placeholder}"></div>`}
+
+let mode='mask',index=0,correct=0,current=null,checked=false;const TOTAL=10;
+function createVlsmQuestion(){
+  if(Math.random()<0.5){
+    const prefix=rand(25,29),maxHosts=Math.pow(2,32-prefix)-2,smallerMax=Math.pow(2,32-(prefix+1))-2,needed=rand(smallerMax+1,maxHosts);
+    return{prompt:`Для VLAN нужно минимум <code>${needed}</code> хостов. Какой CIDR даст наименьшую обычную подсеть с достаточным числом адресов хостов?`,fields:[['a','Префикс','например 27']],answers:[String(prefix)],explain:`/${prefix} даёт ${maxHosts} usable-хостов. /${prefix+1} даёт только ${smallerMax}, поэтому минимальный подходящий вариант — /${prefix}.`};
+  }
+  const count=Math.random()<0.5?2:4,prefix=count===2?23:22,second=rand(1,200),step=count,third=rand(0,Math.floor(255/step))*step;
+  const nets=Array.from({length:count},(_,i)=>`10.${second}.${third+i}.0/24`);
+  return{prompt:`Объедини соседние сети в один маршрут:<br><code>${nets.join('<br>')}</code>`,fields:[['a','Сводный маршрут','x.x.x.x/xx']],answers:[`10.${second}.${third}.0/${prefix}`],explain:`${count} соседние сети /24 образуют непрерывный блок из ${count*256} адресов. Их можно объявить одной записью 10.${second}.${third}.0/${prefix}.`};
+}
+function createQuestion(){if(mode==='vlsm')return createVlsmQuestion();const prefix=rand(8,30),ip=randomIp(),sub=subnet(ip,prefix),intr=interesting(prefix);if(mode==='mask')return{prompt:`Какая маска соответствует <code>/${prefix}</code>?`,fields:[['a','Маска','255.255.255.0']],answers:[maskText(prefix)],explain:explainMask(prefix)};if(mode==='cidr')return{prompt:`Какой CIDR соответствует маске <code>${maskText(prefix)}</code>?`,fields:[['a','Префикс','например 27']],answers:[String(prefix)],explain:explainMask(prefix)};if(mode==='step')return{prompt:`Определи шаг в октете №${intr.octet} для <code>/${prefix}</code> (${maskText(prefix)}).`,fields:[['a','Шаг','число']],answers:[String(intr.step)],explain:`Изменяемый октет №${intr.octet}: ${intr.mask}. Шаг = 256 − ${intr.mask} = ${intr.step}.`};if(mode==='network')return{prompt:`Найди адрес сети: <code>${ip}/${prefix}</code>`,fields:[['a','Адрес сети','x.x.x.x']],answers:[sub.network],explain:explainSubnet(ip,prefix,sub,intr)};return{prompt:`Полностью рассчитай <code>${ip}/${prefix}</code>`,fields:[['a','Сеть','x.x.x.x'],['b','Broadcast','x.x.x.x'],['c','Первый хост','x.x.x.x'],['d','Последний хост','x.x.x.x']],answers:[sub.network,sub.broadcast,sub.first,sub.last],explain:explainSubnet(ip,prefix,sub,intr)}}
+function explainMask(p){const octets=maskText(p).split('.'),n=p%8;return n?`Полных октетов: ${Math.floor(p/8)}. В следующем ${n} сетевых бит: ${'1'.repeat(n)}${'0'.repeat(8-n)} = ${octets[Math.floor(p/8)]}.`:`${p/8} полных октета по 8 единиц дают ${maskText(p)}.`}
+function explainSubnet(ip,p,sub,intr){const oct=Number(ip.split('.')[intr.octet-1]),base=Math.floor(oct/intr.step)*intr.step;return `Маска ${maskText(p)}. Изменяемый октет №${intr.octet}, шаг ${intr.step}. Число ${oct} попадает в блок, начинающийся с ${base}. Сеть ${sub.network}, следующий блок начинается после ${sub.broadcast}.`}
+function render(){current=createQuestion();checked=false;$('round').textContent=`Задание ${index+1} из ${TOTAL}`;$('score').textContent=`${correct} верно`;$('bar').style.width=`${index/TOTAL*100}%`;$('question').innerHTML=current.prompt;$('answers').className='answer-area'+(mode==='full'?' full':'');$('answers').innerHTML=current.fields.map(f=>field(...f)).join('');document.querySelectorAll('#answers input').forEach(input=>input.addEventListener('input',()=>{const fixed=input.value.replace(/[，,]/g,'.');if(fixed!==input.value)input.value=fixed}));$('feedback').className='feedback hidden';$('check').classList.remove('hidden');$('next').classList.add('hidden');$('restart').classList.add('hidden');setTimeout(()=>$('a')?.focus(),50)}
+function check(){if(checked)return;const given=current.fields.map(f=>norm($(f[0]).value).replace(/^\//,''));if(given.some(v=>!v))return;const expected=current.answers.map(norm);const ok=expected.every((a,i)=>a===given[i]);checked=true;if(ok)correct++;current.fields.forEach((f,i)=>{$(f[0]).disabled=true;$(f[0]).style.borderColor=given[i]===expected[i]?'var(--green)':'var(--red)'});$('feedback').className='feedback '+(ok?'good':'bad');$('feedback').innerHTML=`<strong>${ok?'Верно!':'Проверь расчёт.'}</strong>${ok?'':`Правильный ответ: ${expected.join(' · ')}.<br>`}${current.explain}`;$('score').textContent=`${correct} верно`;$('check').classList.add('hidden');$('next').classList.remove('hidden');saveOne(ok)}
+function next(){index++;if(index<TOTAL){render();return}finish()}
+function finish(){const stats=loadStats();stats.best=Math.max(stats.best||0,correct);saveStats(stats);$('bar').style.width='100%';$('question').innerHTML=`Подход завершён: <code>${correct} из ${TOTAL}</code>`;$('answers').innerHTML='';$('feedback').className='feedback '+(correct>=8?'good':'bad');$('feedback').innerHTML=correct>=8?'<strong>Отлично.</strong>Скорость придёт после нескольких коротких подходов.':'<strong>Продолжай.</strong>Перед новой попыткой ещё раз просмотри цепочку масок и шагов.';$('next').classList.add('hidden');$('restart').classList.remove('hidden');updateStats()}
+function restart(){index=0;correct=0;render()}
+function loadStats(){let s;try{s=JSON.parse(localStorage.getItem('ipv4TrainerStats'))}catch{}const n=k=>Number.isSafeInteger(s?.[k])&&s[k]>=0?s[k]:0;const done=n('done');return{done,right:Math.min(done,n('right')),best:Math.min(10,n('best'))}}
+function saveStats(s){try{localStorage.setItem('ipv4TrainerStats',JSON.stringify(s))}catch{}}
+function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||0)+(ok?1:0);saveStats(s);updateStats()}
+function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=`${s.best||0}/10`}
+document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('check').classList.contains('hidden'))check()});updateStats();render();
+})();
+</script>
+</body>
+</html>

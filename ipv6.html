@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>IPv6 без магии — интерактивный тренажёр</title>
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--card:#0d1b2b;--card2:#13253a;--line:#28435f;--text:#f5f8fb;--muted:#a8b7c7;--cyan:#35d0c8;--blue:#5da9ff;--green:#4ade80;--red:#fb7185;--amber:#fbbf24;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-height:100svh;color:var(--text);background:radial-gradient(circle at 85% -10%,#153a5c 0,transparent 38%),var(--bg)}button,input{font:inherit}.shell{width:min(100%,860px);margin:auto;padding:max(16px,env(safe-area-inset-top)) 16px max(34px,env(safe-area-inset-bottom))}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:11px}.mark{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;color:#06131d;background:linear-gradient(145deg,var(--cyan),var(--blue));font-weight:950;font-size:.78rem}.brand strong,.brand small{display:block}.brand small{margin-top:2px;color:var(--muted);font-size:.78rem}.back{padding:11px 13px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:#0d1b2bcc;text-decoration:none;font-weight:800}.hero,.card,.practice{border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,#10243a,#0b1827);box-shadow:0 18px 50px #02081455}.hero{padding:24px}.eyebrow{margin:0 0 9px;color:var(--cyan);font-size:.78rem;font-weight:850;letter-spacing:.1em;text-transform:uppercase}h1{margin:0;font-size:clamp(2rem,9vw,3.5rem);line-height:1.02;letter-spacing:-.045em}h2{margin:0 0 13px;font-size:1.2rem}.lead{color:var(--muted);line-height:1.55}.formula{margin-top:16px;padding:13px 15px;border-left:4px solid var(--amber);border-radius:5px 13px 13px 5px;background:#182b3f;line-height:1.5}.formula strong{color:var(--amber)}.grid{display:grid;gap:13px;margin-top:13px}.card{padding:19px}.address{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:13px}.hex{padding:11px 4px;border:1px solid var(--line);border-radius:11px;background:#091725;text-align:center;font:800 clamp(.76rem,3.1vw,.94rem)/1 ui-monospace,SFMono-Regular,Menlo,monospace}.hex.net{border-color:#35d0c888;color:#8ff5ee}.hex.host{border-color:#5da9ff88;color:#b9dcff}.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:.8rem}.dot{display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:50%}.dot.net{background:var(--cyan)}.dot.host{background:var(--blue)}.steps{display:grid;gap:8px;margin-top:12px}.step{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:11px;border-radius:13px;background:var(--card2)}.step b{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;color:#06131d;background:linear-gradient(145deg,var(--cyan),var(--blue))}.step strong,.step span{display:block}.step span{margin-top:3px;color:var(--muted);font-size:.84rem;line-height:1.42}.examples{display:grid;gap:8px}.example{padding:11px;border-radius:12px;background:#0a1725}.example code{color:var(--amber);font-size:.86rem;word-break:break-all}.arrow{color:var(--muted);margin:4px 0;font-size:.78rem}.type-grid{display:grid;gap:8px}.type{padding:11px;border-radius:12px;background:var(--card2)}.type code{color:var(--cyan);font-weight:900}.type small{display:block;margin-top:4px;color:var(--muted);line-height:1.35}.practice{margin-top:13px;padding:20px}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mode{min-height:56px;padding:9px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:#0b1928;font-weight:800;cursor:pointer}.mode.active{color:#041416;border-color:transparent;background:linear-gradient(135deg,var(--cyan),var(--blue))}.progress-row{display:flex;justify-content:space-between;gap:10px;margin:18px 2px 8px;color:var(--muted);font-size:.84rem}.track{height:7px;overflow:hidden;border-radius:99px;background:var(--card2)}.track i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .25s}.question{margin:19px 0 13px;font-size:clamp(1.15rem,5vw,1.65rem);line-height:1.42}.question code{color:var(--amber);word-break:break-all}.answers{display:grid;gap:9px}.choice{width:100%;min-height:54px;padding:10px 13px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:#0a1725;text-align:left;cursor:pointer}.choice.selected{border-color:var(--blue);background:#132c46}.field input{width:100%;min-height:54px;padding:0 13px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:#0a1725}.field input:focus{outline:2px solid #35d0c866;border-color:var(--cyan)}.primary,.secondary{width:100%;min-height:54px;margin-top:12px;border-radius:15px;font-weight:900;cursor:pointer}.primary{border:0;color:#041416;background:linear-gradient(135deg,var(--cyan),var(--blue))}.secondary{border:1px solid var(--line);color:var(--text);background:var(--card2)}.feedback{margin-top:13px;padding:14px;border-left:4px solid var(--blue);border-radius:5px 13px 13px 5px;background:#10263b;line-height:1.5}.feedback.good{border-color:var(--green)}.feedback.bad{border-color:var(--red)}.feedback strong{display:block;margin-bottom:4px}.hidden{display:none!important}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stat{padding:12px 6px;border-radius:12px;background:var(--card2);text-align:center}.stat strong,.stat small{display:block}.stat strong{font-size:1.25rem}.stat small{margin-top:3px;color:var(--muted);font-size:.7rem}
+    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}.practice{padding:26px}.mode-grid{grid-template-columns:repeat(5,1fr)}.address{grid-template-columns:repeat(8,1fr)}}
+    @media(max-width:390px){.shell{padding-left:11px;padding-right:11px}.hero,.card,.practice{border-radius:18px}.hero{padding:19px}.back{font-size:.8rem}.mode-grid{grid-template-columns:1fr}.address{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand"><span class="mark">128 bit</span><div><strong>IPv6 без магии</strong><small>от адреса к NDP и SLAAC</small></div></div>
+    <a class="back" href="index.html">← К сайту</a>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">Продолжение после IPv4</p>
+    <h1>Не учи IPv6 как стену из цифр</h1>
+    <p class="lead">Смотри на адрес как на восемь групп по 16 бит. В типичной LAN первые 64 бита — префикс сети, вторые 64 — идентификатор интерфейса.</p>
+    <div class="formula"><strong>Главная мысль:</strong> IPv6 — 128 бит = 8 групп × 16 бит. Одна hex-цифра = 4 бита. Поэтому одна группа из четырёх hex-цифр = 16 бит.</div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1. Увидь структуру /64</h2>
+      <p class="lead">Адрес <code>2001:db8:1234:5678:abcd:ef01:2345:6789/64</code></p>
+      <div class="address">
+        <span class="hex net">2001</span><span class="hex net">0db8</span><span class="hex net">1234</span><span class="hex net">5678</span>
+        <span class="hex host">abcd</span><span class="hex host">ef01</span><span class="hex host">2345</span><span class="hex host">6789</span>
+      </div>
+      <div class="legend"><span><i class="dot net"></i>префикс /64</span><span><i class="dot host"></i>интерфейс</span></div>
+      <p class="lead">/64 означает: первые четыре группы принадлежат сети. Это не «маска 255…», а длина префикса в битах.</p>
+    </section>
+
+    <section class="card">
+      <h2>2. Научись сокращать</h2>
+      <div class="examples">
+        <div class="example"><code>2001:0db8:0000:0000:0000:0000:0000:0042</code><div class="arrow">↓ убираем ведущие нули и одну самую длинную цепочку нулевых групп</div><code>2001:db8::42</code></div>
+        <div class="example"><code>fe80:0000:0000:0000:021c:7eff:fe12:3456</code><div class="arrow">↓</div><code>fe80::21c:7eff:fe12:3456</code></div>
+      </div>
+      <p class="lead">В канонической форме сжимаем самую длинную цепочку из двух и более нулевых групп; при равенстве — первую слева. <b>::</b> в одном адресе используют только один раз, иначе нельзя понять, сколько нулевых групп вернуть.</p>
+    </section>
+
+    <section class="card">
+      <h2>3. Узнавай тип адреса</h2>
+      <div class="type-grid">
+        <div class="type"><code>2000::/3</code><small>Global Unicast — диапазон глобальной адресации. 2001:db8::/32 зарезервирован для документации: учебные адреса из него в Интернете не маршрутизируют.</small></div>
+        <div class="type"><code>fe80::/10</code><small>Link-Local — обычно создаётся на интерфейсе с включённым IPv6, работает только в пределах канала.</small></div>
+        <div class="type"><code>fc00::/7</code><small>Unique Local — внутренние адреса, по смыслу ближе всего к частным IPv4.</small></div>
+        <div class="type"><code>ff00::/8</code><small>Multicast. Broadcast в IPv6 нет.</small></div>
+        <div class="type"><code>::1</code><small>Loopback — «сам себе», аналог 127.0.0.1.</small></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4–5. NDP, RA и SLAAC</h2>
+      <div class="steps">
+        <div class="step"><b>1</b><div><strong>Link-Local</strong><span>Интерфейс получает адрес из fe80::/10.</span></div></div>
+        <div class="step"><b>2</b><div><strong>Router Advertisement</strong><span>Роутер сообщает префикс сети и параметры.</span></div></div>
+        <div class="step"><b>3</b><div><strong>SLAAC</strong><span>Хост формирует адрес из префикса RA с флагом A: глобальный или ULA. В обычной Ethernet LAN используется /64; перед использованием проверяется отсутствие дубликата (DAD). DHCPv6 для этого не обязателен.</span></div></div>
+        <div class="step"><b>4</b><div><strong>NDP</strong><span>Neighbor Discovery через ICMPv6 выполняет задачи, похожие на ARP, плюс обнаружение роутеров и соседей.</span></div></div>
+        <div class="step"><b>5</b><div><strong>Dual Stack</strong><span>На практике IPv4 и IPv6 часто работают параллельно во время перехода.</span></div></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="practice">
+    <p class="eyebrow">Тренировка · 10 заданий</p>
+    <h2>Закрепим без зубрёжки</h2>
+    <div id="modes" class="mode-grid">
+      <button class="mode active" data-mode="compress">Сжать адрес</button>
+      <button class="mode" data-mode="expand">Развернуть</button>
+      <button class="mode" data-mode="type">Тип адреса</button>
+      <button class="mode" data-mode="prefix">Префикс /64</button>
+      <button class="mode" data-mode="concept">NDP / SLAAC</button>
+    </div>
+    <div class="progress-row"><span id="round">Задание 1 из 10</span><span id="score">0 верно</span></div>
+    <div class="track"><i id="bar"></i></div>
+    <div id="question" class="question"></div>
+    <div id="answers" class="answers"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="check" class="primary" type="button">Проверить</button>
+    <button id="next" class="primary hidden" type="button">Следующее задание</button>
+    <button id="restart" class="secondary hidden" type="button">Ещё 10 заданий</button>
+    <div class="stats"><div class="stat"><strong id="doneStat">0</strong><small>решено всего</small></div><div class="stat"><strong id="rightStat">0</strong><small>верных</small></div><div class="stat"><strong id="bestStat">0/10</strong><small>лучший подход</small></div></div>
+  </section>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), TOTAL=10;
+const compressPairs=[
+ ['2001:0db8:0000:0000:0000:0000:0000:0042','2001:db8::42'],
+ ['2001:0db8:1234:0000:0000:0000:0000:0001','2001:db8:1234::1'],
+ ['fe80:0000:0000:0000:021c:7eff:fe12:3456','fe80::21c:7eff:fe12:3456'],
+ ['fd12:3456:789a:0000:0000:0000:0000:00ab','fd12:3456:789a::ab'],
+ ['2001:0db8:0000:0001:0000:0000:0000:0009','2001:db8:0:1::9']
+];
+const concepts=[
+ {q:'Что в IPv6 выполняет задачи, похожие на ARP?',a:'NDP',opts:['NDP','DNS','NAT','STP'],e:'NDP (Neighbor Discovery Protocol) работает через ICMPv6 и помогает находить соседей и их канальные адреса.'},
+ {q:'Что позволяет хосту получить IPv6-адрес без обязательного DHCPv6?',a:'SLAAC',opts:['SLAAC','ARP','PAT','VTP'],e:'SLAAC использует Router Advertisement и позволяет хосту самостоятельно сформировать адрес.'},
+ {q:'Как роутер сообщает хостам IPv6-префикс сети?',a:'Router Advertisement',opts:['Router Advertisement','ARP Reply','TCP SYN','DNS Response'],e:'RA — сообщение ICMPv6 от маршрутизатора с префиксом и другими параметрами.'},
+ {q:'Есть ли в IPv6 broadcast?',a:'Нет',opts:['Нет','Да, только /64','Да, только локальный','Только через DHCPv6'],e:'Broadcast в IPv6 убран. Вместо него используются multicast и другие механизмы.'},
+ {q:'Что такое Dual Stack?',a:'Одновременная работа IPv4 и IPv6',opts:['Одновременная работа IPv4 и IPv6','Два IPv6-адреса на интерфейсе','Два маршрутизатора','Шифрование IPv6'],e:'Dual Stack означает, что устройство или сеть одновременно поддерживает оба стека.'}
+];
+function expand(addr){
+ const text=String(addr).trim().toLowerCase();
+ if(!/^[0-9a-f:]+$/.test(text)||text.split('::').length>2)return null;
+ const halves=text.split('::'),left=halves[0]?halves[0].split(':'):[],right=halves.length===2&&halves[1]?halves[1].split(':'):[];
+ if([...left,...right].some(x=>!/^[0-9a-f]{1,4}$/.test(x)))return null;
+ const missing=8-left.length-right.length;
+ if(halves.length===1?missing!==0:missing<1)return null;
+ return [...left,...(halves.length===2?Array(missing).fill('0'):[]),...right].map(x=>x.padStart(4,'0')).join(':');
+}
+function samePrefix64(given,expected){const a=given.trim().split('/'),b=expected.split('/');return a.length===2&&a[1]==='64'&&expand(a[0])!==null&&expand(a[0])===expand(b[0]);}
+function shuffled(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function compress(addr){
+ const full=expand(addr);if(full===null)return null;const parts=full.split(':').map(x=>x.replace(/^0+(?=[0-9a-f])/,''));
+ let bestS=-1,bestL=0,s=-1;
+ for(let i=0;i<=parts.length;i++){if(i<parts.length&&parts[i]==='0'){if(s<0)s=i}else if(s>=0){const len=i-s;if(len>bestL&&len>=2){bestS=s;bestL=len}s=-1}}
+ if(bestS>=0){const before=parts.slice(0,bestS).join(':'),after=parts.slice(bestS+bestL).join(':');return (before?before:'')+'::'+(after?after:'')}
+ return parts.join(':');
+}
+function prefix64(a){return expand(a).split(':').slice(0,4).map(x=>x.replace(/^0+(?=[0-9a-f])/,'')).join(':')+'::/64'}
+function choiceHtml(opts){return opts.map(x=>'<button class="choice" type="button" data-value="'+x.replace(/"/g,'&quot;')+'">'+x+'</button>').join('')}
+function fieldHtml(){return '<div class="field"><input id="textAnswer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="введи ответ"></div>'}
+let mode='compress',index=0,correct=0,current=null,selected='',checked=false;
+function make(){
+ const pair=compressPairs[Math.floor(Math.random()*compressPairs.length)];
+ if(mode==='compress')return{q:'Запиши адрес в канонической сокращённой форме:<br><code>'+pair[0]+'</code>',answer:pair[1],input:true,e:'Убираем ведущие нули в группах, затем одну самую длинную последовательность нулевых групп заменяем на ::. При равной длине выбираем первую слева; одиночную нулевую группу не сжимаем.'};
+ if(mode==='expand')return{q:'Разверни до восьми групп по 4 hex-цифры:<br><code>'+pair[1]+'</code>',answer:pair[0],input:true,e:'На месте :: возвращаем столько групп 0000, чтобы всего снова стало восемь групп.'};
+ if(mode==='type'){const pool=[['2001:db8:1234::10','Global Unicast'],['fe80::21c:7eff:fe12:3456','Link-Local'],['fd12:3456:789a::1','Unique Local'],['ff02::1','Multicast'],['::1','Loopback']],p=pool[Math.floor(Math.random()*pool.length)],opts=['Global Unicast','Link-Local','Unique Local','Multicast','Loopback'];return{q:'Какой это тип адреса?<br><code>'+p[0]+'</code>',answer:p[1],opts:shuffled(opts),e:'Ориентир по началу адреса: 2000::/3 — global, fe80::/10 — link-local, fc00::/7 — unique local, ff00::/8 — multicast, ::1 — loopback. 2001:db8::/32 имеет формат Global Unicast, но выделен для документации и не предназначен для публичной маршрутизации.'}}
+ if(mode==='prefix'){const pool=['2001:db8:1234:5678:abcd:ef01:2345:6789','fd12:3456:789a:10::25','2001:db8:aa:bb:1:2:3:4'],a=pool[Math.floor(Math.random()*pool.length)];return{q:'Какой префикс сети /64 у адреса?<br><code>'+a+'/64</code>',answer:prefix64(a),input:true,e:'При /64 сеть — первые четыре группы по 16 бит. Остальные 64 бита относятся к идентификатору интерфейса.'}}
+ const c=concepts[Math.floor(Math.random()*concepts.length)];return{q:c.q,answer:c.a,opts:shuffled(c.opts),e:c.e}
+}
+function render(){current=make();selected='';checked=false;$('round').textContent='Задание '+(index+1)+' из '+TOTAL;$('score').textContent=correct+' верно';$('bar').style.width=(index/TOTAL*100)+'%';$('question').innerHTML=current.q;$('answers').innerHTML=current.input?fieldHtml():choiceHtml(current.opts);document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{selected=b.dataset.value;document.querySelectorAll('.choice').forEach(x=>x.classList.toggle('selected',x===b))});$('feedback').className='feedback hidden';$('check').classList.remove('hidden');$('next').classList.add('hidden');$('restart').classList.add('hidden')}
+function norm(s){return String(s||'').trim().toLowerCase()}
+function check(){if(checked)return;const given=current.input?$('textAnswer').value:selected;if(!norm(given))return;const ok=mode==='prefix'?samePrefix64(given,current.answer):norm(given)===norm(current.answer);checked=true;document.querySelectorAll('.choice,#textAnswer').forEach(el=>el.disabled=true);if(ok)correct++;$('feedback').className='feedback '+(ok?'good':'bad');$('feedback').innerHTML='<strong>'+(ok?'Верно!':'Не совсем.')+'</strong>'+(ok?'':'Правильный ответ: <code>'+current.answer+'</code><br>')+current.e;$('score').textContent=correct+' верно';$('check').classList.add('hidden');$('next').classList.remove('hidden');saveOne(ok)}
+function next(){index++;if(index<TOTAL)render();else finish()}
+function finish(){const s=loadStats();s.best=Math.max(s.best||0,correct);saveStats(s);$('bar').style.width='100%';$('question').innerHTML='Подход завершён: <code>'+correct+' из '+TOTAL+'</code>';$('answers').innerHTML='';$('feedback').className='feedback '+(correct>=8?'good':'bad');$('feedback').innerHTML=correct>=8?'<strong>Отлично.</strong>Основные конструкции IPv6 уже начинают читаться глазами.':'<strong>Нормально.</strong>Вернись к пяти ступеням выше и сделай ещё один короткий подход.';$('next').classList.add('hidden');$('restart').classList.remove('hidden');updateStats()}
+function restart(){index=0;correct=0;render()}
+function loadStats(){let s;try{s=JSON.parse(localStorage.getItem('ipv6TrainerStats'))}catch{}const n=k=>Number.isSafeInteger(s?.[k])&&s[k]>=0?s[k]:0;const done=n('done');return{done,right:Math.min(done,n('right')),best:Math.min(10,n('best'))}}
+function saveStats(s){try{localStorage.setItem('ipv6TrainerStats',JSON.stringify(s))}catch{}}
+function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||0)+(ok?1:0);saveStats(s);updateStats()}
+function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=(s.best||0)+'/10'}
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('check').classList.contains('hidden'))check()});updateStats();render();
+})();
+</script>
+</body>
+</html>
