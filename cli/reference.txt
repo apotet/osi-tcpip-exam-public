@@ -1,5 +1,5 @@
 NET CLI — команды и рабочие сценарии
-https://osi-tcpip-exam.pages.dev/cli/
+https://apotet.github.io/osi-tcpip-exam-public/cli/
 Примеры относятся к указанным семействам и версиям ОС. Поддержка функций зависит от модели.
 
 ## Проверить состояние портов
