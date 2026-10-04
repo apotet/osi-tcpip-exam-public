@@ -12,6 +12,14 @@ for(const q of topics){
  if(q.answers.some(a=>/^L[1-7]$/.test(a)))assert(!/\bL[1-7]\b/.test(q.topic),`Level leaked by topic: ${q.id}`);
 }
 const photoChecks=[];
+const technicalTerms=/\b(?:ICMP|TLS|SLAAC|NDP|ARP|STP|RSTP|LACP|MRP|DHCP|SSH|HTTP|HTTPS|TCP|UDP|DNS|SNMP|IGMP|PTP|LLDP|Syslog|PoE|VLAN)\b/gi;
+for(const q of bank){
+ // TCP/IP names the whole model, not a particular answer-bearing protocol.
+ const terms=(q.topic.replace(/^TCP\/IP · /,'').match(technicalTerms)||[])
+  .filter(t=>!q.text.toLowerCase().includes(t.toLowerCase()));
+ const hinted=q.answers.map(a=>terms.some(t=>a.toLowerCase().includes(t.toLowerCase())));
+ assert(!(hinted.some((h,i)=>h&&q.correct.includes(i))&&!hinted.some((h,i)=>h&&!q.correct.includes(i))),`Technical answer hinted by topic: ${q.id}`);
+}
 for(const q of bank.filter(q=>q.id.startsWith('photo-'))){
  assert(q.imageAlt&&q.imageAlt.trim(),`Missing alt: ${q.id}`);
  for(const i of q.correct)assert(!q.imageAlt.toLowerCase().includes(q.answers[i].toLowerCase()),`Exact photo answer in alt: ${q.id}`);
