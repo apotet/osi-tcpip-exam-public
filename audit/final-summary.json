@@ -1,0 +1,399 @@
+{
+  "run": "final-c683fc7-20261004",
+  "candidate": "c683fc7d155e662ad49a6e892de5d7b925992795",
+  "browser": {
+    "total": 285,
+    "pass": 285,
+    "fail": 0,
+    "skip": 0,
+    "statuses": {
+      "passed": 285
+    },
+    "perProject": {
+      "chromium-360": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "chromium-390": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "chromium-430": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "chromium-768": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "chromium-1440": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit-360": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit-390": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit-430": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit-768": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit-1440": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox-360": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox-390": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox-430": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox-768": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox-1440": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    "retried": 0,
+    "runnerErrors": [],
+    "durationMs": 1832247.609
+  },
+  "static": {
+    "questions": 343,
+    "groups": {
+      "l1-l2": 43,
+      "l3": 128,
+      "l4": 46,
+      "l5-l7": 40,
+      "tcpip": 23,
+      "troubleshooting": 39,
+      "visual-l1": 24
+    },
+    "duplicateTexts": [],
+    "ipv4": {
+      "masks": 33,
+      "subnets": 11500,
+      "vlsm": 2000,
+      "seed": "0x51a7",
+      "hostRange": "/8–/30; /31 and /32 are table-only special cases"
+    },
+    "totalAssetBytes": 2681191,
+    "unreferencedFunctionCandidates": []
+  },
+  "ipv6": {
+    "status": "pass",
+    "oracle": "Python ipaddress",
+    "seed": "0x6a17",
+    "valid": 2009,
+    "invalid": 13,
+    "prefixRejections": 5,
+    "fixed": [
+      "::",
+      "::1",
+      "1::",
+      "2001:DB8::42",
+      "1:0:2:3:4:5:6:7",
+      "1:0:0:2:0:0:3:4",
+      "0:0:1:2:3:4:0:0",
+      "1:2:3:4:5:6:7:8",
+      " 2001:0DB8::0001 "
+    ],
+    "excluded": "IPv4-embedded and zone IDs are outside current trainer grammar; prefix64 called only with valid addresses"
+  },
+  "links": {
+    "internalUrls": 93,
+    "resources": 38,
+    "failures": [],
+    "urls": [
+      "/assets/cheatsheets/l1.svg",
+      "/assets/cheatsheets/l2.svg",
+      "/assets/cheatsheets/l3.svg",
+      "/assets/cheatsheets/l4.svg",
+      "/assets/cheatsheets/l5.svg",
+      "/assets/cheatsheets/l6.svg",
+      "/assets/cheatsheets/l7.svg",
+      "/assets/photos/dirty-fiber-end.webp",
+      "/assets/photos/ethernet-switch.webp",
+      "/assets/photos/fc-apc-patchcord.webp",
+      "/assets/photos/fiber-cable-12.webp",
+      "/assets/photos/fiber-patch-panel.webp",
+      "/assets/photos/gbic-sfp.webp",
+      "/assets/photos/lc-connector.webp",
+      "/assets/photos/lc-sc-connectors.webp",
+      "/assets/photos/optical-patchcords.webp",
+      "/assets/photos/otdr.webp",
+      "/assets/photos/sc-connector.webp",
+      "/assets/photos/sfp-multimode.webp",
+      "/assets/photos/sfp-rx-tx.webp",
+      "/assets/photos/sm-mm-cords.webp",
+      "/assets/photos/st-connector.webp",
+      "/assets/photos/xfp-sfpplus.webp",
+      "/cli/",
+      "/cli/#",
+      "/cli/app.js",
+      "/cli/data.js",
+      "/cli/extensions.js",
+      "/cli/quiz-utils.js",
+      "/cli/read.html",
+      "/cli/read.html#commands",
+      "/cli/read.html#host-capture",
+      "/cli/read.html#host-ip",
+      "/cli/read.html#host-ipv6",
+      "/cli/read.html#host-ipv6-neigh",
+      "/cli/read.html#host-ipv6-ping",
+      "/cli/read.html#host-ipv6-ra",
+      "/cli/read.html#host-listen",
+      "/cli/read.html#host-mtu",
+      "/cli/read.html#host-tcp",
+      "/cli/read.html#protocols",
+      "/cli/read.html#scenarios",
+      "/cli/read.html#task-access",
+      "/cli/read.html#task-acl",
+      "/cli/read.html#task-arp",
+      "/cli/read.html#task-config",
+      "/cli/read.html#task-create",
+      "/cli/read.html#task-errdisable",
+      "/cli/read.html#task-hsrp",
+      "/cli/read.html#task-igmp",
+      "/cli/read.html#task-ip",
+      "/cli/read.html#task-ipv6-neighbors",
+      "/cli/read.html#task-ipv6-ra",
+      "/cli/read.html#task-ipv6-route",
+      "/cli/read.html#task-lacp",
+      "/cli/read.html#task-lldp",
+      "/cli/read.html#task-logs",
+      "/cli/read.html#task-mac",
+      "/cli/read.html#task-membership",
+      "/cli/read.html#task-mirror",
+      "/cli/read.html#task-mrp",
+      "/cli/read.html#task-mrpcounter",
+      "/cli/read.html#task-nat",
+      "/cli/read.html#task-noshutdown",
+      "/cli/read.html#task-ntp",
+      "/cli/read.html#task-ospf",
+      "/cli/read.html#task-ping",
+      "/cli/read.html#task-poe",
+      "/cli/read.html#task-port",
+      "/cli/read.html#task-portconfig",
+      "/cli/read.html#task-ports",
+      "/cli/read.html#task-reloadcancel",
+      "/cli/read.html#task-reloadtimer",
+      "/cli/read.html#task-route",
+      "/cli/read.html#task-save",
+      "/cli/read.html#task-security",
+      "/cli/read.html#task-sfp",
+      "/cli/read.html#task-snmp-check",
+      "/cli/read.html#task-snooping",
+      "/cli/read.html#task-ssh-check",
+      "/cli/read.html#task-stp",
+      "/cli/read.html#task-trunk",
+      "/cli/read.html#task-version",
+      "/cli/read.html#task-vrrp",
+      "/cli/reference.txt",
+      "/cli/scenarios.js",
+      "/cli/style.css",
+      "/favicon.svg",
+      "/index.html",
+      "/ipv4.html",
+      "/ipv6.html",
+      "/quiz/engine.js",
+      "/quiz/questions.js"
+    ]
+  },
+  "resources": [
+    {
+      "route": "/",
+      "documentBytes": 143833,
+      "resourceBytes": 223827,
+      "requests": 3,
+      "loadMs": 132
+    },
+    {
+      "route": "/ipv4.html",
+      "documentBytes": 23466,
+      "resourceBytes": 0,
+      "requests": 1,
+      "loadMs": 37
+    },
+    {
+      "route": "/ipv6.html",
+      "documentBytes": 22763,
+      "resourceBytes": 0,
+      "requests": 1,
+      "loadMs": 35
+    },
+    {
+      "route": "/cli/",
+      "documentBytes": 230161,
+      "resourceBytes": 175741,
+      "requests": 7,
+      "loadMs": 179
+    },
+    {
+      "route": "/cli/read.html",
+      "documentBytes": 229342,
+      "resourceBytes": 6199,
+      "requests": 2,
+      "loadMs": 61
+    }
+  ],
+  "favicon": {
+    "checks": 15,
+    "errors": [],
+    "results": [
+      {
+        "browser": "chromium",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "chromium",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "webkit",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "firefox",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      }
+    ]
+  },
+  "rawDirectory": "/workspace/osi-tcpip-exam-public/audit/runs/final-c683fc7-20261004",
+  "traceCount": 285,
+  "completedUTC": "2026-10-04T12:28:23.326661+00:00",
+  "checks": {
+    "static": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "ipv6Oracle": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "links": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "resourcesMeasurement": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "favicon": {
+      "pass": 15,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    }
+  },
+  "remoteComparison": {
+    "checkedUTC": "2026-10-04T12:26:43.313287+00:00",
+    "candidate": "c683fc7d155e662ad49a6e892de5d7b925992795",
+    "remoteMain": "ac6c297421e0e4843bfd0451700f08532db0f514",
+    "behind": 0,
+    "ahead": 20,
+    "mergeBase": "ac6c297421e0e4843bfd0451700f08532db0f514",
+    "mergeTreeExit": 0,
+    "mergeTreeOutput": "11bebad36107a9e2600cdc6722132b5576bb3a14",
+    "conflicts": false
+  }
+}

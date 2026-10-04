@@ -3,7 +3,7 @@
 Итоговая оценка покрытия, ручные проверки и условия merge:
 [Habr Stage 1 acceptance report](../HABR_STAGE_1_ACCEPTANCE_REPORT.md).
 
-Требуются Node.js 20+ и Python 3. Из корня репозитория:
+Требуются Node.js 20+ и Python 3 (включая stdlib ipaddress для независимого IPv6 oracle). Из корня репозитория:
 
 ```sh
 npm ci
@@ -13,8 +13,11 @@ npm test
 
 `npm run audit:static` проверяет банк, семьи вопросов, ссылки на подробные
 пояснения, реальные функции IPv4, VLSM, размеры и SHA-256 ресурсов.
-`npm run audit:browser` запускает 135 сценариев: три движка × пять viewport
-(360, 390, 430, 768, 1440 px) × девять сценариев.
+`npm run audit:browser` запускает 285 сценариев: три движка × пять viewport
+(360, 390, 430, 768, 1440 px) × 19 сценариев (9 базовых + 10 acceptance).
+`npm test` выполняет static, независимый IPv6 oracle и browser matrix.
+Сводка последней финальной приёмки — [final-summary.json](final-summary.json).
+Старые `*-summary.json` сохраняют историю предыдущих прогонов и не входят в финальный итог.
 Playwright сам запускает локальный HTTP-сервер на 127.0.0.1:4173.
 
 Проверяются все пять HTML-страниц, внутренние href/src и fragment ID,
