@@ -1,0 +1,346 @@
+{
+  "candidate": "ee74aae83e1b1eeaa867c0a5f2393697223008dd",
+  "base": "a1131011fd5165f901703b553111e9fbdd683dd1",
+  "completedAt": "2026-10-04T18:37:53.774286+00:00",
+  "counterId": null,
+  "browser": {
+    "pass": 480,
+    "fail": 0,
+    "skip": 0
+  },
+  "stage1": {
+    "pass": 285,
+    "fail": 0,
+    "skip": 0
+  },
+  "analytics": {
+    "pass": 195,
+    "fail": 0,
+    "skip": 0
+  },
+  "projects": {
+    "chromium-1440": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "chromium-360": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "chromium-390": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "chromium-430": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "chromium-768": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox-1440": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox-360": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox-390": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox-430": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox-768": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit-1440": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit-360": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit-390": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit-430": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit-768": {
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "rawStats": {
+    "startTime": "2026-10-04T17:41:07.387Z",
+    "duration": 3326323.595,
+    "expected": 480,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "sourceHashesMatch": true,
+  "traces": 480,
+  "rawPath": "audit/runs/stage2-final-20261004/",
+  "analyticsUnit": {
+    "pass": 11,
+    "fail": 0,
+    "skip": 0,
+    "realNetworkRequests": 0
+  },
+  "links": {
+    "internalUrls": 95,
+    "resources": 40,
+    "failures": []
+  },
+  "favicon": {
+    "checks": 15,
+    "errors": [],
+    "results": [
+      {
+        "browser": "chromium",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "chromium",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "chromium",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "webkit",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "webkit",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/ipv4.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/ipv6.html",
+        "iconStatus": 200
+      },
+      {
+        "browser": "firefox",
+        "route": "/cli/",
+        "iconStatus": "inline SVG"
+      },
+      {
+        "browser": "firefox",
+        "route": "/cli/read.html",
+        "iconStatus": 200
+      }
+    ]
+  },
+  "resources": [
+    {
+      "route": "/",
+      "documentBytes": 144605,
+      "resourceBytes": 230314,
+      "requests": 5,
+      "loadMs": 118,
+      "resources": [
+        {
+          "path": "/analytics/config.js",
+          "bytes": 307
+        },
+        {
+          "path": "/analytics/analytics.js",
+          "bytes": 4671
+        },
+        {
+          "path": "/quiz/questions.js",
+          "bytes": 222661
+        },
+        {
+          "path": "/quiz/engine.js",
+          "bytes": 2675
+        }
+      ]
+    },
+    {
+      "route": "/ipv4.html",
+      "documentBytes": 23647,
+      "resourceBytes": 4978,
+      "requests": 3,
+      "loadMs": 123,
+      "resources": [
+        {
+          "path": "/analytics/config.js",
+          "bytes": 307
+        },
+        {
+          "path": "/analytics/analytics.js",
+          "bytes": 4671
+        }
+      ]
+    },
+    {
+      "route": "/ipv6.html",
+      "documentBytes": 22888,
+      "resourceBytes": 4978,
+      "requests": 3,
+      "loadMs": 112,
+      "resources": [
+        {
+          "path": "/analytics/config.js",
+          "bytes": 307
+        },
+        {
+          "path": "/analytics/analytics.js",
+          "bytes": 4671
+        }
+      ]
+    },
+    {
+      "route": "/cli/",
+      "documentBytes": 230291,
+      "resourceBytes": 180719,
+      "requests": 9,
+      "loadMs": 178,
+      "resources": [
+        {
+          "path": "/cli/style.css",
+          "bytes": 6199
+        },
+        {
+          "path": "/analytics/config.js",
+          "bytes": 307
+        },
+        {
+          "path": "/analytics/analytics.js",
+          "bytes": 4671
+        },
+        {
+          "path": "/cli/data.js",
+          "bytes": 25414
+        },
+        {
+          "path": "/cli/scenarios.js",
+          "bytes": 64480
+        },
+        {
+          "path": "/cli/quiz-utils.js",
+          "bytes": 3297
+        },
+        {
+          "path": "/cli/extensions.js",
+          "bytes": 42931
+        },
+        {
+          "path": "/cli/app.js",
+          "bytes": 33420
+        }
+      ]
+    },
+    {
+      "route": "/cli/read.html",
+      "documentBytes": 229472,
+      "resourceBytes": 11177,
+      "requests": 4,
+      "loadMs": 104,
+      "resources": [
+        {
+          "path": "/cli/style.css",
+          "bytes": 6199
+        },
+        {
+          "path": "/analytics/config.js",
+          "bytes": 307
+        },
+        {
+          "path": "/analytics/analytics.js",
+          "bytes": 4671
+        }
+      ]
+    }
+  ],
+  "content": {
+    "status": "pass",
+    "questions": 321,
+    "deletedIDsChecked": 22,
+    "selectionRuns": 8000,
+    "selectedRecords": 80000,
+    "renamedTopicsChecked": 62,
+    "photoAltsChecked": 20,
+    "exactDuplicates": 0,
+    "limitations": [
+      "Semantic similarity and answer-length cues need editorial judgement.",
+      "Pattern checks cover exact answer/level/object leaks, not all paraphrases or text printed inside images.",
+      "Original OSI/ARP classification and ambiguous delete/replace decisions remain in CONTENT_MANUAL_REVIEW.md."
+    ],
+    "bankSHA256": "788d8ab9206076cc0028d6c376d7f7261608e53981ae700f76835702e1679cc6"
+  },
+  "shuffle": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Real UI, controlled copies of real single/multiple question records; seeded RNG. Not a full acceptance run or semantic answer validation."
+  }
+}
