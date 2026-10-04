@@ -30,6 +30,7 @@ python3 -m http.server 4173 --bind 127.0.0.1
 # В другом терминале:
 npm run audit:resources
 npm run audit:links
+npm run audit:icons
 ```
 
 JSON-результаты находятся в `audit/results/`, скриншоты и failure traces —

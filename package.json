@@ -7,7 +7,8 @@
     "audit:static": "node audit/static.cjs",
     "audit:browser": "playwright test",
     "audit:links": "node audit/links.cjs",
-    "audit:resources": "node audit/resources.cjs"
+    "audit:resources": "node audit/resources.cjs",
+    "audit:icons": "node audit/favicon.cjs"
   },
   "repository": {
     "type": "git",
