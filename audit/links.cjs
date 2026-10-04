@@ -34,7 +34,7 @@ const fs=require('node:fs');
       else if(url.hash){const id=decodeURIComponent(url.hash.slice(1));if(!result.body.includes(`id="${id}"`)&&!result.body.includes(`id='${id}'`))failures.push({href,error:'Missing fragment ID'});}
     }
     const report={internalUrls:urls.size,resources:bodies.size,failures,urls:[...urls].map(u=>u.replace('http://127.0.0.1:4173','')).sort()};
-    fs.mkdirSync('audit/results',{recursive:true});fs.writeFileSync('audit/results/links.json',JSON.stringify(report,null,2)+'\n');
+    fs.mkdirSync((process.env.AUDIT_RUN_DIR||'audit/results'),{recursive:true});fs.writeFileSync(`${process.env.AUDIT_RUN_DIR||'audit/results'}/links.json`,JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({internalUrls:urls.size,resources:bodies.size,failures},null,2));
     if(failures.length)process.exitCode=1;
   }finally{await browser.close();}

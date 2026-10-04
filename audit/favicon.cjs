@@ -29,7 +29,7 @@ const fs=require('node:fs');
       assert.deepEqual(errors,[],name);
     }finally{await browser.close();}
   }
-  fs.mkdirSync('audit/results',{recursive:true});
-  fs.writeFileSync('audit/results/favicon.json',JSON.stringify({checks:results.length,errors:[],results},null,2)+'\n');
+  fs.mkdirSync((process.env.AUDIT_RUN_DIR||'audit/results'),{recursive:true});
+  fs.writeFileSync(`${process.env.AUDIT_RUN_DIR||'audit/results'}/favicon.json`,JSON.stringify({checks:results.length,errors:[],results},null,2)+'\n');
   console.log('15 favicon/page checks passed');
 })().catch(e=>{console.error(e);process.exitCode=1});

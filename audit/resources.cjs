@@ -16,7 +16,7 @@ const fs=require('node:fs');
       await context.close();
     }
   }finally{await browser.close();}
-  fs.mkdirSync('audit/results',{recursive:true});
-  fs.writeFileSync('audit/results/resources.json',JSON.stringify(results,null,2)+'\n');
+  fs.mkdirSync((process.env.AUDIT_RUN_DIR||'audit/results'),{recursive:true});
+  fs.writeFileSync(`${process.env.AUDIT_RUN_DIR||'audit/results'}/resources.json`,JSON.stringify(results,null,2)+'\n');
   console.log(JSON.stringify(results.map(({resources,...r})=>r),null,2));
 })().catch(e=>{console.error(e);process.exitCode=1});

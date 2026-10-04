@@ -3,3 +3,5 @@ playwright-report/
 test-results/
 test-results-*/
 audit/results/
+
+audit/runs/

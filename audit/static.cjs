@@ -3,7 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
-fs.mkdirSync('audit/results', {recursive:true});
+fs.mkdirSync((process.env.AUDIT_RUN_DIR||'audit/results'), {recursive:true});
 const ctx = {window:{}};
 vm.runInNewContext(fs.readFileSync('quiz/questions.js','utf8'), ctx);
 const bank = ctx.window.QUESTION_BANK;
@@ -68,5 +68,5 @@ const assets=walk('assets').map(file=>({file,bytes:fs.statSync(file).size,hash:c
 const functions=[];
 for(const file of files.filter(f=>/\.(js|html)$/.test(f))){const s=fs.readFileSync(file,'utf8');for(const m of s.matchAll(/function\s+(\w+)\s*\(/g)){const name=m[1],count=(source.match(new RegExp(`\\b${name}\\b`,'g'))||[]).length;if(count===1)functions.push({file,name});}}
 const result={questions:bank.length,groups,duplicateTexts:duplicates,ipv4:{masks:33,subnets:cases,vlsm:2000,seed:'0x51a7',hostRange:'/8–/30; /31 and /32 are table-only special cases'},assets,totalAssetBytes:assets.reduce((n,a)=>n+a.bytes,0),unreferencedFunctionCandidates:functions};
-fs.writeFileSync('audit/results/static.json',JSON.stringify(result,null,2)+'\n');
+fs.writeFileSync(`${process.env.AUDIT_RUN_DIR||'audit/results'}/static.json`,JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({questions:bank.length,groups,duplicateTexts:duplicates,ipv4:result.ipv4,totalAssetBytes:result.totalAssetBytes,unreferencedAssets:assets.filter(a=>!a.referenced).map(a=>a.file),unreferencedFunctionCandidates:functions},null,2));
