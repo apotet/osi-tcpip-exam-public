@@ -1,5 +1,8 @@
 # Воспроизводимый аудит Этапа 1
 
+Итоговая оценка покрытия, ручные проверки и условия merge:
+[Habr Stage 1 acceptance report](../HABR_STAGE_1_ACCEPTANCE_REPORT.md).
+
 Требуются Node.js 20+ и Python 3. Из корня репозитория:
 
 ```sh
