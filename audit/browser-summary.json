@@ -86,6 +86,13 @@
   "preparationFix": "Four Firefox OSI timeouts occurred because rapid summary clicks left details closed. Replaced preparation with native details.open and verified the open state. All 15 OSI project combinations passed on rerun.",
   "rawReports": [
     "audit/results/full-matrix.json",
-    "audit/results/osi-rerun.json"
-  ]
+    "audit/results/osi-rerun.json",
+    "audit/results/favicon.json"
+  ],
+  "faviconFollowUp": {
+    "checks": 15,
+    "errors": [],
+    "sourceCommit": "e7d52bf",
+    "summary": "audit/favicon-summary.json"
+  }
 }

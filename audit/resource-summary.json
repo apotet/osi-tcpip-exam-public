@@ -5,6 +5,7 @@
   },
   "transport": "localhost HTTP, uncompressed",
   "assetsBytes": 2681191,
+  "faviconBytes": 249,
   "largestAssets": [
     {
       "file": "assets/cheatsheets/l2.webp",
@@ -50,19 +51,19 @@
   "pages": [
     {
       "route": "/",
-      "documentBytes": 143776,
+      "documentBytes": 143833,
       "resourceBytes": 223827,
       "requests": 3
     },
     {
       "route": "/ipv4.html",
-      "documentBytes": 23409,
+      "documentBytes": 23466,
       "resourceBytes": 0,
       "requests": 1
     },
     {
       "route": "/ipv6.html",
-      "documentBytes": 22706,
+      "documentBytes": 22763,
       "resourceBytes": 0,
       "requests": 1
     },
@@ -74,7 +75,7 @@
     },
     {
       "route": "/cli/read.html",
-      "documentBytes": 229282,
+      "documentBytes": 229342,
       "resourceBytes": 6199,
       "requests": 2
     }

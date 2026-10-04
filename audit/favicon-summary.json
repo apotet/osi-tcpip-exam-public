@@ -1,0 +1,81 @@
+{
+  "checks": 15,
+  "errors": [],
+  "results": [
+    {
+      "browser": "chromium",
+      "route": "/",
+      "iconStatus": 200
+    },
+    {
+      "browser": "chromium",
+      "route": "/ipv4.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "chromium",
+      "route": "/ipv6.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "chromium",
+      "route": "/cli/",
+      "iconStatus": "inline SVG"
+    },
+    {
+      "browser": "chromium",
+      "route": "/cli/read.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "webkit",
+      "route": "/",
+      "iconStatus": 200
+    },
+    {
+      "browser": "webkit",
+      "route": "/ipv4.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "webkit",
+      "route": "/ipv6.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "webkit",
+      "route": "/cli/",
+      "iconStatus": "inline SVG"
+    },
+    {
+      "browser": "webkit",
+      "route": "/cli/read.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "firefox",
+      "route": "/",
+      "iconStatus": 200
+    },
+    {
+      "browser": "firefox",
+      "route": "/ipv4.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "firefox",
+      "route": "/ipv6.html",
+      "iconStatus": 200
+    },
+    {
+      "browser": "firefox",
+      "route": "/cli/",
+      "iconStatus": "inline SVG"
+    },
+    {
+      "browser": "firefox",
+      "route": "/cli/read.html",
+      "iconStatus": 200
+    }
+  ]
+}

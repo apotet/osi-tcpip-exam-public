@@ -1,6 +1,6 @@
 {
-  "internalUrls": 92,
-  "resources": 37,
+  "internalUrls": 93,
+  "resources": 38,
   "failures": [],
   "urls": [
     "/assets/cheatsheets/l1.svg",
@@ -90,6 +90,7 @@
     "/cli/reference.txt",
     "/cli/scenarios.js",
     "/cli/style.css",
+    "/favicon.svg",
     "/index.html",
     "/ipv4.html",
     "/ipv6.html",
