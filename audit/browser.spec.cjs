@@ -1,8 +1,8 @@
 const {test,expect}=require('@playwright/test');
-const fs=require('node:fs');
 const pages=['/','/ipv4.html','/ipv6.html','/cli/','/cli/read.html'];
 test.beforeEach(async({page})=>{
   page.auditErrors=[];
+  page.on('dialog',d=>d.accept());
   page.on('pageerror',e=>page.auditErrors.push(e.message));
   page.on('console',m=>{if(m.type()==='error')page.auditErrors.push(m.text());});
   page.on('response',r=>{if(r.status()>=400)page.auditErrors.push(`${r.status()} ${r.url()}`);});
@@ -44,6 +44,9 @@ test('OSI exam modes, results, learning and dialogs',async({page})=>{
     else await page.click('#exitButton');
   }
   await page.click('#learnNav');
+  for(const details of await page.locator('#learningScreen details').all()){
+    if(!await details.getAttribute('open') && !(await details.evaluate(e=>e.open)))await details.locator('summary').first().click();
+  }
   for(const b of await page.locator('[data-notes]').all()){
     await b.click();await expect(page.locator('#closeNotes')).toBeVisible();await layout(page);await page.click('#closeNotes');
   }
