@@ -1,0 +1,1210 @@
+{
+  "baseCommit": "1701a45",
+  "before": 343,
+  "after": 321,
+  "modifiedQuestions": 154,
+  "deletedQuestions": 22,
+  "renamedTopics": 62,
+  "changedPhotoAlts": 20,
+  "deletedIDs": [
+    "new-tcpip-map",
+    "new-tcpip-order",
+    "new-l4-flow",
+    "l4-06",
+    "gen-diag-1",
+    "k-12",
+    "k-13",
+    "photo-lc-sfp",
+    "photo-rxtx",
+    "photo-xfp-sfp",
+    "photo-color-warning",
+    "review-igmp-11",
+    "review-osi-31",
+    "review-osi-32",
+    "review-osi-33",
+    "review-osi-36",
+    "review-osi-37",
+    "review-osi-38",
+    "gen-osi-a-14",
+    "gen-osi-a-15",
+    "gen-osi-a-16",
+    "gen-osi-a-17"
+  ],
+  "changes": [
+    {
+      "id": "l1-01",
+      "fields": [
+        "topic",
+        "text",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l1-04",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-01",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-02",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "l2-04",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-06",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-08",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-09",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-10",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "l2-11",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l2-12",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-01",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-02",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-05",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-11",
+      "fields": [
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l3-13",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "l4-01",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l4-04",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l4-05",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l4-10",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l5-01",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "l5-02",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l6-01",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l6-02",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "l7-06",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tcp-07",
+      "fields": [
+        "text",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tcp-08",
+      "fields": [
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-01",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-03",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-04",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "tr-05",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-06",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-08",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "tr-09",
+      "fields": [
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-bin-dec-252",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-bin-dec-254",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-0",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-1",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-2",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-3",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-4",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-5",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-6",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-transport-7",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-8",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-9",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-10",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-11",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-12",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-13",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-14",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-15",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-16",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-transport-17",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-0",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-1",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-2",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-3",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-4",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-5",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-6",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-7",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-8",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-9",
+      "fields": [
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-osi-a-10",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-11",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-12",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-13",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-18",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-osi-a-19",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-diag-0",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-3",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-4",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-5",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-6",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-7",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-8",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-9",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-10",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "gen-diag-11",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-diag-12",
+      "fields": [
+        "answers"
+      ]
+    },
+    {
+      "id": "gen-diag-13",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "k-01",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-02",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-03",
+      "fields": [
+        "topic",
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "k-04",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-05",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-06",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "k-07",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-08",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-09",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-10",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "k-11",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "new-l2-switch-photo",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l2-patch-passive",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l2-full-duplex",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l3-next-hop",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l3-arp-scope",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "new-l4-udp-pdu",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l7-tls",
+      "fields": [
+        "topic",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-l7-dns",
+      "fields": [
+        "text",
+        "answers"
+      ]
+    },
+    {
+      "id": "new-l6-format",
+      "fields": [
+        "topic",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-ts-photo-panel",
+      "fields": [
+        "topic",
+        "answers"
+      ]
+    },
+    {
+      "id": "new-ts-vlan",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-ts-mtu",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-ts-duplex",
+      "fields": [
+        "topic",
+        "explanation"
+      ]
+    },
+    {
+      "id": "new-ts-dns",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "photo-lc",
+      "fields": [
+        "imageAlt"
+      ]
+    },
+    {
+      "id": "photo-sc",
+      "fields": [
+        "imageAlt"
+      ]
+    },
+    {
+      "id": "photo-st",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-fc",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-lc-sc-order",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-polarity",
+      "fields": [
+        "topic",
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-sfp",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-sfp-appearance",
+      "fields": [
+        "imageAlt"
+      ]
+    },
+    {
+      "id": "photo-formfactor-compat",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-gbic-sfp",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-sm-mm-colors",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-hybrid",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-patchcord",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-apc",
+      "fields": [
+        "imageAlt"
+      ]
+    },
+    {
+      "id": "photo-dirty-end",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-cleaning",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "correct",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-otdr",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-otdr-use",
+      "fields": [
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-cable",
+      "fields": [
+        "text",
+        "imageAlt",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "photo-panel",
+      "fields": [
+        "imageAlt",
+        "answers"
+      ]
+    },
+    {
+      "id": "eth-lacp",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ndp-1",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ndp-2",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "review-ndp-3",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-slaac-4",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-slaac-5",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-slaac-6",
+      "fields": [
+        "topic",
+        "answers"
+      ]
+    },
+    {
+      "id": "review-lldp-7",
+      "fields": [
+        "topic",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-lldp-8",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-igmp-9",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-igmp-10",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-prp-13",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-hsr-15",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ptp-16",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ptp-17",
+      "fields": [
+        "topic"
+      ]
+    },
+    {
+      "id": "review-ptp-18",
+      "fields": [
+        "topic",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-dot1x-19",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-dot1x-20",
+      "fields": [
+        "topic",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-qos-22",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-syslog-23",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-syslog-24",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ospf-27",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-ospf-28",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-poe-29",
+      "fields": [
+        "text",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-poe-30",
+      "fields": [
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-osi-34",
+      "fields": [
+        "topic",
+        "answers",
+        "explanation"
+      ]
+    },
+    {
+      "id": "review-osi-35",
+      "fields": [
+        "topic",
+        "text",
+        "answers",
+        "explanation"
+      ]
+    }
+  ],
+  "productCommit": "486708a6956a27d40bc9207ad1f64158e0cc0b22",
+  "reports": {
+    "questions": {
+      "filename": "audit questions.pdf",
+      "coverage": "l1-01 … new-ts-vlan",
+      "sha256": "9347ab0b37f3492de7bf825c33d77d1a25d386088e7dd358ec6030bce63ab50d"
+    },
+    "tail": {
+      "filename": "audit tail.pdf",
+      "coverage": "new-ts-vlan … review-osi-38",
+      "sha256": "39920e03cc12c115d6bd8f3a4a429fd9f42ae8747c6066381ad7fe3839d79b38"
+    }
+  },
+  "countDefinitions": {
+    "modifiedQuestions": "Surviving IDs with at least one changed field; deletions excluded.",
+    "renamedTopics": "Surviving IDs with changed topic.",
+    "changedPhotoAlts": "Surviving photo IDs with changed imageAlt; captions render this same field."
+  },
+  "bankSHA256": "788d8ab9206076cc0028d6c376d7f7261608e53981ae700f76835702e1679cc6"
+}

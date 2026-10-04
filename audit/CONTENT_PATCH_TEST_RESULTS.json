@@ -1,0 +1,152 @@
+{
+  "productCommit": "486708a6956a27d40bc9207ad1f64158e0cc0b22",
+  "bankSHA256": "788d8ab9206076cc0028d6c376d7f7261608e53981ae700f76835702e1679cc6",
+  "bankCounts": {
+    "before": 343,
+    "after": 321,
+    "modified": 154,
+    "deleted": 22,
+    "topics": 62,
+    "photoAlts": 20
+  },
+  "matrix": {
+    "pass": 285,
+    "fail": 0,
+    "skip": 0,
+    "byBrowser": {
+      "chromium": {
+        "pass": 95,
+        "fail": 0,
+        "skip": 0
+      },
+      "webkit": {
+        "pass": 95,
+        "fail": 0,
+        "skip": 0
+      },
+      "firefox": {
+        "pass": 95,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    "startTime": "2026-10-04T15:53:11.292Z",
+    "durationMs": 1954097.1619999998,
+    "workers": 3,
+    "traceCount": 285
+  },
+  "static": {
+    "questions": 321,
+    "groups": {
+      "l1-l2": 42,
+      "l3": 127,
+      "l4": 44,
+      "l5-l7": 30,
+      "tcpip": 21,
+      "troubleshooting": 37,
+      "visual-l1": 20
+    },
+    "duplicateTexts": [],
+    "ipv4": {
+      "masks": 33,
+      "subnets": 11500,
+      "vlsm": 2000,
+      "seed": "0x51a7",
+      "hostRange": "/8–/30; /31 and /32 are table-only special cases"
+    },
+    "totalAssetBytes": 2681191,
+    "unreferencedFunctionCandidates": []
+  },
+  "ipv6": {
+    "status": "pass",
+    "oracle": "Python ipaddress",
+    "seed": "0x6a17",
+    "valid": 2009,
+    "invalid": 13,
+    "prefixRejections": 5,
+    "fixed": [
+      "::",
+      "::1",
+      "1::",
+      "2001:DB8::42",
+      "1:0:2:3:4:5:6:7",
+      "1:0:0:2:0:0:3:4",
+      "0:0:1:2:3:4:0:0",
+      "1:2:3:4:5:6:7:8",
+      " 2001:0DB8::0001 "
+    ],
+    "excluded": "IPv4-embedded and zone IDs are outside current trainer grammar; prefix64 called only with valid addresses"
+  },
+  "contentChecks": {
+    "status": "pass",
+    "questions": 321,
+    "deletedIDsChecked": 22,
+    "selectionRuns": 8000,
+    "selectedRecords": 80000,
+    "renamedTopicsChecked": 62,
+    "photoAltsChecked": 20,
+    "exactDuplicates": 0,
+    "limitations": [
+      "Semantic similarity and answer-length cues need editorial judgement.",
+      "Pattern checks cover exact answer/level/object leaks, not all paraphrases or text printed inside images.",
+      "Original OSI/ARP classification and ambiguous delete/replace decisions remain in CONTENT_MANUAL_REVIEW.md."
+    ],
+    "bankSHA256": "788d8ab9206076cc0028d6c376d7f7261608e53981ae700f76835702e1679cc6"
+  },
+  "hostAnswerOracle": {
+    "id": "l3-11",
+    "oracle": "Python ipaddress.hosts",
+    "status": "pass",
+    "expectedIndices": [
+      0,
+      1
+    ],
+    "actualIndices": [
+      0,
+      1
+    ],
+    "network": "10.0.0.0/28"
+  },
+  "preservedFields": {
+    "status": "pass",
+    "survivingQuestions": 321,
+    "preservedFields": [
+      "id",
+      "group",
+      "family",
+      "template",
+      "image",
+      "graphic",
+      "source",
+      "sourceLabel"
+    ]
+  },
+  "links": {
+    "pass": 93,
+    "fail": 0,
+    "skip": 0,
+    "resources": 38
+  },
+  "favicon": {
+    "pass": 15,
+    "fail": 0,
+    "skip": 0
+  },
+  "resourceMeasurements": {
+    "pages": 5,
+    "mainInitialDecodedBytes": 368591
+  },
+  "shuffle": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0,
+    "observations": 80
+  },
+  "rawDirectory": "audit/runs/content-patch-final-20261004",
+  "excludedRuns": [
+    "../content-patch-preflight-20261004",
+    "../content-patch-preflight-topics-20261004",
+    "../content-patch-concurrency-20261004",
+    "../content-patch-preflight-token-20261004"
+  ]
+}
