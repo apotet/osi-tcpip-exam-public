@@ -971,6 +971,7 @@ window.QUESTION_BANK = [
   },
   {
     "id": "tcp-02",
+    "family": "tcpip-application-mapping",
     "group": "tcpip",
     "topic": "TCP/IP · Модель",
     "text": "Какие уровни OSI обычно объединяет прикладной уровень TCP/IP?",
@@ -4691,6 +4692,7 @@ window.QUESTION_BANK = [
   },
   {
     "id": "new-tcpip-map",
+    "family": "tcpip-application-mapping",
     "group": "tcpip",
     "topic": "OSI ↔ TCP/IP",
     "text": "Какие уровни OSI обычно объединяют в прикладной уровень TCP/IP?",

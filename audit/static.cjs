@@ -20,6 +20,17 @@ for (const q of bank) {
   const text=q.text.toLowerCase().replace(/\s+/g,' ').trim();
   if(texts.has(text)) duplicates.push([texts.get(text),q.id]); else texts.set(text,q.id);
 }
+const engine=require('../quiz/engine.js');
+for(const mode of ['mixed',...Object.keys(groups)]) for(let i=0;i<100;i++) {
+  const picked=engine.pick(bank,mode,engine.stats({}));
+  assert.equal(picked.length,10,mode);
+  assert.equal(new Set(picked.map(engine.family)).size,picked.length,`${mode}: repeated family`);
+}
+assert.equal(engine.family(bank.find(q=>q.id==='tcp-02')),engine.family(bank.find(q=>q.id==='new-tcpip-map')));
+const lessons=JSON.parse(fs.readFileSync('index.html','utf8').match(/const DETAIL_LESSONS = (\{.*?\});/)[1]);
+const mapping=JSON.parse(fs.readFileSync('index.html','utf8').match(/const DETAIL_BY_QUESTION = (\{.*?\});/)[1]);
+for(const [id,lesson] of Object.entries(mapping)){assert(ids.has(id),`Obsolete lesson mapping: ${id}`);assert(lessons[lesson],`Missing lesson: ${lesson}`);}
+assert(Object.keys(lessons).every(k=>Object.values(mapping).includes(k)), 'Unused detailed lesson');
 // Evaluate the actual production functions, without copying their implementation.
 const html=fs.readFileSync('ipv4.html','utf8');
 const code=html.slice(html.indexOf('function maskInt('),html.indexOf('function interesting('));
