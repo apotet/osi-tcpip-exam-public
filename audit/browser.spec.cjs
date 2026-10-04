@@ -72,9 +72,11 @@ test('CLI vendors, cards, filters, exam, host and scenarios',async({page})=>{
   for(const vendor of await page.locator('#vendor option').evaluateAll(els=>els.map(e=>e.value))){
     await page.selectOption('#vendor',vendor);
     // Open every command/protocol card for this vendor and check dynamic DOM/resources.
-    for(const card of await page.locator('#results .card').all()){
-      await card.locator('summary').click();await expect(card.locator('.detail')).not.toBeEmpty();await layout(page);await card.locator('summary').click();
-    }
+    // Native toggle events populate the cards; batch expansion avoids spending the
+    // audit on scrolling hundreds of summaries for every viewport and engine.
+    await page.locator('#results .card').evaluateAll(cards=>cards.forEach(c=>c.open=true));
+    await expect.poll(()=>page.locator('#results .detail').evaluateAll(els=>els.every(e=>e.textContent.trim()))).toBe(true);
+    await layout(page);
   }
   await page.fill('#search','VLAN');await expect(page.locator('#results .card').first()).toBeVisible();await page.fill('#search','zzzz-no-match');await expect(page.locator('#results .empty')).toBeVisible();await page.fill('#search','');
   for(const kind of ['commands','protocols','favorites','all']){await page.selectOption('#kind',kind);await layout(page);}
