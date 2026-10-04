@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "node audit/static.cjs && playwright test",
+    "test": "node audit/static.cjs && node audit/ipv6.cjs && playwright test",
     "audit:static": "node audit/static.cjs",
     "audit:browser": "playwright test",
     "audit:links": "node audit/links.cjs",
