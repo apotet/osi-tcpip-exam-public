@@ -1,4 +1,4 @@
-const {test,expect}=require('@playwright/test');
+const {test,expect}=require('./test-fixture.cjs');
 const fixtures=Array.from({length:10},(_,i)=>({id:`audit-${i}`,group:'l1-l2',topic:'Acceptance control',text:`Control ${i}`,answers:['A','B','C','D'],correct:i%2?[0,2]:[0],explanation:'Synthetic acceptance fixture; not published content.'}));
 async function setup(page){
   await page.route('**/quiz/questions.js',r=>r.fulfill({contentType:'application/javascript',body:`window.QUESTION_BANK=${JSON.stringify(fixtures)};`}));

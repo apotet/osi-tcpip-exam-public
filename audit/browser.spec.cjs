@@ -1,4 +1,4 @@
-const {test,expect}=require('@playwright/test');
+const {test,expect}=require('./test-fixture.cjs');
 const pages=['/','/ipv4.html','/ipv6.html','/cli/','/cli/read.html'];
 test.beforeEach(async({page})=>{
   page.auditErrors=[];
