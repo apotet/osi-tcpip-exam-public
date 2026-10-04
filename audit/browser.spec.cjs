@@ -44,9 +44,8 @@ test('OSI exam modes, results, learning and dialogs',async({page})=>{
     else await page.click('#exitButton');
   }
   await page.click('#learnNav');
-  for(const details of await page.locator('#learningScreen details').all()){
-    if(!await details.getAttribute('open') && !(await details.evaluate(e=>e.open)))await details.locator('summary').first().click();
-  }
+  await page.locator('#learningScreen details').evaluateAll(els=>els.forEach(e=>e.open=true));
+  await expect.poll(()=>page.locator('#learningScreen details').evaluateAll(els=>els.every(e=>e.open))).toBe(true);
   for(const b of await page.locator('[data-notes]').all()){
     await b.click();await expect(page.locator('#closeNotes')).toBeVisible();await layout(page);await page.click('#closeNotes');
   }
