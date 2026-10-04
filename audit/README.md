@@ -26,11 +26,14 @@ reload/Back/Forward, console.error, pageerror, HTTP 4xx/5xx и ошибки за
 ```sh
 python3 -m http.server 4173 --bind 127.0.0.1
 # В другом терминале:
-node audit/resources.cjs
+npm run audit:resources
+npm run audit:links
 ```
 
 JSON-результаты находятся в `audit/results/`, скриншоты и failure traces —
-в `test-results/`. Эти каталоги исключены из git. Начальная загрузка измеряется
+в `test-results/`. `audit:links` дополнительно собирает ссылки из динамических
+CLI-карточек всех вендоров, сценариев и всех фото банка, затем проверяет HTTP
+и fragment ID с дедупликацией запросов. Эти каталоги исключены из git. Начальная загрузка измеряется
 в новом контексте Chromium на 390 px без сжатия, на localhost; время не является
 оценкой скорости GitHub Pages или мобильного соединения.
 

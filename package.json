@@ -5,7 +5,9 @@
   "scripts": {
     "test": "node audit/static.cjs && playwright test",
     "audit:static": "node audit/static.cjs",
-    "audit:browser": "playwright test"
+    "audit:browser": "playwright test",
+    "audit:links": "node audit/links.cjs",
+    "audit:resources": "node audit/resources.cjs"
   },
   "repository": {
     "type": "git",
