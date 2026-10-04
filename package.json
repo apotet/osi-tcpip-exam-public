@@ -1,0 +1,26 @@
+{
+  "name": "osi-tcpip-exam-public",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "node audit/static.cjs && playwright test",
+    "audit:static": "node audit/static.cjs",
+    "audit:browser": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apotet/osi-tcpip-exam-public.git"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/apotet/osi-tcpip-exam-public/issues"
+  },
+  "homepage": "https://github.com/apotet/osi-tcpip-exam-public#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "agent-browser": "^0.38.2"
+  },
+  "private": true
+}
