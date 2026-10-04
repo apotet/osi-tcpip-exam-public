@@ -1,0 +1,82 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "transport": "localhost HTTP, uncompressed",
+  "assetsBytes": 2681191,
+  "largestAssets": [
+    {
+      "file": "assets/cheatsheets/l2.webp",
+      "bytes": 236192
+    },
+    {
+      "file": "assets/cheatsheets/l1.webp",
+      "bytes": 231282
+    },
+    {
+      "file": "assets/cheatsheets/l7.webp",
+      "bytes": 217310
+    },
+    {
+      "file": "assets/cheatsheets/l6.webp",
+      "bytes": 212464
+    },
+    {
+      "file": "assets/cheatsheets/l3.webp",
+      "bytes": 207234
+    },
+    {
+      "file": "assets/cheatsheets/l4.webp",
+      "bytes": 204290
+    },
+    {
+      "file": "assets/cheatsheets/l5.webp",
+      "bytes": 203590
+    },
+    {
+      "file": "assets/photos/optical-patchcords.webp",
+      "bytes": 198888
+    },
+    {
+      "file": "assets/photos/sm-mm-cords.webp",
+      "bytes": 172320
+    },
+    {
+      "file": "assets/photos/fiber-patch-panel.webp",
+      "bytes": 117910
+    }
+  ],
+  "pages": [
+    {
+      "route": "/",
+      "documentBytes": 143776,
+      "resourceBytes": 223827,
+      "requests": 3
+    },
+    {
+      "route": "/ipv4.html",
+      "documentBytes": 23409,
+      "resourceBytes": 0,
+      "requests": 1
+    },
+    {
+      "route": "/ipv6.html",
+      "documentBytes": 22706,
+      "resourceBytes": 0,
+      "requests": 1
+    },
+    {
+      "route": "/cli/",
+      "documentBytes": 230161,
+      "resourceBytes": 175741,
+      "requests": 7
+    },
+    {
+      "route": "/cli/read.html",
+      "documentBytes": 229282,
+      "resourceBytes": 6199,
+      "requests": 2
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-04",
+  "playwright": "1.63.0",
+  "uniqueScenarios": 135,
+  "passed": 135,
+  "failed": 0,
+  "skipped": 0,
+  "projects": {
+    "chromium-360": {
+      "passed": 9,
+      "total": 9
+    },
+    "chromium-390": {
+      "passed": 9,
+      "total": 9
+    },
+    "chromium-430": {
+      "passed": 9,
+      "total": 9
+    },
+    "chromium-768": {
+      "passed": 9,
+      "total": 9
+    },
+    "chromium-1440": {
+      "passed": 9,
+      "total": 9
+    },
+    "webkit-360": {
+      "passed": 9,
+      "total": 9
+    },
+    "webkit-390": {
+      "passed": 9,
+      "total": 9
+    },
+    "webkit-430": {
+      "passed": 9,
+      "total": 9
+    },
+    "webkit-768": {
+      "passed": 9,
+      "total": 9
+    },
+    "webkit-1440": {
+      "passed": 9,
+      "total": 9
+    },
+    "firefox-360": {
+      "passed": 9,
+      "total": 9
+    },
+    "firefox-390": {
+      "passed": 9,
+      "total": 9
+    },
+    "firefox-430": {
+      "passed": 9,
+      "total": 9
+    },
+    "firefox-768": {
+      "passed": 9,
+      "total": 9
+    },
+    "firefox-1440": {
+      "passed": 9,
+      "total": 9
+    }
+  },
+  "fullRun": {
+    "startTime": "2026-10-04T10:31:36.966Z",
+    "duration": 877264.642,
+    "expected": 131,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "osiRerun": {
+    "startTime": "2026-10-04T10:46:46.503Z",
+    "duration": 265792.007,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "preparationFix": "Four Firefox OSI timeouts occurred because rapid summary clicks left details closed. Replaced preparation with native details.open and verified the open state. All 15 OSI project combinations passed on rerun.",
+  "rawReports": [
+    "audit/results/full-matrix.json",
+    "audit/results/osi-rerun.json"
+  ]
+}

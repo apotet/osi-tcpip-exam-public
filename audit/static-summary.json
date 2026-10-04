@@ -1,0 +1,26 @@
+{
+  "questions": 343,
+  "groups": {
+    "l1-l2": 43,
+    "l3": 128,
+    "l4": 46,
+    "l5-l7": 40,
+    "tcpip": 23,
+    "troubleshooting": 39,
+    "visual-l1": 24
+  },
+  "duplicateTexts": [],
+  "ipv4": {
+    "masks": 33,
+    "subnets": 11500,
+    "vlsm": 2000,
+    "seed": "0x51a7",
+    "hostRange": "/8–/30; /31 and /32 are table-only special cases"
+  },
+  "totalAssetBytes": 2681191,
+  "unreferencedFunctionCandidates": [],
+  "detailedLessons": 76,
+  "unusedRuntimeAssets": [
+    "assets/photos/credits.json (license metadata; retained)"
+  ]
+}
