@@ -1,0 +1,31 @@
+{
+  "commit": "8a8c11e798847b119e56efdf0d8298ce12a525df",
+  "bankSHA256": "03085486b75f8f053a8468de92eead00c3168f80e83205f41951f6aea09bec01",
+  "total": 343,
+  "reportedCoverage": {
+    "first": "l1-01",
+    "last": "new-ts-vlan",
+    "count": 273,
+    "independentlyConfirmedFullSemanticCoverage": false
+  },
+  "unreviewed": 70,
+  "boundaryIncludedForSafety": true,
+  "files": [
+    {
+      "json": "audit/claude-review/tail-part-1.json",
+      "markdown": "audit/claude-review/tail-part-1.md",
+      "count": 36,
+      "first": "new-ts-vlan",
+      "last": "review-ndp-3",
+      "markdownBytes": 32077
+    },
+    {
+      "json": "audit/claude-review/tail-part-2.json",
+      "markdown": "audit/claude-review/tail-part-2.md",
+      "count": 35,
+      "first": "review-slaac-4",
+      "last": "review-osi-38",
+      "markdownBytes": 32201
+    }
+  ]
+}
