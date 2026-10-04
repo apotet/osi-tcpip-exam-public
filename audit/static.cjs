@@ -26,7 +26,10 @@ for(const mode of ['mixed',...Object.keys(groups)]) for(let i=0;i<100;i++) {
   assert.equal(picked.length,10,mode);
   assert.equal(new Set(picked.map(engine.family)).size,picked.length,`${mode}: repeated family`);
 }
-assert.equal(engine.family(bank.find(q=>q.id==='tcp-02')),engine.family(bank.find(q=>q.id==='new-tcpip-map')));
+// The mapping duplicate was removed by the content audit; surviving service
+// questions still exercise the existing family exclusion contract.
+assert(!ids.has('new-tcpip-map'), 'Deleted mapping question returned');
+assert.equal(engine.family(bank.find(q=>q.id==='gen-port-1')),engine.family(bank.find(q=>q.id==='gen-transport-1')));
 const lessons=JSON.parse(fs.readFileSync('index.html','utf8').match(/const DETAIL_LESSONS = (\{.*?\});/)[1]);
 const mapping=JSON.parse(fs.readFileSync('index.html','utf8').match(/const DETAIL_BY_QUESTION = (\{.*?\});/)[1]);
 for(const [id,lesson] of Object.entries(mapping)){assert(ids.has(id),`Obsolete lesson mapping: ${id}`);assert(lessons[lesson],`Missing lesson: ${lesson}`);}
