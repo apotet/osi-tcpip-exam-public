@@ -26,7 +26,7 @@ for(const route of pages)test(`load, links, reload, history ${route}`,async({pag
   if(route!=='/') {await page.goto('/');await page.goBack();expect(new URL(page.url()).pathname).toBe(route);await page.goForward();expect(new URL(page.url()).pathname).toBe('/');await page.goBack();}
   const resources=await page.evaluate(()=>performance.getEntriesByType('resource').map(r=>({url:new URL(r.name).pathname,bytes:r.decodedBodySize,duration:r.duration})));
   await info.attach('resources',{body:JSON.stringify(resources,null,2),contentType:'application/json'});
-  await page.screenshot({path:info.outputPath('page.png'),fullPage:true});
+  await page.screenshot({path:info.outputPath('page.png'),fullPage:route!=='/cli/read.html'});
 });
 test('OSI exam modes, results, learning and dialogs',async({page})=>{
   await page.goto('/');
@@ -35,7 +35,7 @@ test('OSI exam modes, results, learning and dialogs',async({page})=>{
     await page.selectOption('#modeSelect',mode);await page.click('#startButton');
     for(let i=0;i<(mode===modes[0]?10:1);i++){
       await expect(page.locator('#questionText')).not.toBeEmpty();
-      await page.locator('#answersForm input').first().check();await page.click('#checkButton');
+      await page.locator('#answersForm label').first().click();await page.click('#checkButton');
       await expect(page.locator('#feedback')).toBeVisible();await layout(page);
       if(await page.locator('#detailButton').isVisible()){await page.click('#detailButton');await layout(page);}
       await page.click('#nextButton');
