@@ -1,0 +1,67 @@
+{
+  "status": "pass",
+  "passCount": 630,
+  "failCount": 0,
+  "skipCount": 0,
+  "flakyFinalCases": 0,
+  "automaticRetries": 0,
+  "originalStage2Cases": 480,
+  "stage3Cases": 150,
+  "byEngine": {
+    "chromium": 210,
+    "webkit": 210,
+    "firefox": 210
+  },
+  "byProject": {
+    "chromium-360": 42,
+    "chromium-390": 42,
+    "chromium-430": 42,
+    "chromium-768": 42,
+    "chromium-1440": 42,
+    "webkit-360": 42,
+    "webkit-390": 42,
+    "webkit-430": 42,
+    "webkit-768": 42,
+    "webkit-1440": 42,
+    "firefox-360": 42,
+    "firefox-390": 42,
+    "firefox-430": 42,
+    "firefox-768": 42,
+    "firefox-1440": 42
+  },
+  "runtimeCandidate": "86f5131218d6596024f3e32d892e6f7c2cfad619",
+  "testCorrectionCommit": "d342de448a724a926ed805c5e055b699496afbc9",
+  "verificationMethod": "Complete matrix assembled from 525 unchanged cases and 105 replacement/additional cases on identical runtime source; not a single clean 630-case invocation.",
+  "firstRun": {
+    "startTime": "2026-10-05T17:41:56.721Z",
+    "duration": 3515440.428,
+    "expected": 612,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  },
+  "replacementRun": {
+    "startTime": "2026-10-05T18:41:19.003Z",
+    "duration": 646579.9280000001,
+    "expected": 105,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "excludedFirstRunCases": 90,
+  "excludedReason": "All 75 navigation cases and all 15 legacy IPv4 all-mode cases replaced, not only the failures.",
+  "runtimeSHA256": {
+    "index.html": "642be6430e210696829e4f3c4a77b10934d3162735c3d931f53de1ed5af81761",
+    "ipv4.html": "5b545cd3e481eeb48a08a8935fcd9a56331968296a22d88c6d076ce0a1a48e1f",
+    "ipv6.html": "cdcaff56d2c12afd260b334e7513915524cd996d87936de32464234782520f4c",
+    "cli/index.html": "b3cca2ac92113a89d7821d8c885904884e78e34249b391c91f4d18b71d43d9ce",
+    "home-link.css": "c3c25ca3213ff63c3610aed148c73b0f5a1c06fae12c7c5c0c34b98247735dba",
+    "analytics/config.js": "9a8d42afb0d9a35d5be2b58a2d8762680574f3a0bf556d40d30245a2825628be",
+    "analytics/analytics.js": "74cfc247473ac6f8bcd8b8f4e38fb35e46cbc7af79c8a75f08c2710060e72564",
+    "package.json": "81319443ea19907038efc246993e2f45ef0fb8b9b3988abca7b992677cde575e"
+  },
+  "raw": [
+    "audit/runs/stage3-final/",
+    "audit/runs/stage3-corrected/"
+  ]
+}

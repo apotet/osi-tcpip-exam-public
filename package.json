@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "node audit/static.cjs && node audit/ipv6.cjs && playwright test",
+    "test": "node audit/static.cjs && node audit/ipv6.cjs && node audit/ipv4-stage3-unit.cjs && node audit/analytics-unit.cjs && playwright test",
     "audit:static": "node audit/static.cjs",
     "audit:browser": "playwright test",
     "audit:links": "node audit/links.cjs",
     "audit:resources": "node audit/resources.cjs",
-    "audit:icons": "node audit/favicon.cjs"
+    "audit:icons": "node audit/favicon.cjs",
+    "audit:ipv4": "node audit/ipv4-stage3-unit.cjs"
   },
   "repository": {
     "type": "git",

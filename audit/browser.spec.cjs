@@ -14,6 +14,9 @@ async function layout(page){
 }
 for(const route of pages)test(`load, links, reload, history ${route}`,async({page,request},info)=>{
   expect((await page.goto(route)).status()).toBe(200);
+  // Navigation must wait for asynchronously requested favicon/resources too.
+  // Keep all requestfailed assertions; do not dismiss genuine resource errors.
+  await page.waitForLoadState('networkidle');
   await expect(page.locator('body')).not.toBeEmpty();await layout(page);
   // Includes hidden anchors and resources in static HTML. Dynamic states are covered below.
   const links=await page.locator('[href],[src]').evaluateAll(els=>els.map(e=>e.href||e.src).filter(Boolean));
@@ -22,8 +25,8 @@ for(const route of pages)test(`load, links, reload, history ${route}`,async({pag
     const response=await request.get(href);expect(response.ok(),href).toBe(true);
     if(url.hash){const body=await response.text();const id=decodeURIComponent(url.hash.slice(1));expect(body.includes(`id="${id}"`)||body.includes(`id='${id}'`),href).toBe(true);}
   }
-  await page.reload();await layout(page);
-  if(route!=='/') {await page.goto('/');await page.goBack();expect(new URL(page.url()).pathname).toBe(route);await page.goForward();expect(new URL(page.url()).pathname).toBe('/');await page.goBack();}
+  await page.reload();await page.waitForLoadState('networkidle');await layout(page);
+  if(route!=='/') {await page.goto('/');await page.waitForLoadState('networkidle');await page.goBack();await page.waitForLoadState('networkidle');expect(new URL(page.url()).pathname).toBe(route);await page.goForward();await page.waitForLoadState('networkidle');expect(new URL(page.url()).pathname).toBe('/');await page.goBack();await page.waitForLoadState('networkidle');}
   const resources=await page.evaluate(()=>performance.getEntriesByType('resource').map(r=>({url:new URL(r.name).pathname,bytes:r.decodedBodySize,duration:r.duration})));
   await info.attach('resources',{body:JSON.stringify(resources,null,2),contentType:'application/json'});
   await page.screenshot({path:info.outputPath('page.png'),fullPage:route!=='/cli/read.html'});
@@ -56,7 +59,10 @@ test('OSI exam modes, results, learning and dialogs',async({page})=>{
 });
 for(const version of [4,6])test(`IPv${version} all modes and round completion`,async({page})=>{
   await page.goto(`/ipv${version}.html`);
-  for(const mode of await page.locator('.mode').all()){
+  // Preserve the six Stage 1/2 IPv4 modes and their full ten-answer rounds.
+  // Stage 3 modes each have independent ten-answer oracle tests in their own spec.
+  const selector=version===4?['mask','cidr','step','network','full','vlsm'].map(m=>`.mode[data-mode="${m}"]`).join(','):'.mode';
+  for(const mode of await page.locator(selector).all()){
     await mode.click();
     for(let i=0;i<10;i++){
       if(await page.locator('#answers input').count())for(const field of await page.locator('#answers input').all())await field.fill('1');
