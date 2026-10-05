@@ -1,6 +1,8 @@
 # Stage 3 — IPv4 Trainer 2.0
 
-Статус: реализация и автоматические проверки завершены; подготовлен релиз, production пока не изменён.
+Статус: **Stage 3 not deployed / deployment pending**. Все проверки зелёные;
+main обновлён на релиз, но GitHub Pages build остаётся queued без runner.
+Live Stage 3 и production smoke-test пока не подтверждены.
 
 ## Изменения
 
@@ -72,7 +74,7 @@ Complete: завершённый подход из 10 проверенных о�
 
 ## Проверки
 
-Кандидат: `86f5131218d6596024f3e32d892e6f7c2cfad619`.
+Локальный проверенный кандидат: `86f5131218d6596024f3e32d892e6f7c2cfad619`.
 Итоговая матрица: **630 pass / 0 fail / 0 skip**, 630 сценариев; прежние 480 сохранены,
 150 дополнительных Stage 3. Chromium/WebKit/Firefox × 360/390/430/768/1440,
 3 workers, timeout 180 секунд, retries не добавлены.
@@ -159,8 +161,21 @@ Backup commit: `dbe1eeb2bd29e8b0ab1bef300d6d6d9e48a2b2c7`.
 относительно backup: точный rollback без force-push возможен.
 Shell Git push не получил учётных данных; удалённая ветка и публикация
 выполняются через подключённый GitHub API, без передачи credential в shell.
-Production Stage 3 commit: ещё не опубликован.
-Production smoke-test: ещё не выполнялся для Stage 3.
+Production release commit: `9d76aaa12819ee939e2a744360d62ccf080b95df`.
+Main обновлён через GitHub API (force=false); серверное tree_sha
+`8b939c653b9bee9ff18bc16101f7bc6b2f621a1d` совпало с локальным деревом релиза.
+Ветка релиза: `release/stage3-ipv4-20261005`.
+Pages run: https://github.com/apotet/osi-tcpip-exam-public/actions/runs/37359792801
+Состояние: queued, runner для build пока не назначен; ожидание более 15 минут.
+GitHub Actions/Pages status — operational; других in_progress сборок этого проекта нет.
+Ошибка build, запрос ручного подтверждения или P0/P1 не обнаружены.
+Блокер — внешняя очередь Pages; перезапуск не выполнен, так как job ещё не запускался.
+После назначения runner GitHub может завершить публикацию автоматически.
+Эта запись описывает состояние на момент проверки, а не гарантирует будущий статус.
+Production smoke-test: ожидает успешного Pages deployment. Пока URL отдаёт
+прежний IPv4; ранняя сверка выявила ожидаемое несовпадение с новым релизом.
+Это проверка версии, а не подтверждённый сбой приложения. Публикация live
+Stage 3 и итоговый smoke ещё не подтверждены.
 
 Rollback: сохранить ветку backup/stage3-production-20261005-dbe1eeb и архив
 исходного commit. При необходимости создать новый commit поверх текущего main
@@ -188,3 +203,5 @@ build сверить опубликованный IPv4 и analytics/config.js с
 Moxa, Troubleshooting Simulator, Pro/B2B, регистрация, backend и редизайн сайта.
 Advanced только зарезервирован структурно. Проверка реальных мобильных клавиатур
 и подтверждение получения новых целей в кабинете остаются ручными ограничениями.
+
+Последняя проверка статуса: 2026-10-05 19:12:43 UTC; Pages queued, Stage 3 live не подтверждён.
