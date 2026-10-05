@@ -1,7 +1,8 @@
 # Stage 3 — IPv4 Trainer 2.0
 
 Статус: **Stage 3 not deployed / deployment pending**. Все проверки зелёные;
-main обновлён на релиз, но GitHub Pages build остаётся queued без runner.
+main обновлён на релиз. Первый Pages run отменён из-за отсутствия hosted runner;
+повторный запуск принят GitHub и ожидает выполнения.
 Live Stage 3 и production smoke-test пока не подтверждены.
 
 ## Изменения
@@ -166,12 +167,13 @@ Main обновлён через GitHub API (force=false); серверное tr
 `8b939c653b9bee9ff18bc16101f7bc6b2f621a1d` совпало с локальным деревом релиза.
 Ветка релиза: `release/stage3-ipv4-20261005`.
 Pages run: https://github.com/apotet/osi-tcpip-exam-public/actions/runs/37359792801
-Состояние: queued, runner для build пока не назначен; ожидание более 20 минут.
-GitHub Actions/Pages status — operational; других in_progress сборок этого проекта нет.
-Ошибка build, запрос ручного подтверждения или P0/P1 не обнаружены.
-Блокер — внешняя очередь Pages; перезапуск не выполнен, так как job ещё не запускался.
-После назначения runner GitHub может завершить публикацию автоматически.
-Эта запись описывает состояние на момент проверки, а не гарантирует будущий статус.
+Первый запуск завершился failure: build и report-build-status отменены,
+deploy пропущен; ни один шаг сборки не выполнялся, runner_name пустой.
+Точная failure annotation GitHub: `The job was not acquired by Runner of type hosted even after multiple attempts`.
+Это сбой выделения hosted runner; ошибка кода Stage 3 этим запуском не установлена.
+В 2026-10-05 19:43 UTC через GitHub Actions API выполнен rerun failed jobs;
+GitHub принял запрос, run вновь queued. Дополнительное разрешение не требуется:
+повторная публикация входит в исходную авторизацию Stage 3.
 Production smoke-test: ожидает успешного Pages deployment. Пока URL отдаёт
 прежний IPv4; ранняя сверка выявила ожидаемое несовпадение с новым релизом.
 Это проверка версии, а не подтверждённый сбой приложения. Публикация live
@@ -204,4 +206,6 @@ Moxa, Troubleshooting Simulator, Pro/B2B, регистрация, backend и р�
 Advanced только зарезервирован структурно. Проверка реальных мобильных клавиатур
 и подтверждение получения новых целей в кабинете остаются ручными ограничениями.
 
-Последняя проверка статуса: 2026-10-05 19:18:38 UTC; Pages queued, runner не назначен; live IPv4 совпадает с backup dbe1eeb, Stage 3 live не опубликован. Production smoke новых режимов заблокирован внешней очередью.
+Последняя проверка статуса: 2026-10-05 19:43:29 UTC; повторный Pages run queued.
+Последняя сверка live IPv4 (19:18:38 UTC) совпадала с backup dbe1eeb.
+Публикация Stage 3 и production smoke пока не подтверждены.
