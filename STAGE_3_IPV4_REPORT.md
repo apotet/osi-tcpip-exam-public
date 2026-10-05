@@ -166,7 +166,7 @@ Main обновлён через GitHub API (force=false); серверное tr
 `8b939c653b9bee9ff18bc16101f7bc6b2f621a1d` совпало с локальным деревом релиза.
 Ветка релиза: `release/stage3-ipv4-20261005`.
 Pages run: https://github.com/apotet/osi-tcpip-exam-public/actions/runs/37359792801
-Состояние: queued, runner для build пока не назначен; ожидание более 15 минут.
+Состояние: queued, runner для build пока не назначен; ожидание более 20 минут.
 GitHub Actions/Pages status — operational; других in_progress сборок этого проекта нет.
 Ошибка build, запрос ручного подтверждения или P0/P1 не обнаружены.
 Блокер — внешняя очередь Pages; перезапуск не выполнен, так как job ещё не запускался.
@@ -204,4 +204,4 @@ Moxa, Troubleshooting Simulator, Pro/B2B, регистрация, backend и р�
 Advanced только зарезервирован структурно. Проверка реальных мобильных клавиатур
 и подтверждение получения новых целей в кабинете остаются ручными ограничениями.
 
-Последняя проверка статуса: 2026-10-05 19:12:43 UTC; Pages queued, Stage 3 live не подтверждён.
+Последняя проверка статуса: 2026-10-05 19:18:38 UTC; Pages queued, runner не назначен; live IPv4 совпадает с backup dbe1eeb, Stage 3 live не опубликован. Production smoke новых режимов заблокирован внешней очередью.
