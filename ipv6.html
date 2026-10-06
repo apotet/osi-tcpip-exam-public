@@ -45,6 +45,7 @@
         <div class="example"><code>2001:0db8:0000:0000:0000:0000:0000:0042</code><div class="arrow">↓ убираем ведущие нули и одну самую длинную цепочку нулевых групп</div><code>2001:db8::42</code></div>
         <div class="example"><code>fe80:0000:0000:0000:021c:7eff:fe12:3456</code><div class="arrow">↓</div><code>fe80::21c:7eff:fe12:3456</code></div>
       </div>
+      <p class="lead">В примере <code>fe80::21c:7eff:fe12:3456</code> IID сформирован по modified EUI-64 — историческому, одному из способов. Современные ОС часто используют стабильные приватные (RFC 7217) и временные IID (RFC 8981).</p>
       <p class="lead">В канонической форме сжимаем самую длинную цепочку из двух и более нулевых групп; при равенстве — первую слева. <b>::</b> в одном адресе используют только один раз, иначе нельзя понять, сколько нулевых групп вернуть.</p>
     </section>
 
@@ -61,6 +62,7 @@
 
     <section class="card">
       <h2>4–5. NDP, RA и SLAAC</h2>
+      <p class="lead">RS/RA и NS/NA относятся к NDP; DAD использует NS/NA. Уже на этапах RA и SLAAC работают механизмы NDP, а не отдельный следующий этап.</p>
       <div class="steps">
         <div class="step"><b>1</b><div><strong>Link-Local</strong><span>Интерфейс получает адрес из fe80::/10.</span></div></div>
         <div class="step"><b>2</b><div><strong>Router Advertisement</strong><span>Роутер сообщает префикс сети и параметры.</span></div></div>
