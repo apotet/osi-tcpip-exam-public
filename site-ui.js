@@ -116,9 +116,15 @@
     `);
   }
 
+  function removeIpv4AdvancedPlaceholder() {
+    if (document.body?.dataset?.analyticsSection !== 'ipv4') return;
+    document.querySelector('[data-level="advanced"]')?.remove();
+  }
+
   function run() {
     polishCliHomeLink();
     polishIpv4Reference();
+    removeIpv4AdvancedPlaceholder();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
