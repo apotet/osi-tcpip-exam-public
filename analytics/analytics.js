@@ -52,6 +52,17 @@
     } catch { return false; }
   }
   window.SiteAnalytics = Object.freeze({ events, trackEvent, enabled });
+
+  try {
+    if (!document.querySelector('script[data-site-ui]')) {
+      const ui = document.createElement('script');
+      ui.defer = true;
+      ui.src = new URL('../site-ui.js', document.currentScript?.src || location.href).href;
+      ui.dataset.siteUi = 'true';
+      document.head.append(ui);
+    }
+  } catch {}
+
   if (!enabled) return;
 
   try {
