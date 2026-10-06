@@ -46,10 +46,10 @@
     }).filter((row) => Number.isInteger(row.prefix));
 
     const groups = [
-      { id: '4', label: '4-й', title: '4-й октет · учить', min: 25, max: 32 },
-      { id: '3', label: '3-й', title: '3-й октет · учить', min: 17, max: 24 },
+      { id: '1', label: '1-й', title: '1-й октет · справка', min: 1, max: 8 },
       { id: '2', label: '2-й', title: '2-й октет · справка', min: 9, max: 16 },
-      { id: '1', label: '1-й', title: '1-й октет · справка', min: 1, max: 8 }
+      { id: '3', label: '3-й', title: '3-й октет · учить', min: 17, max: 24 },
+      { id: '4', label: '4-й', title: '4-й октет · учить', min: 25, max: 32 }
     ];
 
     heading.textContent = '2. Шпаргалка CIDR по октетам';
@@ -59,7 +59,7 @@
     panel.innerHTML = `
       <p class="cidr-memory-intro">Для запоминания начни с 4-го и 3-го октетов. 2-й и 1-й оставь как справку.</p>
       <div class="cidr-octet-tabs" role="tablist" aria-label="Октет маски">
-        ${groups.map((group, index) => `<button type="button" class="cidr-octet-tab${index === 0 ? ' active' : ''}" data-octet="${group.id}" role="tab" aria-selected="${index === 0}">${group.label}</button>`).join('')}
+        ${groups.map((group) => `<button type="button" class="cidr-octet-tab${group.id === '4' ? ' active' : ''}" data-octet="${group.id}" role="tab" aria-selected="${group.id === '4'}">${group.label}</button>`).join('')}
       </div>
       <div class="cidr-octet-title" aria-live="polite"></div>
       <div class="cidr-compact-table" role="table" aria-label="Шпаргалка CIDR">
@@ -80,7 +80,7 @@
     const tabs = [...panel.querySelectorAll('.cidr-octet-tab')];
 
     function render(groupId) {
-      const group = groups.find((item) => item.id === groupId) || groups[0];
+      const group = groups.find((item) => item.id === groupId) || groups[3];
       title.textContent = group.title;
       rowHost.innerHTML = rows
         .filter((row) => row.prefix >= group.min && row.prefix <= group.max)
