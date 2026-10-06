@@ -30,17 +30,6 @@
     `);
   }
 
-  function polishCliBackground() {
-    if (document.body?.dataset?.analyticsSection !== 'cli' && !location.pathname.includes('/cli/')) return;
-    addStyle('cli-background-polish', `
-      html { background: #07111f; }
-      body {
-        min-height: 100svh;
-        background: radial-gradient(circle at 85% -10%, #153a5c 0, transparent 38%), #07111f;
-      }
-    `);
-  }
-
   function polishCheatsheetZoom() {
     if (!document.querySelector('.open-cheat')) return;
     document.querySelectorAll('.open-cheat').forEach((button) => {
@@ -162,7 +151,6 @@
     config.onload = () => { const script = document.createElement('script'); script.src = new URL('feedback/form.js', uiRoot).href; document.head.append(script); };
     document.head.append(config);
     polishCliHomeLink();
-    polishCliBackground();
     polishCheatsheetZoom();
     polishIpv4Reference();
     removeIpv4AdvancedPlaceholder();
