@@ -121,10 +121,23 @@
     document.querySelector('[data-level="advanced"]')?.remove();
   }
 
+  function mergeIpv4VlsmIntoPractice() {
+    if (document.body?.dataset?.analyticsSection !== 'ipv4') return;
+    const vlsm = document.querySelector('.mode[data-mode="vlsm"]');
+    const practiceGrid = document.querySelector('.mode-grid[data-level="practice"]');
+    if (!vlsm || !practiceGrid) return;
+    const oldGrid = vlsm.closest('.mode-grid');
+    const oldHeading = oldGrid?.previousElementSibling;
+    practiceGrid.append(vlsm);
+    if (oldGrid && oldGrid !== practiceGrid) oldGrid.remove();
+    if (oldHeading?.classList?.contains('level-title') && oldHeading.textContent.trim() === 'Ранее доступная практика') oldHeading.remove();
+  }
+
   function run() {
     polishCliHomeLink();
     polishIpv4Reference();
     removeIpv4AdvancedPlaceholder();
+    mergeIpv4VlsmIntoPractice();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
