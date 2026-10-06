@@ -5,10 +5,10 @@
     ipv4_mode_start: 'ipv4_mode_start', ipv4_mode_complete: 'ipv4_mode_complete',
     exam_start: 'exam_start', exam_complete: 'exam_complete',
     training_open: 'training_open', ipv4_open: 'ipv4_open', ipv6_open: 'ipv6_open',
-    cli_open: 'cli_open', cheatsheet_open: 'cheatsheet_open', feedback_submit: 'feedback_submit',
+    cli_open: 'cli_open', cheatsheet_open: 'cheatsheet_open', feedback_open: 'feedback_open', feedback_submit: 'feedback_submit',
     troubleshooting_open: 'troubleshooting_open', pro_interest: 'pro_interest', b2b_interest: 'b2b_interest'
   });
-  const active = new Set(['ipv4_mode_start', 'ipv4_mode_complete', 'exam_start', 'exam_complete', 'training_open', 'ipv4_open', 'ipv6_open', 'cli_open', 'cheatsheet_open']);
+  const active = new Set(['ipv4_mode_start', 'ipv4_mode_complete', 'exam_start', 'exam_complete', 'training_open', 'ipv4_open', 'ipv6_open', 'cli_open', 'cheatsheet_open', 'feedback_open', 'feedback_submit']);
   const modes = new Set(['mixed', 'visual-l1', 'l1-l2', 'l3', 'l4', 'l5-l7', 'tcpip', 'troubleshooting']);
   const id = window.SITE_ANALYTICS_CONFIG?.counterId;
   const enabled = Number.isSafeInteger(id) && id > 0 && /^https?:$/.test(location.protocol);
@@ -21,6 +21,9 @@
           !Number.isInteger(input.score) || input.score < 0 || input.score > 10 || input.percent !== input.score * 10 ||
           (name === 'ipv4_mode_start' && input.score !== 0)) return null;
       return { mode: input.mode, score: input.score, total: input.total, percent: input.percent };
+    }
+    if (name === 'feedback_open' || name === 'feedback_submit') {
+      return ['question_error', 'site_error', 'topic_idea', 'question_idea', 'other'].includes(input.type) ? { type: input.type } : null;
     }
     if (name === 'exam_start') return modes.has(input.mode) ? { mode: input.mode } : null;
     if (name === 'exam_complete') {
@@ -46,7 +49,7 @@
   }
   function trackEvent(name, input) {
     try {
-      if (!active.has(name)) return false; // Future events and absent feedback form stay inert.
+      if (!active.has(name)) return false; // Unimplemented events stay inert.
       const safe = parameters(name, input);
       return safe !== null && call('reachGoal', name, safe);
     } catch { return false; }

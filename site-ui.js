@@ -133,7 +133,14 @@
     if (oldHeading?.classList?.contains('level-title') && oldHeading.textContent.trim() === 'Ранее доступная практика') oldHeading.remove();
   }
 
+  const uiRoot = new URL('./', document.currentScript.src);
+
   function run() {
+    // The shared UI is loaded dynamically; its script URL is captured below.
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = new URL('feedback/form.css', uiRoot).href; document.head.append(css);
+    const config = document.createElement('script'); config.src = new URL('feedback/config.js', uiRoot).href;
+    config.onload = () => { const script = document.createElement('script'); script.src = new URL('feedback/form.js', uiRoot).href; document.head.append(script); };
+    document.head.append(config);
     polishCliHomeLink();
     polishIpv4Reference();
     removeIpv4AdvancedPlaceholder();

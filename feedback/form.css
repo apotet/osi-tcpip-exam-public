@@ -1,0 +1,12 @@
+.feedback-trigger { display:block; max-width:calc(100% - 32px); margin:24px auto; padding:12px 16px; border:1px solid #506277; border-radius:12px; background:#102337; color:#e8f3ff; cursor:pointer; font:inherit; }
+#feedbackDialog { box-sizing:border-box; width:min(560px, calc(100% - 24px)); max-height:calc(100dvh - 24px); overflow:auto; padding:20px; border:1px solid #506277; border-radius:16px; background:#102337; color:#e8f3ff; }
+#feedbackDialog::backdrop { background:rgb(0 0 0 / .7); }
+#feedbackDialog .feedback-form { display:grid; gap:10px; min-width:0; }
+#feedbackDialog h2, #feedbackDialog p { margin:0; overflow-wrap:anywhere; }
+#feedbackDialog label { margin-top:6px; }
+#feedbackDialog input, #feedbackDialog select, #feedbackDialog textarea { box-sizing:border-box; width:100%; min-width:0; padding:10px; border:1px solid #708297; border-radius:8px; font:inherit; font-size:16px; color:#e8f3ff; background:#09121c; }
+#feedbackDialog textarea { resize:vertical; }
+#feedbackDialog .feedback-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; }
+#feedbackDialog button { min-height:44px; padding:10px 14px; border:1px solid #708297; border-radius:8px; font:inherit; background:#163850; color:#e8f3ff; cursor:pointer; }
+#feedbackDialog button:disabled { opacity:.6; cursor:wait; }
+#feedbackDialog :focus-visible, .feedback-trigger:focus-visible { outline:3px solid #5ee0c4; outline-offset:2px; }
