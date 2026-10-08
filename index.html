@@ -494,6 +494,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     $('topicBadge').textContent = q.topic;
     $('choiceHint').textContent = q.correct.length > 1 ? 'Выберите все подходящие ответы' : 'Один правильный ответ';
     $('questionText').textContent = q.text;
+    $('questionText').dataset.questionId = q.id;
     const visual = q.image
       ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Проверь соединение. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
       : (q.graphic ? q.graphic + '<button type="button" class="secondary-button" id="zoomGraphic">Увеличить схему</button>' : '');

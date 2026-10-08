@@ -10,3 +10,7 @@
 #feedbackDialog button { min-height:44px; padding:10px 14px; border:1px solid #708297; border-radius:8px; font:inherit; background:#163850; color:#e8f3ff; cursor:pointer; }
 #feedbackDialog button:disabled { opacity:.6; cursor:wait; }
 #feedbackDialog :focus-visible, .feedback-trigger:focus-visible { outline:3px solid #5ee0c4; outline-offset:2px; }
+#feedbackDialog .feedback-muted { color:#b0becc; font-size:14px; }
+#feedbackDialog [hidden] { display:none !important; }
+#feedbackDialog #feedbackPreview { display:flex; flex-wrap:wrap; align-items:center; gap:10px; min-width:0; }
+#feedbackDialog #feedbackPreview img { width:96px; height:72px; object-fit:contain; border-radius:6px; }
