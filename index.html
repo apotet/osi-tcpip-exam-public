@@ -25,7 +25,7 @@
 }
 * { box-sizing: border-box; }
 html { background: var(--bg); }
-body { margin: 0; min-height: 100svh; background: radial-gradient(circle at 85% -10%,#153a5c 0,transparent 38%) top left / 100% 100svh no-repeat, var(--bg); color: var(--text); }
+body { margin: 0; min-height: 100svh; background: radial-gradient(circle at 85% -10%, #153a5c 0, transparent 38%), var(--bg); color: var(--text); }
 button, select, input { font: inherit; }
 button { -webkit-tap-highlight-color: transparent; }
 .shell { width: min(100%, 760px); min-height: 100svh; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom)); }
@@ -494,6 +494,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     $('topicBadge').textContent = q.topic;
     $('choiceHint').textContent = q.correct.length > 1 ? 'Выберите все подходящие ответы' : 'Один правильный ответ';
     $('questionText').textContent = q.text;
+    $('questionText').dataset.questionId = q.id;
     const visual = q.image
       ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Проверь соединение. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
       : (q.graphic ? q.graphic + '<button type="button" class="secondary-button" id="zoomGraphic">Увеличить схему</button>' : '');
