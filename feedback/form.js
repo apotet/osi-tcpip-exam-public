@@ -58,7 +58,7 @@
         for (const [key, value] of Object.entries({ ...fields, requestId })) body.set(key, value);
         body.set('image', image, 'screenshot'); headers = {};
       }
-      const response = await fetch(window.SITE_FEEDBACK_CONFIG.endpoint, { method: 'POST', headers, body, signal: AbortSignal.timeout(20000), credentials: 'omit', referrerPolicy: 'no-referrer' });
+      const response = await fetch(window.SITE_FEEDBACK_CONFIG.endpoint, { method: 'POST', headers, body, signal: AbortSignal.timeout(image ? 120000 : 20000), credentials: 'omit', referrerPolicy: 'no-referrer' });
       const result = await response.json();
       if (!response.ok || result.ok !== true) throw new Error('endpoint');
       window.SiteAnalytics?.trackEvent('feedback_submit', { type: fields.type });
