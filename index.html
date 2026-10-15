@@ -25,7 +25,7 @@
 }
 * { box-sizing: border-box; }
 html { background: var(--bg); }
-body { margin: 0; min-height: 100svh; background: radial-gradient(circle at 85% -10%, #153a5c 0, transparent 38%), var(--bg); color: var(--text); }
+body { margin: 0; min-height: 100svh; background: radial-gradient(circle at 85% -10%,#153a5c 0,transparent 38%) top left / 100% 100svh no-repeat, var(--bg); color: var(--text); }
 button, select, input { font: inherit; }
 button { -webkit-tap-highlight-color: transparent; }
 .shell { width: min(100%, 760px); min-height: 100svh; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom)); }
@@ -119,7 +119,8 @@ select { width: 100%; min-height: 54px; padding: 0 44px 0 15px; border: 1px soli
 dialog { width: min(calc(100% - 28px), 520px); max-height: 85svh; padding: 20px; overflow: auto; border: 1px solid var(--line); border-radius: 22px; color: var(--text); background: var(--surface); box-shadow: 0 30px 80px #0009; }
 dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 .dialog-head { display: flex; justify-content: space-between; align-items: center; }
-.dialog-head .icon-button { font-size: 1.5rem; }
+.dialog-head .icon-button { margin: 2px 2px 0 0; font-size: 1.5rem; }
+.dialog-head .icon-button:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; }
 .stat-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
 .stat-box { padding: 13px 8px; border-radius: 14px; text-align: center; background: var(--surface-2); }
 .stat-box strong, .stat-box small { display: block; }
