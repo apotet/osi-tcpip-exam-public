@@ -209,6 +209,10 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 .question-photo { min-height: 100px; }
 #photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
 #retryPhoto { min-height: 44px; margin: 8px; }
+#resumeNotice { grid-column: 1 / -1; grid-row: 1; }
+#resumeNotice[hidden] { display: none; }
+#progressCode { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: var(--surface-2); }
+@media (max-width: 767px), (pointer: coarse) { .keyboard-hint { display: none; } }
 </style>
 <script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script></head>
 <body data-analytics-section="exam">
@@ -218,7 +222,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         <span class="brand-mark">7</span>
         <div><strong>OSI & TCP/IP</strong><small>обучение · экзамен · 348 вопросов</small></div>
       </div>
-      <button id="statsButton" class="icon-button" type="button" aria-label="Статистика" title="Статистика">
+      <button id="statsButton" class="icon-button" type="button" aria-label="Мой прогресс" title="Мой прогресс">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/></svg>
       </button>
       <nav class="main-nav" aria-label="Основные разделы" style="grid-template-columns:repeat(5,1fr)">
@@ -240,6 +244,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         </div>
       </div>
 
+      <div id="resumeNotice" class="setup-card" hidden><p>Есть незавершённая сессия.</p><button id="resumeStart" class="primary-button" type="button">Продолжить</button><button id="discardStart" class="secondary-button" type="button">Сбросить сессию</button></div>
       <div class="setup-card">
         <label for="modeSelect">Режим</label>
         <div class="select-wrap">
@@ -273,6 +278,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         <button id="detailButton" class="detail-button" type="button" hidden>Понять подробнее</button>
         <div id="detailPanel" class="detail-panel" hidden></div>
         <a id="ipv4PracticeLink" class="detail-button" href="ipv4.html" target="_blank" rel="noopener" hidden>Практика адресов и масок в IPv4-тренажёре ↗</a>
+        <p id="keyboardHint" class="available keyboard-hint"></p>
         <button id="checkButton" class="primary-button" type="button" disabled>Проверить ответ</button>
         <button id="nextButton" class="primary-button" type="button" hidden>Следующий вопрос</button>
       </article>
@@ -398,9 +404,16 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   </main>
 
   <dialog id="notesDialog" aria-labelledby="notesTitle"><div class="notes-actions"><button id="closeNotes" class="secondary-button" type="button">Закрыть пояснения</button></div><div id="notesContent"></div></dialog>
-  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button">По размеру</button></div><p class="zoom-hint">Увеличивай кнопкой +. Перемещай изображение прокруткой в любом направлении.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog">
-    <div class="dialog-head"><h2>Моя статистика</h2><button id="closeStats" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
+  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button">По размеру</button></div><p class="zoom-hint">Увеличивай кнопкой +. Перемещай изображение прокруткой в любом направлении.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog" aria-labelledby="progressTitle">
+    <div class="dialog-head"><h2 id="progressTitle">Мой прогресс</h2><button id="closeStats" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
     <div id="statsContent"></div>
+    <button id="repeatMistakes" class="primary-button" type="button">Повторить ошибки</button>
+    <div id="resumeProgress" hidden><p>Незавершённая сессия</p><button id="resumeButton" class="secondary-button" type="button">Продолжить</button><button id="discardButton" class="secondary-button" type="button">Сбросить сессию</button></div>
+    <button id="exportProgress" class="secondary-button" type="button">Скопировать код прогресса</button>
+    <label for="progressCode">Код прогресса для переноса</label><textarea id="progressCode" rows="3" spellcheck="false" aria-describedby="importHelp"></textarea>
+    <p id="importHelp" class="available">Импорт заменит текущий прогресс и сбросит незавершённую сессию.</p>
+    <button id="importProgress" class="secondary-button" type="button">Импортировать прогресс</button>
+    <p id="progressStatus" role="status"></p>
     <button id="clearStats" class="danger-button" type="button">Сбросить статистику</button>
   </dialog>
 
@@ -412,7 +425,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   const PASS_SCORE = 8;
   const QUIZ_SIZE = 10;
   const modeLabels = {
-    'visual-l1': 'L1 — фотографии', mixed: 'Смешанный экзамен', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4',
+    mistakes: 'Мои ошибки', 'visual-l1': 'L1 — фотографии', mixed: 'Смешанный экзамен', 'l1-l2': 'L1–L2', l3: 'L3', l4: 'L4',
     'l5-l7': 'L5–L7', tcpip: 'TCP/IP', troubleshooting: 'Диагностика'
   };
 
@@ -457,21 +470,23 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     photoFitWidth = $('zoomContent').clientWidth;
     setPhotoZoom(2);
     $('zoomContent').scrollTo(0, 0);
+    $('zoomContent').focus();
     document.body.style.overflow = 'hidden';
     const level = src.match(/\/l([1-7])\.webp$/)?.[1];
     if (level) trackEvent('cheatsheet_open', { section: 'learning', topic: LEVEL_NOTES[level].title });
   }
 
   function getPool(mode) {
+    if (mode === 'mistakes') return QuizEngine.mistakes(bank,loadStats());
     return mode === 'mixed' ? bank.filter(q=>q.group!=='visual-l1') : bank.filter(q => q.group === mode);
   }
 
-  function pickQuestions(mode) { return QuizEngine.pick(bank,mode,loadStats()); }
+  function pickQuestions(mode) { return mode === 'mistakes' ? shuffle(getPool(mode)).slice(0,10) : QuizEngine.pick(bank,mode,loadStats()); }
 
   function startQuiz(mode = $('modeSelect').value) {
     if ($('quizScreen').classList.contains('active')) return false;
     const pool = getPool(mode);
-    if (pool.length < QUIZ_SIZE && mode !== 'mixed') return false;
+    if (!pool.length || (pool.length < QUIZ_SIZE && mode !== 'mixed' && mode !== 'mistakes')) return false;
     state.mode = mode;
     state.questions = pickQuestions(mode).map(question => {
       const answerOrder = shuffle(question.answers.map((text, original) => ({ text, original })));
@@ -480,7 +495,8 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     state.index = 0; state.score = 0; state.answers = []; state.checked = false; state.completed = false; state.shown = new Set();
     showScreen('quizScreen');
     renderQuestion();
-    trackEvent('exam_start', { mode: state.mode });
+    saveSession();
+    if(mode !== 'mistakes') trackEvent('exam_start', { mode: state.mode });
     return true;
   }
 
@@ -488,9 +504,9 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     const q = state.questions[state.index];
     if (!state.shown.has(q.id)) { const stats=loadStats(); QuizEngine.shown(stats,q.id); writeStats(stats); state.shown.add(q.id); }
     state.checked = false;
-    $('questionNumber').textContent = `Вопрос ${state.index + 1} из ${QUIZ_SIZE}`;
+    $('questionNumber').textContent = `Вопрос ${state.index + 1} из ${state.questions.length}`;
     $('scoreMini').textContent = `${state.score} ✓`;
-    $('progressBar').style.width = `${((state.index + 1) / QUIZ_SIZE) * 100}%`;
+    $('progressBar').style.width = `${((state.index + 1) / state.questions.length) * 100}%`;
     $('topicBadge').textContent = q.topic;
     $('choiceHint').textContent = q.correct.length > 1 ? 'Выберите все подходящие ответы' : 'Один правильный ответ';
     $('questionText').textContent = q.text;
@@ -522,9 +538,10 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     $('checkButton').hidden = false;
     $('checkButton').disabled = true;
     $('nextButton').hidden = true;
-    $('nextButton').textContent = state.index === QUIZ_SIZE - 1 ? 'Показать результат' : 'Следующий вопрос';
+    $('nextButton').textContent = state.index === state.questions.length - 1 ? 'Показать результат' : 'Следующий вопрос';
 
     const multiple = q.correct.length > 1;
+    $('keyboardHint').textContent = `[1–${q.answers.length}] выбор · [Enter / Space] далее${q.image ? ' · [Z] фото' : ''}`;
     $('answersForm').innerHTML = '';
     q.answerOrder.forEach((answer, displayIndex) => {
       const label = document.createElement('label');
@@ -582,6 +599,7 @@ function buildDetailedExplanation(q){
     photoFitWidth = $('zoomContent').clientWidth;
     setPhotoZoom(2);
     $('zoomContent').scrollTo(0, 0);
+    $('zoomContent').focus();
     document.body.style.overflow = 'hidden';
   }
   $('zoomIn').onclick = () => setPhotoZoom(photoZoom + .5);
@@ -589,7 +607,7 @@ function buildDetailedExplanation(q){
   $('zoomFit').onclick = () => { setPhotoZoom(1); $('zoomContent').scrollTo(0, 0); };
   $('zoomDialog').addEventListener('close', () => { document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
 
-  function checkAnswer() {
+  function checkAnswer(replay = false) {
     if (state.checked) return;
     const q = state.questions[state.index];
     const chosen = selectedValues();
@@ -597,7 +615,7 @@ function buildDetailedExplanation(q){
     state.checked = true;
     if (isCorrect) state.score += 1;
     state.answers.push({ question: q, chosen, isCorrect });
-    const progress=loadStats(); QuizEngine.answered(progress,q.id,isCorrect); writeStats(progress);
+    if (!replay) { const progress=loadStats(); QuizEngine.answered(progress,q.id,isCorrect); writeStats(progress); saveSession(); updateAvailable(); }
 
     document.querySelectorAll('#answersForm input').forEach(input => {
       input.disabled = true;
@@ -623,26 +641,28 @@ function buildDetailedExplanation(q){
 
   function nextQuestion() {
     if (!state.checked || !$('quizScreen').classList.contains('active')) return;
-    if (state.index < QUIZ_SIZE - 1) { state.index += 1; renderQuestion(); }
+    if (state.index < state.questions.length - 1) { state.index += 1; renderQuestion(); saveSession(); }
     else finishQuiz();
   }
 
   function finishQuiz() {
-    if (state.completed || state.answers.length !== QUIZ_SIZE) return;
+    if (state.completed || !state.questions.length || state.answers.length !== state.questions.length) return;
     state.completed = true;
-    const passed = state.score >= PASS_SCORE;
+    clearSession();
+    const passed = state.score / state.questions.length >= .8;
     $('resultHero').className = `result-hero ${passed ? 'pass' : 'fail'}`;
     $('resultIcon').textContent = passed ? '✓' : '↻';
-    $('resultStatus').textContent = passed ? 'Экзамен сдан' : 'Пока не зачёт';
-    $('resultScore').textContent = `${state.score} из ${QUIZ_SIZE}`;
-    $('resultMessage').textContent = passed
+    $('resultStatus').textContent = state.mode === 'mistakes' ? 'Повторение завершено' : passed ? 'Экзамен сдан' : 'Пока не зачёт';
+    $('resultScore').textContent = `${state.score} из ${state.questions.length}`;
+    $('resultMessage').textContent = state.mode === 'mistakes' ? 'Повторение завершено. Два правильных ответа подряд убирают вопрос из активных ошибок.' : passed
       ? (state.score === 10 ? 'Идеальный результат. Ты уверенно видишь сеть по уровням.' : 'Хороший результат. Порог 8 из 10 пройден.')
       : `До зачёта не хватило ${PASS_SCORE - state.score}. Посмотри разбор и попробуй новый набор.`;
     renderTopicResults();
     renderMistakes();
     saveAttempt();
+    $('retryButton').disabled=state.mode === 'mistakes' && !getPool('mistakes').length;
     showScreen('resultScreen');
-    trackEvent('exam_complete', { mode: state.mode, score: state.score, total: QUIZ_SIZE, percent: Math.round(state.score / QUIZ_SIZE * 100), passed });
+    if(state.mode !== 'mistakes') trackEvent('exam_complete', { mode: state.mode, score: state.score, total: state.questions.length, percent: Math.round(state.score / state.questions.length * 100), passed });
   }
 
   function renderTopicResults() {
@@ -661,7 +681,7 @@ function buildDetailedExplanation(q){
 
   function renderMistakes() {
     const wrong = state.answers.filter(item => !item.isCorrect);
-    if (!wrong.length) { $('mistakes').innerHTML = '<h2>Ошибки</h2><p class="right-answer">Ошибок нет — чистые 10 из 10.</p>'; return; }
+    if (!wrong.length) { $('mistakes').innerHTML = `<h2>Ошибки</h2><p class="right-answer">Ошибок нет — ${state.score} из ${state.questions.length}.</p>`; return; }
     $('mistakes').innerHTML = '<h2>Разбор ошибок</h2>' + wrong.map(item => {
       const q = item.question;
       const right = q.correct.map(i => q.answers[i]).join('; ');
@@ -674,34 +694,67 @@ function buildDetailedExplanation(q){
   }
 
   function loadStats() {
-    try { return QuizEngine.stats(JSON.parse(localStorage.getItem('osiQuizStats'))); }
+    try { return QuizEngine.migrate(JSON.parse(localStorage.getItem('osiQuizStats')),bank); }
     catch { return QuizEngine.stats(); }
   }
   function writeStats(stats){try{localStorage.setItem('osiQuizStats',JSON.stringify(stats))}catch{}}
 
   function saveAttempt() {
     const stats = loadStats();
-    stats.attempts.push({ date: new Date().toISOString(), mode: state.mode, score: state.score, wrongIds: state.answers.filter(a=>!a.isCorrect).map(a=>a.question.id), questionIds:state.questions.map(q=>q.id) });
+    stats.attempts.push({ date: new Date().toISOString(), mode: state.mode, score: state.score, total: state.questions.length, wrongIds: state.answers.filter(a=>!a.isCorrect).map(a=>a.question.id), questionIds:state.questions.map(q=>q.id) });
     stats.attempts = stats.attempts.slice(-100);
     writeStats(stats); 
   }
 
   function showStats() {
     const progress=loadStats(),attempts=progress.attempts;
-    const unresolved=bank.filter(q=>progress.questions[q.id]?.wrong && (progress.questions[q.id].streak||0)<2);
-    if (!attempts.length) $('statsContent').innerHTML = '<p class="empty-state">Здесь появятся результаты после первого экзамена.</p>';
-    else {
-      const best = Math.max(...attempts.map(a => a.score));
-      const average = (attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length).toFixed(1);
-      const passed = attempts.filter(a => a.score >= PASS_SCORE).length;
-      const recent = [...attempts].reverse().slice(0, 5);
-      $('statsContent').innerHTML = `<div class="stat-main"><div class="stat-box"><strong>${attempts.length}</strong><small>попыток</small></div><div class="stat-box"><strong>${best}/10</strong><small>лучший</small></div><div class="stat-box"><strong>${average}</strong><small>средний</small></div></div><h3>Последние попытки</h3>${recent.map(a => `<div class="topic-line"><span>${modeLabels[a.mode] || a.mode}</span><small>${a.score}/10</small></div>`).join('')}<p class="available">Зачтено попыток: ${passed}</p>`;
+    const unresolved=QuizEngine.mistakes(bank,progress);
+    const best=attempts.reduce((best,a)=>!best || a.score/(a.total||10)>best.score/(best.total||10) ? a : best,null);
+    $('statsContent').innerHTML=`<div class="stat-main"><div class="stat-box"><strong>${attempts.length}</strong><small>попыток</small></div><div class="stat-box"><strong>${best ? `${best.score}/${best.total||10}` : '—'}</strong><small>лучший результат</small></div><div class="stat-box"><strong>${unresolved.length}</strong><small>активные ошибки</small></div></div><h3>По направлениям</h3>`;
+    for(const group of [...new Set(bank.map(q=>q.group))]) {
+      const qs=bank.filter(q=>q.group===group),seen=qs.filter(q=>(progress.questions[q.id]?.correct||0)+(progress.questions[q.id]?.wrong||0)>0).length;
+      const mastered=qs.filter(q=>(progress.questions[q.id]?.streak||0)>=2).length;
+      $('statsContent').innerHTML+=`<div class="topic-line"><span>${modeLabels[group]}</span><small>${seen}/${qs.length} изучено · ${mastered} закреплено</small></div>`;
     }
-    if(unresolved.length)$('statsContent').innerHTML+=`<h3>Темы для повторения</h3><p>${unresolved.length} вопросов с ошибками. После двух правильных ответов подряд усиленное повторение прекращается.</p>${unresolved.slice(0,10).map(q=>`<div class="topic-line"><span>${escapeHtml(q.text)}</span><small>${escapeHtml(q.topic)}</small></div>`).join('')}`;
-    $('statsDialog').showModal();
+    $('repeatMistakes').disabled=!unresolved.length;
+    $('resumeProgress').hidden=!loadSession();
+    $('progressStatus').textContent='';
+    if(!$('statsDialog').open) $('statsDialog').showModal();
+  }
+
+  function loadSession() { try { return QuizEngine.session(localStorage.getItem('osiQuizSession'),bank); } catch { return null; } }
+  function syncResume() { $('resumeNotice').hidden=!loadSession(); $('resumeProgress').hidden=!loadSession(); }
+  function clearSession() { try {localStorage.removeItem('osiQuizSession');} catch {} syncResume(); }
+  function saveSession() {
+    if(state.completed || !state.questions.length) return;
+    const data={version:1, mode:state.mode, questionIds:state.questions.map(q=>q.id),orders:state.questions.map(q=>q.answerOrder.map(a=>a.original)),index:state.index,score:state.score,timestamp:Date.now(),answers:state.answers.map(a=>({questionId:a.question.id,chosen:a.chosen,isCorrect:a.isCorrect}))};
+    try { localStorage.setItem('osiQuizSession',JSON.stringify(data)); } catch {}
+    syncResume();
+  }
+  function resumeQuiz() {
+    const saved=loadSession(); if(!saved) {syncResume();return;}
+    $('statsDialog').close();
+    state.mode=saved.mode;state.index=saved.index;state.score=saved.score;state.completed=false;
+    state.questions=saved.questionIds.map((id,i)=>{const q=bank.find(q=>q.id===id);return {...q,answerOrder:saved.orders[i].map(original=>({original,text:q.answers[original]}))};});
+    state.answers=saved.answers.map((a,i)=>({question:state.questions[i],chosen:a.chosen,isCorrect:a.isCorrect}));
+    state.shown=new Set(saved.questionIds.slice(0,saved.index+1));
+    showScreen('quizScreen');renderQuestion();
+    if(saved.answers.length>saved.index) {
+      const last=state.answers.pop();if(last.isCorrect)state.score--;
+      document.querySelectorAll('#answersForm input').forEach(input=>{input.checked=last.chosen.includes(Number(input.value));});
+      checkAnswer(true);
+    }
+    $('checkButton').blur();$('nextButton').blur();
   }
 
   function updateAvailable() {
+    const count=QuizEngine.mistakes(bank,loadStats()).length;
+    let option=$('modeSelect').querySelector('option[value="mistakes"]');
+    if(count && !option) { option=document.createElement('option');option.value='mistakes';$('modeSelect').appendChild(option); }
+    if(option) {
+      option.textContent=`Мои ошибки (${count})`;option.disabled=!count;
+      if(!count && $('modeSelect').value === 'mistakes') $('modeSelect').value='mixed';
+    }
     const mode = $('modeSelect').value;
     $('questionCount').textContent = mode === 'mixed' ? `${getPool(mode).length} текстовых вопросов · отдельно ${bank.filter(q=>q.group==='visual-l1').length} с фотографиями` : `${getPool(mode).length} вопросов в этой теме`;
   }
@@ -709,7 +762,7 @@ function buildDetailedExplanation(q){
   $('startButton').addEventListener('click', () => startQuiz());
   $('examNav').addEventListener('click', () => showScreen('startScreen'));
   $('learnNav').addEventListener('click', () => showScreen('learningScreen'));
-  $('checkButton').addEventListener('click', checkAnswer);
+  $('checkButton').addEventListener('click', () => checkAnswer());
   $('nextButton').addEventListener('click', nextQuestion);
   $('detailButton').addEventListener('click', () => {
     const panel = $('detailPanel');
@@ -727,14 +780,47 @@ function buildDetailedExplanation(q){
   $('exitButton').addEventListener('click', () => { if (confirm('Прервать текущий экзамен?')) showScreen('startScreen'); });
   $('modeSelect').addEventListener('change', updateAvailable);
   $('statsButton').addEventListener('click', showStats);
+  $('repeatMistakes').onclick=()=> { $('statsDialog').close();showScreen('startScreen');startQuiz('mistakes'); };
+  $('resumeStart').onclick=$('resumeButton').onclick=resumeQuiz;
+  $('discardStart').onclick=$('discardButton').onclick=()=>{clearSession();state.completed=true;showScreen('startScreen');};
+  $('exportProgress').onclick=async()=>{
+    try {
+      const code=QuizEngine.exportProgress(loadStats(),bank);$('progressCode').value=code;
+      try {await navigator.clipboard.writeText(code);$('progressStatus').textContent='Код прогресса скопирован.';}
+      catch {$('progressStatus').textContent='Код готов. Выделите и скопируйте его из поля.';}
+    }catch {$('progressStatus').textContent='Не удалось сформировать код.';}
+  };
+  $('importProgress').onclick=()=>{
+    try {
+      const data=QuizEngine.importProgress($('progressCode').value,bank);
+      localStorage.setItem('osiQuizStats',JSON.stringify(data));
+      clearSession();state.completed=true;showScreen('startScreen');updateAvailable();showStats();
+      $('progressStatus').textContent=`Импортировано: ${data.attempts.length} попыток, ${QuizEngine.mistakes(bank,data).length} активных ошибок.`;
+    }catch {$('progressStatus').textContent='Неверный код или хранилище недоступно. Прогресс не изменён.';}
+  };
+  document.addEventListener?.('keydown',event=>{
+    if(event.repeat||event.ctrlKey||event.altKey||event.metaKey||event.isComposing) return;
+    const target=event.target;
+    // Native controls retain their standard keyboard and screen-reader behavior.
+    if(target?.closest?.('input,textarea,select,button,a,[contenteditable]:not([contenteditable="false"])'))return;
+    if($('zoomDialog').open) {if(event.key.toLowerCase()==='z'){event.preventDefault();$('zoomDialog').close();}return;}
+    if(document.querySelector?.('dialog[open]')||!$('quizScreen').classList.contains('active'))return;
+    if(/^[1-5]$/.test(event.key)&&!state.checked){
+      const input=$('answersForm').querySelectorAll('input')[Number(event.key)-1];
+      if(input){event.preventDefault();input.click();}
+    }else if(event.key==='Enter'||event.key===' '){
+      event.preventDefault();if(state.checked)nextQuestion();else if(!$('checkButton').disabled)checkAnswer();
+    }else if(event.key.toLowerCase()==='z'&&state.questions[state.index]?.image&&!$('zoomGraphic').disabled){event.preventDefault();openPhotoViewer(state.questions[state.index]);}
+  });
   $('closeStats').addEventListener('click', () => $('statsDialog').close());
-  $('clearStats').addEventListener('click', () => { if (confirm('Удалить всю статистику прохождений?')) { try { localStorage.removeItem('osiQuizStats'); } catch {}  showStats(); } });
+  $('clearStats').addEventListener('click', () => { if (confirm('Удалить всю статистику прохождений?')) { try { localStorage.removeItem('osiQuizStats'); clearSession();state.completed=true;showScreen('startScreen'); } catch {}  updateAvailable();showStats(); } });
   $('closeZoom').onclick=()=> $('zoomDialog').close();
   $('closeNotes').addEventListener('click', () => $('notesDialog').close());
   document.querySelectorAll('[data-notes]').forEach(element => element.addEventListener('click', () => openNotes(element.dataset.notes)));
   document.querySelectorAll('[data-cheat]').forEach(element => element.addEventListener('click', () => openCheat(element.dataset.cheat)));
   document.querySelectorAll('.layer-quiz').forEach(button => button.addEventListener('click', () => startQuiz(button.dataset.quizMode)));
   updateAvailable();
+  syncResume();
 
   // Локальная версия требует соседние quiz/questions.js и quiz/engine.js; Service Worker не используется.
 
@@ -753,7 +839,7 @@ function buildDetailedExplanation(q){
       description: 'Возвращает текущий прогресс и результат без изменения экзамена.',
       inputSchema: { type:'object', properties:{}, additionalProperties:false },
       annotations: { readOnlyHint:true, untrustedContentHint:false },
-      execute() { return { active:$('quizScreen').classList.contains('active'), question:state.index + 1, total:QUIZ_SIZE, correct:state.score, completed:state.answers.length === QUIZ_SIZE }; }
+      execute() { return { active:$('quizScreen').classList.contains('active'), question:state.index + 1, total:state.questions.length, correct:state.score, completed:state.completed }; }
     }, { signal: controller.signal })).catch(() => {});
   }
 })();
