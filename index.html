@@ -434,7 +434,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   const trackEvent = (name, params) => window.SiteAnalytics?.trackEvent(name, params);
   const $ = id => document.getElementById(id);
   const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen'];
-  const state = { mode: 'mixed', questions: [], index: 0, score: 0, answers: [], checked: false, completed: false, shown: new Set() };
+  const state = { mode: 'mixed', questions: [], index: 0, score: 0, answers: [], checked: false, completed: false, shown: new Set(), photoReady: true };
 
   function shuffle(items) {
     const out = [...items];
@@ -504,7 +504,8 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   function renderQuestion() {
     const q = state.questions[state.index];
-    if (!state.shown.has(q.id)) { const stats=loadStats(); QuizEngine.shown(stats,q.id); writeStats(stats); state.shown.add(q.id); }
+    state.photoReady = !q.image;
+    if (state.photoReady) markQuestionShown(q);
     state.checked = false;
     $('questionNumber').textContent = `Вопрос ${state.index + 1} из ${state.questions.length}`;
     $('scoreMini').textContent = `${state.score} ✓`;
@@ -514,20 +515,42 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     $('questionText').textContent = q.text;
     $('questionText').dataset.questionId = q.id;
     const visual = q.image
-      ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Проверь соединение. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
+      ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Для ответа дождись загрузки. Проверь соединение и повтори. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
       : (q.graphic ? q.graphic + '<button type="button" class="secondary-button" id="zoomGraphic">Увеличить схему</button>' : '');
     $('questionGraphic').innerHTML = visual;
     if(q.image) {
       const photo = $('questionGraphic').querySelector('img');
-      const ready = () => { $('photoError').hidden = true; $('zoomGraphic').disabled = false; $('zoomGraphic').textContent = 'Увеличить фотографию'; };
-      const failed = () => { $('photoError').hidden = false; $('zoomGraphic').disabled = true; $('zoomGraphic').textContent = 'Фото недоступно'; };
-      photo.onload = ready; photo.onerror = failed;
-      $('retryPhoto').onclick = () => {
+      // Ignore callbacks from an image belonging to a previous question.
+      const current = () => photo.isConnected && state.questions[state.index]?.id === q.id;
+      const ready = () => {
+        if (!current()) return;
+        state.photoReady = true;
+        markQuestionShown(q);
         $('photoError').hidden = true;
+        $('zoomGraphic').disabled = false;
+        $('zoomGraphic').textContent = 'Увеличить фотографию';
+        syncPhotoControls();
+      };
+      const failed = () => {
+        if (!current()) return;
+        state.photoReady = false;
+        $('photoError').hidden = false;
+        $('zoomGraphic').disabled = true;
+        $('zoomGraphic').textContent = 'Фото недоступно';
+        syncPhotoControls();
+      };
+      const decode = () => { photo.decode().then(ready, failed); };
+      photo.onload = decode;
+      photo.onerror = failed;
+      $('retryPhoto').onclick = () => {
+        state.photoReady = false;
+        syncPhotoControls();
+        $('photoError').hidden = true;
+        $('zoomGraphic').disabled = true;
         $('zoomGraphic').textContent = 'Загрузка фотографии…';
         photo.src = q.image.startsWith('data:') ? q.image : q.image + (q.image.includes('?') ? '&' : '?') + 'retry=' + Date.now();
       };
-      if(photo.complete) { if(photo.naturalWidth) ready(); else failed(); }
+      if(photo.complete) { if(photo.naturalWidth) decode(); else failed(); }
     }
     if(q.image || q.graphic) $('zoomGraphic').onclick = () => openPhotoViewer(q);
     $('feedback').hidden = true;
@@ -553,14 +576,30 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
       label.querySelector('input').addEventListener('change', onChoiceChange);
       $('answersForm').appendChild(label);
     });
+    syncPhotoControls();
+  }
+
+  function markQuestionShown(q) {
+    if (state.shown.has(q.id)) return;
+    const stats = loadStats();
+    QuizEngine.shown(stats, q.id);
+    writeStats(stats);
+    state.shown.add(q.id);
+  }
+
+  function syncPhotoControls() {
+    document.querySelectorAll('#answersForm input').forEach(input => {
+      input.disabled = state.checked || !state.photoReady;
+    });
+    $('checkButton').disabled = state.checked || !state.photoReady || selectedValues().length === 0;
   }
 
   function onChoiceChange(event) {
-    if (state.checked) return;
+    if (state.checked || !state.photoReady) return;
     const input = event.currentTarget;
     if (input.type === 'radio') document.querySelectorAll('.answer-option').forEach(el => el.classList.remove('selected'));
     input.closest('.answer-option').classList.toggle('selected', input.checked);
-    $('checkButton').disabled = selectedValues().length === 0;
+    syncPhotoControls();
   }
 
   function selectedValues() {
@@ -610,7 +649,7 @@ function buildDetailedExplanation(q){
   $('zoomDialog').addEventListener('close', () => { document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
 
   function checkAnswer(replay = false) {
-    if (state.checked) return;
+    if (state.checked || (!replay && !state.photoReady)) return;
     const q = state.questions[state.index];
     const chosen = selectedValues();
     const isCorrect = sameAnswers(chosen, q.correct);
@@ -739,7 +778,8 @@ function buildDetailedExplanation(q){
     state.mode=saved.mode;state.index=saved.index;state.score=saved.score;state.completed=false;
     state.questions=saved.questionIds.map((id,i)=>{const q=bank.find(q=>q.id===id);return {...q,answerOrder:saved.orders[i].map(original=>({original,text:q.answers[original]}))};});
     state.answers=saved.answers.map((a,i)=>({question:state.questions[i],chosen:a.chosen,isCorrect:a.isCorrect}));
-    state.shown=new Set(saved.questionIds.slice(0,saved.index+1));
+    state.shown=new Set(saved.questionIds.slice(0,saved.index));
+    if (loadStats().questions[saved.questionIds[saved.index]]?.seen) state.shown.add(saved.questionIds[saved.index]);
     showScreen('quizScreen');renderQuestion();
     if(saved.answers.length>saved.index) {
       const last=state.answers.pop();if(last.isCorrect)state.score--;
