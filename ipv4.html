@@ -140,6 +140,7 @@
         <option value="plain">Ёмкость без запаса</option>
         <option value="growth">Ёмкость с запасом</option>
         <option value="vlans">Три VLAN в блоке</option>
+        <option value="summary">Суммаризация маршрутов</option>
       </select>
       <p id="capacityHint" class="memory">В подборе ёмкости шлюз занимает отдельный адрес. Рост задаётся в устройствах или процентах от текущего числа конечных устройств.</p>
     </div>
@@ -199,6 +200,44 @@ function subnetRange(network,prefix){
 function rangeIntersection(a,b){
   const start=Math.max(a.start,b.start),end=Math.min(a.end,b.end);
   return start<=end?{start,end}:null;
+}
+// Cover complete input blocks, including their last addresses; merge nested/adjacent ranges first.
+function summaryPlan(blocks){
+  const ranges=blocks.map(b=>subnetRange(b.network,b.prefix)).sort((a,b)=>a.start-b.start),merged=[];
+  for(const row of ranges){
+    const last=merged[merged.length-1];
+    if(last&&row.start<=last.end+1)last.end=Math.max(last.end,row.end);
+    else merged.push({start:row.start,end:row.end});
+  }
+  const start=merged[0].start,end=merged[merged.length-1].end;
+  const low=start.toString(2).padStart(32,'0'),high=end.toString(2).padStart(32,'0');
+  let prefix=0;while(prefix<32&&low[prefix]===high[prefix])prefix++;
+  const route=subnetRange(intToIp(start),prefix),extra=[];let cursor=route.start;
+  for(const row of merged){if(cursor<row.start)extra.push({start:cursor,end:row.start-1});cursor=row.end+1}
+  if(cursor<=route.end)extra.push({start:cursor,end:route.end});
+  return {route,merged,extra,exact:extra.length===0,low,high,prefix};
+}
+function rangeLabel(row){return `${intToIp(row.start)} — ${intToIp(row.end)}`}
+function summaryReviewMarkup(blocks){
+  const plan=summaryPlan(blocks),{route,prefix,extra,low,high}=plan;
+  return `<h3>Общий префикс · /${prefix}</h3><p class="boundary-legend"><span class="network-bit">Общие биты</span> · <span class="host-bit">оставшиеся биты</span>. Сравниваем крайние адреса всех блоков, включая последние.</p><div class="boundary-octets">${[0,1,2,3].map(o=>`<div class="boundary-octet"><h4>Октет ${o+1}</h4>${[[`Минимум · ${intToIp(parseInt(low,2)).split('.')[o]}`,low],[`Максимум · ${intToIp(parseInt(high,2)).split('.')[o]}`,high]].map(([label,bits])=>`<div class="boundary-label">${label}</div><div class="boundary-bits" role="img" aria-label="${label}: ${bits.slice(o*8,o*8+8)}; общих бит ${Math.max(0,Math.min(8,prefix-o*8))}">${[...bits.slice(o*8,o*8+8)].map((bit,i)=>`<span aria-hidden="true" class="${o*8+i<prefix?'network-bit':'host-bit'}">${bit}</span>`).join('')}</div>`).join('')}</div>`).join('')}</div><p class="memory">Общие ${prefix} бит сохраняем; остальные → 0 для начала, → 1 для конца: <b>${route.network}/${prefix}</b>, ${rangeLabel(route)}.</p><h4>${plan.exact?'Точная агрегация · дополнительных адресов нет':'Покрывающий маршрут · дополнительные диапазоны'}</h4>${extra.length?`<ul class="allocation-map" aria-label="Дополнительные диапазоны">${extra.map(row=>`<li>${rangeLabel(row)}</li>`).join('')}</ul><p class="memory">Занятость дополнительных адресов неизвестна. Перед объявлением такого маршрута проверь маршрутизацию этих диапазонов.</p>`:'<p class="memory">Объединение исходных блоков полностью совпадает с результатом.</p>'}`;
+}
+function createSummaryTask(kind=['common','exact','cover','extra'][index%4]){
+  const prefix=[15,21,23,25][Math.floor(index/3)%4],base=subnetRange(randomIp(),prefix).start,quarter=2**(30-prefix);
+  const layout=kind==='exact'?[[0,1],[2,2],[3,2]]:index%2?[[1,2],[2,2]]:[[0,2],[2,2],[2,3]];
+  return {kind,blocks:shuffleItems(layout.map(([offset,delta])=>({network:intToIp(base+offset*quarter),prefix:prefix+delta})))};
+}
+function createSummaryQuestion(task=createSummaryTask()){
+  const plan=summaryPlan(task.blocks),route=`${plan.route.network}/${plan.prefix}`,extra=plan.extra.map(rangeLabel).join('; ');
+  const intro=`Исходные маршруты:<br>${task.blocks.map(b=>`<code>${b.network}/${b.prefix}</code>`).join('<br>')}<br>`;
+  const question={summaryTask:task,fields:[['a','Сводный маршрут','x.x.x.x/xx']],answers:[route],
+    explain:plan.exact?'Точная агрегация: дополнительных адресов нет.':'Это покрывающий маршрут с дополнительными адресами, а не точная агрегация. Их занятость неизвестна; перед объявлением проверь маршрутизацию этих диапазонов.'};
+  if(task.kind==='common')return {...question,prompt:intro+'Сколько начальных битов общие у всех адресов этих блоков? Учитывай границы подсетей.',fields:[['a','Длина общего префикса','например 21']],answers:[String(plan.prefix)]};
+  if(task.kind==='extra'){
+    const choices=shuffleItems([['extra',`Дополнительно: ${extra}`],['none','Дополнительных адресов нет · точная агрегация'],['all',`Весь диапазон ${rangeLabel(plan.route)}`],['source',`Только исходные блоки: ${task.blocks.map(b=>`${b.network}/${b.prefix}`).join('; ')}`]]);
+    return {...question,prompt:intro+`Предложен минимальный единый маршрут <code>${route}</code>. Какие адреса входят в него <b>дополнительно</b> к исходным блокам? Выбери один ответ.`,fields:[['a','Дополнительные диапазоны','выбери вариант']],answers:['extra'],choices};
+  }
+  return {...question,prompt:intro+(task.kind==='exact'?'Объедини соседние выровненные блоки в один CIDR <b>точно, без дополнительных адресов</b>.':'Найди <b>минимальный по размеру единый CIDR</b>, покрывающий все блоки. Он может включить дополнительные адреса.')};
 }
 function shuffleItems(items){
   const out=[...items];for(let i=out.length-1;i>0;i--){const j=rand(0,i);[out[i],out[j]]=[out[j],out[i]]}return out;
@@ -324,6 +363,7 @@ let capacityPractice='mixed';
 let mode='mask',index=0,correct=0,current=null,checked=false,started=false,scope='mixed';const TOTAL=10;
 function createVlsmQuestion(practice=capacityPractice){
   if(practice==='vlans')return createVlanQuestion();
+  if(practice==='summary')return createSummaryQuestion();
   if(practice==='growth'){
     const devices=rand(1,1500),percent=index%2===1;
     return capacityQuestion(devices,percent?[10,20,25,33,50][rand(0,4)]:rand(1,300),percent?'percent':'devices');
@@ -332,9 +372,9 @@ function createVlsmQuestion(practice=capacityPractice){
     const prefix=practice==='plain'?rand(21,30):rand(25,29),needed=rand(Math.max(2,usableCapacity(prefix+1)+1),usableCapacity(prefix));
     return capacityQuestion(needed-1);
   }
-  const count=Math.random()<0.5?2:4,prefix=count===2?23:22,second=rand(1,200),step=count,third=rand(0,Math.floor(255/step))*step;
+  const count=Math.random()<0.5?2:4,second=rand(1,200),step=count,third=rand(0,Math.floor(255/step))*step;
   const nets=Array.from({length:count},(_,i)=>`10.${second}.${third+i}.0/24`);
-  return{prompt:`Объедини соседние сети в один маршрут:<br><code>${nets.join('<br>')}</code>`,fields:[['a','Сводный маршрут','x.x.x.x/xx']],answers:[`10.${second}.${third}.0/${prefix}`],explain:`${count} соседние сети /24 образуют непрерывный блок из ${count*256} адресов. Их можно объявить одной записью 10.${second}.${third}.0/${prefix}.`};
+  return createSummaryQuestion({kind:'exact',blocks:nets.map(net=>({network:net.split('/')[0],prefix:24}))});
 }
 // Compare both addresses using the source prefix, as a host does before delivery.
 function sameSubnet(src,dst,prefix){return subnet(src,prefix).network===subnet(dst,prefix).network}
@@ -397,7 +437,7 @@ function boundaryReviewMarkup(visual){
 }
 function answerValue(value){
   const v=norm(value).toLowerCase();
-  if(mode==='diagnosis')return current?.choices?.[Number(v)-1]?.[0]||v;
+  if(mode==='diagnosis'||current?.summaryTask&&current.choices)return current?.choices?.[Number(v)-1]?.[0]||v;
   if(mode==='same')return ({'да':'yes','нет':'no','1':'yes','2':'no'})[v]||v;
   if(mode==='gateway')return ({'напрямую':'direct','напрямую в l2':'direct','l2':'direct','шлюз':'gateway','через шлюз':'gateway','1':'direct','2':'gateway'})[v]||v;
   if(/^\d{1,3}(\.\d{1,3}){3}$/.test(v)&&v.split('.').every(n=>+n<=255))return v.split('.').map(Number).join('.');
@@ -431,14 +471,14 @@ function check(){
   current.fields.forEach((f,i)=>{const input=$(f[0]);input.setAttribute('aria-readonly','true');input.setAttribute('aria-invalid',String(!matches[i]));input.style.borderColor=matches[i]?'var(--green)':'var(--red)'});
   document.querySelectorAll('.choice').forEach(btn=>btn.disabled=true);
   $('inputStatus').textContent='';$('feedback').className='feedback '+(ok?'good':'bad');
-  const titles={yes:'Да',no:'Нет',direct:'Напрямую в L2',gateway:'Через шлюз',...(mode==='diagnosis'?Object.fromEntries(current.choices):{})};
+  const titles={yes:'Да',no:'Нет',direct:'Напрямую в L2',gateway:'Через шлюз',...(current.choices?Object.fromEntries(current.choices):{})};
   const wrong=verdict?verdict.errors.map(e=>e.message):current.fields.map((f,i)=>matches[i]?null:`${f[1]}: ${titles[expected[i]]||expected[i]}`).filter(Boolean);
   const invalid=!verdict&&current.fields.some((f,i)=>f[2].includes('.')&&(!/^\d{1,3}(\.\d{1,3}){3}(\/\d{1,2})?$/.test(given[i])||given[i].split('/')[0].split('.').some(n=>+n>255)));
   let explanation=verdict?(ok?'Все три VLAN помещаются: размеры минимальны, границы верны, пересечений нет.':'Сверь границы и размеры с одним примером ниже.'):current.explain;
   if(mode==='full'&&!ok){if(given[0]!==expected[0]||given[1]!==expected[1])explanation=current.explain;else if(given[2]!==expected[2])explanation=`Первый usable — сеть + 1: ${current.answers[0]} → ${current.answers[2]}.`;else if(given[3]!==expected[3])explanation=`Последний usable — broadcast − 1: ${current.answers[1]} → ${current.answers[3]}.`}
   $('feedback').replaceChildren();const title=document.createElement('strong');title.textContent=ok?'Верно!':verdict?'Проверь план.':invalid?'Неверный формат IPv4.':'Проверь расчёт.';$('feedback').append(title);
   if(!ok){const result=document.createElement('div');result.textContent=wrong.join(' · ');$('feedback').append(result)}$('feedback').append(document.createTextNode(explanation));
-  const review=verdict?vlanReviewMarkup(current.planTask,verdict):boundaryReviewMarkup(current.visual);$('boundaryReview').setAttribute('aria-label',verdict?'Размещение VLAN и свободные диапазоны':'Биты и границы подсети');$('boundaryReview').innerHTML=review;$('boundaryReview').classList.toggle('hidden',!review);
+  const review=current.summaryTask?summaryReviewMarkup(current.summaryTask.blocks):verdict?vlanReviewMarkup(current.planTask,verdict):boundaryReviewMarkup(current.visual);$('boundaryReview').setAttribute('aria-label',current.summaryTask?'Общий префикс и границы маршрута':verdict?'Размещение VLAN и свободные диапазоны':'Биты и границы подсети');$('boundaryReview').innerHTML=review;$('boundaryReview').classList.toggle('hidden',!review);
   $('score').textContent=`${correct} верно`;$('check').classList.add('hidden');$('next').classList.remove('hidden');saveOne(ok);
 }
 function next(){if(!checked||index>=TOTAL)return;index++;if(index<TOTAL){render();return}finish()}
@@ -450,11 +490,12 @@ function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||
 function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=`${s.best||0}/10`}
 function updatePrefixScope(){
   $('capacityOptions').classList.toggle('hidden',mode!=='vlsm');
+  $('capacityHint').textContent=capacityPractice==='summary'?'Общий битовый префикс, точная агрегация и покрытие с дополнительными диапазонами. Биты и границы — после ответа.':'В подборе ёмкости шлюз занимает отдельный адрес. Рост задаётся в устройствах или процентах от текущего числа конечных устройств.';
   $('prefixScope').disabled=mode==='vlsm'||mode==='diagnosis';
   $('prefixHint').textContent=mode==='diagnosis'?'В подходе смешаны ошибки и корректные конфигурации. Условия плана указаны в каждой карточке.':mode==='vlsm'?'VLSM / агрегация использует свой набор префиксов.':scope==='boundaries'?'В каждом подходе /23, /22 и /21 идут по очереди. Биты и разбор появятся после ответа.':'Обычный случайный подбор префиксов /8–/30.';
 }
 $('prefixScope').onchange=()=>{scope=$('prefixScope').value;updatePrefixScope();restart()};
-$('capacityPractice').onchange=()=>{capacityPractice=$('capacityPractice').value;restart()};
+$('capacityPractice').onchange=()=>{capacityPractice=$('capacityPractice').value;updatePrefixScope();restart()};
 document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));updatePrefixScope();restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat&&e.target.closest?.('.practice')){e.preventDefault();return}if(e.key!=='Enter'||e.repeat||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if((target!==document.body&&!target.closest?.('.practice'))||target.closest('#modes')||target.id==='restart'||target.id==='capacityPractice'||target.id==='prefixScope'||target.closest('details'))return;if(target.tagName==='BUTTON'&&!['check','next'].includes(target.id)&&!target.classList.contains('choice'))return;if(index>=TOTAL)return;e.preventDefault();checked?next():check()});updateStats();render();
 })();
 </script>
