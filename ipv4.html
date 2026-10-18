@@ -14,6 +14,19 @@
     @media(max-width:390px){.shell{padding-left:11px;padding-right:11px}.hero,.card,.practice{border-radius:18px}.hero{padding:19px}.two{grid-template-columns:1fr}.back{font-size:.82rem}.mode-grid{grid-template-columns:1fr 1fr}}
     .level-title{margin:18px 0 9px;color:var(--muted);font-size:.95rem}.choice{min-height:52px;padding:10px;border:1px solid var(--line);border-radius:13px;background:var(--card2);color:var(--text);cursor:pointer}.choice.selected{border-color:var(--cyan)}.input-status{min-height:1.4em;margin-top:8px;color:var(--amber);font-size:.85rem}.field input{font-size:16px}.bit,.chip{min-height:44px}.brand{min-width:0}.brand .mark{flex-shrink:0}
   </style>
+  <style>
+    .prefix-filter{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:13px;min-width:0}
+    .prefix-filter label{display:block;margin-bottom:7px;color:var(--muted);font-size:.86rem;font-weight:750}
+    .prefix-filter select{width:100%;min-width:0;min-height:48px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--text);font-size:16px}
+    .boundary-review{margin-top:13px;padding:14px;border:1px solid var(--line);border-radius:13px;overflow-wrap:anywhere}
+    .boundary-review h3{margin:0 0 8px;font-size:1rem}.boundary-review h4{margin:0 0 10px;font-size:.86rem;color:var(--muted)}
+    .boundary-legend{margin:0 0 12px;font-size:.82rem}.network-bit{color:var(--cyan);border-bottom:2px solid var(--cyan)}.host-bit{color:var(--amber);border-bottom:2px dashed var(--amber)}
+    .boundary-octets{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}.boundary-octet{min-width:0}
+    .boundary-label{margin:8px 0 4px;font-size:.82rem}.boundary-bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+    .boundary-bits span{min-width:0;padding:5px 0;text-align:center;background:var(--card2);font-family:ui-monospace,monospace;font-weight:800}
+    .boundary-review summary{margin-top:14px;min-height:44px;padding:12px 0;cursor:pointer;font-weight:750}.boundary-review .steps{font-size:.86rem;line-height:1.5}
+    @media(min-width:600px){.boundary-octets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  </style>
 <script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script><link rel="stylesheet" href="home-link.css"></head>
 <body data-analytics-section="ipv4">
 <main class="shell">
@@ -105,6 +118,14 @@
       <h3 class="level-title">Ранее доступная практика</h3>
       <div class="mode-grid"><button class="mode" data-mode="vlsm">VLSM / агрегация</button></div>
     </div>
+    <div class="prefix-filter">
+      <label for="prefixScope">Префиксы в текущем навыке</label>
+      <select id="prefixScope" aria-describedby="prefixHint">
+        <option value="mixed">Все /8–/30 · смешанная практика</option>
+        <option value="boundaries">Границы /23–/21 · целевая практика</option>
+      </select>
+      <p id="prefixHint" class="memory">Обычный случайный подбор префиксов. VLSM / агрегация использует свой набор.</p>
+    </div>
     <p class="memory">Вводи ответ с клавиатуры или выбирай кнопкой. Enter — проверить, ещё Enter — следующее задание.</p>
     <div class="progress-row"><span id="round">Задание 1 из 10</span><span id="score">0 верно</span></div>
     <div class="track"><i id="bar"></i></div>
@@ -112,6 +133,7 @@
     <div id="answers" class="answer-area"></div>
     <div id="inputStatus" class="input-status" role="status"></div>
     <div id="feedback" class="feedback hidden" role="status"></div>
+    <section id="boundaryReview" class="boundary-review hidden" aria-label="Биты и границы подсети"></section>
     <button id="check" class="primary" type="button">Проверить</button>
     <button id="next" class="primary hidden" type="button">Следующее задание</button>
     <button id="restart" class="secondary hidden" type="button">Ещё 10 заданий</button>
@@ -135,7 +157,15 @@ function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function norm(s){return String(s??'').trim().replace(/[，,]/g,'.').replace(/^\//,'')}
 function field(id,label,placeholder=''){const dotted=placeholder.includes('.');return `<div class="field"><label for="${id}">${label}</label><input id="${id}" inputmode="${dotted?'url':'numeric'}" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${placeholder}"></div>`}
 
-let mode='mask',index=0,correct=0,current=null,checked=false,started=false;const TOTAL=10;
+function practicePrefix(){return scope==='boundaries'?[23,22,21][index%3]:rand(8,30)}
+function practiceIp(prefix){
+  const ip=randomIp();
+  if(scope!=='boundaries')return ip;
+  const base=ipToInt(subnet(ip,prefix).network),size=2**(32-prefix);
+  // Include usable .0 and .255 addresses, then the end of the whole subnet.
+  return intToIp(base+[256,255,size-2,size-1][Math.floor(index/3)%4]);
+}
+let mode='mask',index=0,correct=0,current=null,checked=false,started=false,scope='mixed';const TOTAL=10;
 function createVlsmQuestion(){
   if(Math.random()<0.5){
     const prefix=rand(25,29),maxHosts=Math.pow(2,32-prefix)-2,smallerMax=Math.pow(2,32-(prefix+1))-2,needed=rand(smallerMax+1,maxHosts);
@@ -149,32 +179,60 @@ function createVlsmQuestion(){
 function sameSubnet(src,dst,prefix){return subnet(src,prefix).network===subnet(dst,prefix).network}
 function delivery(src,dst,prefix){return sameSubnet(src,dst,prefix)?'direct':'gateway'}
 function addressPair(prefix,same){
-  const size=2**(32-prefix),base=ipToInt(subnet(randomIp(),prefix).network),src=intToIp(base+rand(1,size-2));
-  const other=same?base:(base+size)>>>0;let offset=rand(1,size-2);
+  const size=2**(32-prefix),base=ipToInt(subnet(randomIp(),prefix).network),src=intToIp(base+(scope==='boundaries'?255:rand(1,size-2)));
+  const other=same?base:(base+size)>>>0;let offset=scope==='boundaries'&&same?256:rand(1,size-2);
   if(same&&intToIp(other+offset)===src)offset=offset===size-2?1:offset+1;
   return {src,dst:intToIp(other+offset)};
 }
 function createQuestion(){
   if(mode==='vlsm')return createVlsmQuestion();
-  const prefix=rand(8,30),ip=randomIp(),sub=subnet(ip,prefix),intr=interesting(prefix);
+  const prefix=practicePrefix(),ip=practiceIp(prefix),sub=subnet(ip,prefix),intr=interesting(prefix);
   if(mode==='same'||mode==='gateway'){
     const pair=addressPair(prefix,Math.random()<0.5),netA=subnet(pair.src,prefix).network,netB=subnet(pair.dst,prefix).network;
     const same=sameSubnet(pair.src,pair.dst,prefix),isSame=mode==='same';
-    return {prompt:isSame?`Host A: <code>${pair.src}/${prefix}</code><br>Host B: <code>${pair.dst}/${prefix}</code><br>Находятся ли они в одной подсети?`:`IP хоста: <code>${pair.src}/${prefix}</code><br>Маска: <code>${maskText(prefix)}</code><br>IP назначения: <code>${pair.dst}</code><br>Как отправить пакет?`,
+    return {visual:{ip:pair.src,prefix,dst:pair.dst},prompt:isSame?`Host A: <code>${pair.src}/${prefix}</code><br>Host B: <code>${pair.dst}/${prefix}</code><br>Находятся ли они в одной подсети?`:`IP хоста: <code>${pair.src}/${prefix}</code><br>Маска: <code>${maskText(prefix)}</code><br>IP назначения: <code>${pair.dst}</code><br>Как отправить пакет?`,
       fields:[['a','Решение',isSame?'да / нет':'напрямую / шлюз']],
       choices:isSame?[['yes','Да · одна подсеть'],['no','Нет · разные подсети']]:[['direct','Напрямую в L2'],['gateway','Через шлюз']],
       answers:[isSame?(same?'yes':'no'):delivery(pair.src,pair.dst,prefix)],
       explain:isSame?`network A = ${netA}; network B = ${netB}. ${same?'Сети совпадают — это одна подсеть.':'Сети различаются — это разные подсети.'}`:`network(src) = ${netA}; network(dst) = ${netB}. ${same?'Сети совпадают — отправляем напрямую в L2.':'Сети различаются — отправляем через шлюз.'}`};
   }
-  if(mode==='mask')return{prompt:`Какая маска соответствует <code>/${prefix}</code>?`,fields:[['a','Маска','255.255.255.0']],answers:[maskText(prefix)],explain:explainMask(prefix)};
-  if(mode==='cidr')return{prompt:`Какой CIDR соответствует маске <code>${maskText(prefix)}</code>?`,fields:[['a','Префикс','например 27']],answers:[String(prefix)],explain:explainMask(prefix)};
-  if(mode==='step')return{prompt:`Определи шаг в октете №${intr.octet} для <code>/${prefix}</code> (${maskText(prefix)}).`,fields:[['a','Шаг','число']],answers:[String(intr.step)],explain:`256 − ${intr.mask} = ${intr.step}: шаг в октете №${intr.octet}.`};
+  if(mode==='mask')return{visual:{prefix},prompt:`Какая маска соответствует <code>/${prefix}</code>?`,fields:[['a','Маска','255.255.255.0']],answers:[maskText(prefix)],explain:explainMask(prefix)};
+  if(mode==='cidr')return{visual:{prefix},prompt:`Какой CIDR соответствует маске <code>${maskText(prefix)}</code>?`,fields:[['a','Префикс','например 27']],answers:[String(prefix)],explain:explainMask(prefix)};
+  if(mode==='step')return{visual:{prefix},prompt:`Определи шаг в октете №${intr.octet} для <code>/${prefix}</code> (${maskText(prefix)}).`,fields:[['a','Шаг','число']],answers:[String(intr.step)],explain:`256 − ${intr.mask} = ${intr.step}: шаг в октете №${intr.octet}.`};
   const single={network:['Адрес сети',sub.network],broadcast:['Broadcast',sub.broadcast],first:['Первый хост',sub.first],last:['Последний хост',sub.last]}[mode];
-  if(single)return{prompt:`${single[0]} для <code>${ip}/${prefix}</code>`,fields:[['a',single[0],'x.x.x.x']],answers:[single[1]],explain:explainSubnet(ip,prefix,sub,intr)+(mode==='first'?` Первый usable — сеть + 1: ${sub.first}.`:mode==='last'?` Последний usable — broadcast − 1: ${sub.last}.`:'')};
-  return{prompt:`Полностью рассчитай <code>${ip}/${prefix}</code>`,fields:[['a','Сеть','x.x.x.x'],['b','Broadcast','x.x.x.x'],['c','Первый хост','x.x.x.x'],['d','Последний хост','x.x.x.x']],answers:[sub.network,sub.broadcast,sub.first,sub.last],explain:explainSubnet(ip,prefix,sub,intr)};
+  if(single)return{visual:{ip,prefix},prompt:`${single[0]} для <code>${ip}/${prefix}</code>`,fields:[['a',single[0],'x.x.x.x']],answers:[single[1]],explain:explainSubnet(ip,prefix,sub,intr)+(mode==='first'?` Первый usable — сеть + 1: ${sub.first}.`:mode==='last'?` Последний usable — broadcast − 1: ${sub.last}.`:'')};
+  return{visual:{ip,prefix},prompt:`Полностью рассчитай <code>${ip}/${prefix}</code>`,fields:[['a','Сеть','x.x.x.x'],['b','Broadcast','x.x.x.x'],['c','Первый хост','x.x.x.x'],['d','Последний хост','x.x.x.x']],answers:[sub.network,sub.broadcast,sub.first,sub.last],explain:explainSubnet(ip,prefix,sub,intr)};
 }
 function explainMask(p){const octets=maskText(p).split('.'),n=p%8;return n?`Полных октетов: ${Math.floor(p/8)}. В следующем ${n} сетевых бит: ${'1'.repeat(n)}${'0'.repeat(8-n)} = ${octets[Math.floor(p/8)]}.`:`${p/8} полных октета по 8 единиц дают ${maskText(p)}.`}
 function explainSubnet(ip,p,sub,intr){const oct=Number(ip.split('.')[intr.octet-1]),base=Math.floor(oct/intr.step)*intr.step;return `/${p}: шаг ${intr.step} в октете №${intr.octet}; ${oct} попадает в блок с ${base}. Границы: ${sub.network}–${sub.broadcast}.`}
+function boundaryModel(ip,prefix){
+  const sub=subnet(ip,prefix),base=ipToInt(sub.network),end=ipToInt(sub.broadcast);
+  return {...sub,transitionFrom:intToIp(base+255),transitionTo:intToIp(base+256),nextNetwork:end===0xffffffff?null:intToIp(end+1)};
+}
+function boundaryReviewMarkup(visual){
+  if(!visual||visual.prefix<21||visual.prefix>23)return '';
+  const {ip,prefix,dst}=visual,model=ip?boundaryModel(ip,prefix):null;
+  const rows=ip?[['IP',ip],['Сеть',model.network],['Broadcast',model.broadcast]]:[['Маска',maskText(prefix)]];
+  const octets=[2,3].map(o=>{
+    const networkBits=o===2?prefix-16:0;
+    return `<div class="boundary-octet"><h4>${o+1}-й октет · сеть ${networkBits} / хост ${8-networkBits} бит</h4>${rows.map(([label,address])=>{
+      const value=Number(address.split('.')[o]),binary=value.toString(2).padStart(8,'0');
+      return `<div class="boundary-label">${label}: ${value}</div><div class="boundary-bits" role="img" aria-label="${label}, октет ${o+1}: ${binary}; сетевых бит ${networkBits}, хостовых ${8-networkBits}">${[...binary].map((bit,i)=>`<span aria-hidden="true" class="${i<networkBits?'network-bit':'host-bit'}">${bit}</span>`).join('')}</div>`;
+    }).join('')}</div>`;
+  }).join('');
+  let steps='';
+  if(model){
+    const intr=interesting(prefix);
+    steps=`<details><summary>Границы по шагам</summary><ol class="steps">
+      <li>/${prefix}: маска ${maskText(prefix)}, шаг ${intr.step} в третьем октете. Первые два октета целиком сетевые.</li>
+      <li>Хостовые биты → 0: сеть <b>${model.network}</b>. Хостовые биты → 1: broadcast <b>${model.broadcast}</b>.</li>
+      <li>Внутри блока: <b>${model.transitionFrom} → ${model.transitionTo}</b>. После .255 идёт .0, третий октет растёт на 1. Оба адреса здесь — хосты.</li>
+      <li>${model.nextNetwork?`После broadcast: <b>${model.broadcast} → ${model.nextNetwork}</b> — начинается следующая подсеть.`:'Broadcast — последний адрес IPv4; следующего блока нет.'} Хосты текущей: ${model.first}–${model.last}.</li>
+    </ol></details>`;
+    if(dst)steps+=`<p class="memory">Второй адрес: ${dst}; его сеть при /${prefix}: ${subnet(dst,prefix).network}. Сравни с ${model.network}.</p>`;
+  }
+  return `<h3>Где заканчивается сеть · /${prefix}</h3><p class="boundary-legend"><span class="network-bit">Сетевые</span> · <span class="host-bit">хостовые</span> биты. Цвет и линия показывают роль бита, цифра — его значение.</p><div class="boundary-octets">${octets}</div>${steps}`;
+}
 function answerValue(value){
   const v=norm(value).toLowerCase();
   if(mode==='same')return ({'да':'yes','нет':'no','1':'yes','2':'no'})[v]||v;
@@ -187,6 +245,7 @@ function startMode(){if(!started){started=true;analytics('ipv4_mode_start')}}
 function render(){
   const focused=document.activeElement?.closest('#answers');
   current=createQuestion();checked=false;
+  $('boundaryReview').classList.add('hidden');$('boundaryReview').replaceChildren();
   $('round').textContent=`Задание ${index+1} из ${TOTAL}`;$('score').textContent=`${correct} верно`;$('bar').style.width=`${index/TOTAL*100}%`;$('question').innerHTML=current.prompt;
   $('answers').className='answer-area'+(mode==='full'?' full':'');
   // Keep inputs mounted between tasks: mobile keyboards retain focus and layout.
@@ -214,17 +273,24 @@ function check(){
   if(mode==='full'&&!ok){if(given[0]!==expected[0]||given[1]!==expected[1])explanation=current.explain;else if(given[2]!==expected[2])explanation=`Первый usable — сеть + 1: ${current.answers[0]} → ${current.answers[2]}.`;else if(given[3]!==expected[3])explanation=`Последний usable — broadcast − 1: ${current.answers[1]} → ${current.answers[3]}.`}
   $('feedback').replaceChildren();const title=document.createElement('strong');title.textContent=ok?'Верно!':invalid?'Неверный формат IPv4.':'Проверь расчёт.';$('feedback').append(title);
   if(!ok){const result=document.createElement('div');result.textContent=wrong.join(' · ');$('feedback').append(result)}$('feedback').append(document.createTextNode(explanation));
+  const review=boundaryReviewMarkup(current.visual);$('boundaryReview').innerHTML=review;$('boundaryReview').classList.toggle('hidden',!review);
   $('score').textContent=`${correct} верно`;$('check').classList.add('hidden');$('next').classList.remove('hidden');saveOne(ok);
 }
 function next(){if(!checked||index>=TOTAL)return;index++;if(index<TOTAL){render();return}finish()}
-function finish(){const stats=loadStats();stats.best=Math.max(stats.best||0,correct);saveStats(stats);analytics('ipv4_mode_complete');$('bar').style.width='100%';$('question').innerHTML=`Подход завершён: <code>${correct} из ${TOTAL}</code>`;$('answers').innerHTML='';$('feedback').className='feedback '+(correct>=8?'good':'bad');$('feedback').innerHTML=correct>=8?'<strong>Отлично.</strong>Скорость придёт после нескольких коротких подходов.':'<strong>Продолжай.</strong>Повтори этот навык ещё одним коротким подходом.';$('next').classList.add('hidden');$('restart').classList.remove('hidden');updateStats();$('restart').focus({preventScroll:true})}
+function finish(){const stats=loadStats();stats.best=Math.max(stats.best||0,correct);saveStats(stats);analytics('ipv4_mode_complete');$('bar').style.width='100%';$('question').innerHTML=`Подход завершён: <code>${correct} из ${TOTAL}</code>`;$('answers').innerHTML='';$('boundaryReview').classList.add('hidden');$('boundaryReview').replaceChildren();$('feedback').className='feedback '+(correct>=8?'good':'bad');$('feedback').innerHTML=correct>=8?'<strong>Отлично.</strong>Скорость придёт после нескольких коротких подходов.':'<strong>Продолжай.</strong>Повтори этот навык ещё одним коротким подходом.';$('next').classList.add('hidden');$('restart').classList.remove('hidden');updateStats();$('restart').focus({preventScroll:true})}
 function restart(){index=0;correct=0;started=false;render();startMode()}
 function loadStats(){let s;try{s=JSON.parse(localStorage.getItem('ipv4TrainerStats'))}catch{}const n=k=>Number.isSafeInteger(s?.[k])&&s[k]>=0?s[k]:0;const done=n('done');return{done,right:Math.min(done,n('right')),best:Math.min(10,n('best'))}}
 function saveStats(s){try{localStorage.setItem('ipv4TrainerStats',JSON.stringify(s))}catch{}}
 function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||0)+(ok?1:0);saveStats(s);updateStats()}
 function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=`${s.best||0}/10`}
-document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat&&e.target.closest?.('.practice')){e.preventDefault();return}if(e.key!=='Enter'||e.repeat||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if((target!==document.body&&!target.closest?.('.practice'))||target.closest('#modes')||target.id==='restart')return;if(target.tagName==='BUTTON'&&!['check','next'].includes(target.id)&&!target.classList.contains('choice'))return;if(index>=TOTAL)return;e.preventDefault();checked?next():check()});updateStats();render();
+function updatePrefixScope(){
+  $('prefixScope').disabled=mode==='vlsm';
+  $('prefixHint').textContent=mode==='vlsm'?'VLSM / агрегация использует свой набор префиксов.':scope==='boundaries'?'В каждом подходе /23, /22 и /21 идут по очереди. Биты и разбор появятся после ответа.':'Обычный случайный подбор префиксов /8–/30.';
+}
+$('prefixScope').onchange=()=>{scope=$('prefixScope').value;updatePrefixScope();restart()};
+document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));updatePrefixScope();restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat&&e.target.closest?.('.practice')){e.preventDefault();return}if(e.key!=='Enter'||e.repeat||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if((target!==document.body&&!target.closest?.('.practice'))||target.closest('#modes')||target.id==='restart'||target.id==='prefixScope'||target.closest('details'))return;if(target.tagName==='BUTTON'&&!['check','next'].includes(target.id)&&!target.classList.contains('choice'))return;if(index>=TOTAL)return;e.preventDefault();checked?next():check()});updateStats();render();
 })();
 </script>
 </body>
 </html>
+
