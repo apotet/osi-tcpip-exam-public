@@ -119,6 +119,7 @@
         <button class="mode" data-mode="full">Полный расчёт</button>
         <button class="mode" data-mode="same">В одной ли подсети?</button>
         <button class="mode" data-mode="gateway">Напрямую или через шлюз?</button>
+        <button class="mode" data-mode="diagnosis">Ошибки адресации</button>
       </div>
       <div data-level="advanced"><h3 class="level-title">Advanced · следующие stages</h3><p class="memory">Новые задания появятся позже.</p></div>
       <h3 class="level-title">Ранее доступная практика</h3>
@@ -195,6 +196,62 @@ function subnetRange(network,prefix){
   const sub=subnet(network,prefix);
   return {network:sub.network,prefix,start:ipToInt(sub.network),end:ipToInt(sub.broadcast)};
 }
+function rangeIntersection(a,b){
+  const start=Math.max(a.start,b.start),end=Math.min(a.end,b.end);
+  return start<=end?{start,end}:null;
+}
+function shuffleItems(items){
+  const out=[...items];for(let i=out.length-1;i>0;i--){const j=rand(0,i);[out[i],out[j]]=[out[j],out[i]]}return out;
+}
+const DIAGNOSIS_TYPES=['network','broadcast','gateway','mask','overlap','nested','zero','last','adjacent','correct'];
+let diagnosisSchedule=[];
+function createDiagnosisScenario(type){
+  const prefix=['zero','last'].includes(type)?23:rand(21,type==='nested'?29:30),range=subnetRange(randomIp(),prefix),size=range.end-range.start+1;
+  if(['overlap','nested','adjacent'].includes(type)){
+    const otherPrefix=type==='nested'?prefix+1:prefix;
+    return {kind:'blocks',plan:[prefix,otherPrefix],blocks:[{network:range.network,prefix},{network:intToIp(range.start+(type==='adjacent'?size:type==='nested'?size/2:0)),prefix:otherPrefix}]};
+  }
+  const offset=type==='network'?0:type==='broadcast'?size-1:type==='zero'?256:type==='last'?255:type==='correct'&&prefix===30?1:2;
+  return {kind:'device',plan:{network:range.network,prefix},device:{ip:intToIp(range.start+offset),prefix:type==='mask'?(prefix<30?prefix+1:29):prefix},
+    gateway:intToIp(type==='gateway'?range.end+2:type==='correct'?range.end-1:range.start+1)};
+}
+function diagnoseIPv4(task){
+  const issues=[];
+  if(task.kind==='blocks'){
+    const ranges=task.blocks.map(b=>subnetRange(b.network,b.prefix)),intersection=rangeIntersection(...ranges);
+    if(intersection)issues.push('overlap');
+    if(task.blocks.some((b,i)=>b.network!==ranges[i].network))issues.push('alignment');
+    if(task.blocks.some((b,i)=>b.prefix!==task.plan[i]))issues.push('mask');
+    return {issues,ranges,intersection};
+  }
+  const local=subnet(task.device.ip,task.device.prefix),planned=subnetRange(task.plan.network,task.plan.prefix),gateway=ipToInt(task.gateway);
+  if(task.device.ip===local.network)issues.push('network');
+  if(task.device.ip===local.broadcast)issues.push('broadcast');
+  if(gateway<=ipToInt(local.network)||gateway>=ipToInt(local.broadcast)||task.gateway===task.device.ip)issues.push('gateway');
+  if(task.device.prefix!==task.plan.prefix)issues.push('mask');
+  return {issues,local,planned};
+}
+function createDiagnosisQuestion(task=createDiagnosisScenario(diagnosisSchedule[index]||DIAGNOSIS_TYPES[index%DIAGNOSIS_TYPES.length])){
+  const report=diagnoseIPv4(task),answer=report.issues[0]||'none';
+  if(report.issues.length>1)throw new Error('В карточке диагностики должна быть одна проблема');
+  let prompt,explain,choices;
+  if(task.kind==='blocks'){
+    const [a,b]=report.ranges,common=report.intersection;
+    prompt=`План: VLAN A — /${task.plan[0]}, VLAN B — /${task.plan[1]}; блоки должны <b>не пересекаться</b> в общей таблице маршрутизации. Свободные промежутки разрешены; адреса устройств и шлюзов ещё не назначены.<br>Выделено A: <code>${task.blocks[0].network}/${task.blocks[0].prefix}</code><br>Выделено B: <code>${task.blocks[1].network}/${task.blocks[1].prefix}</code>`;
+    const relation=a.start===b.start&&a.end===b.end?'Блоки совпадают.':a.start<=b.start&&a.end>=b.end?'B целиком вложена в A.':'A целиком вложена в B.';
+    const conclusion=answer==='mask'?`План требует A /${task.plan[0]}, B /${task.plan[1]}; выделены A /${a.prefix}, B /${b.prefix}.`:answer==='alignment'?`Правильные границы сетей: A ${a.network}/${a.prefix}, B ${b.network}/${b.prefix}.`:common?`${relation} Общие адреса: ${intToIp(common.start)}–${intToIp(common.end)}; план нарушен.`:'Общих адресов нет, префиксы соответствуют плану. Исправления не нужны.';
+    explain=`A: ${intToIp(a.start)}–${intToIp(a.end)}; B: ${intToIp(b.start)}–${intToIp(b.end)}. ${conclusion}`;
+    choices=[['overlap','Адресные блоки пересекаются'],['alignment','Один адрес указан не на границе подсети'],['mask','Префикс одного блока не соответствует плану'],['none','Блоки соответствуют плану; исправления не нужны']];
+  }else{
+    const {local,planned}=report;
+    prompt=`План LAN: <code>${task.plan.network}/${task.plan.prefix}</code>, маска <code>${maskText(task.plan.prefix)}</code>. Маска устройства должна совпадать с планом. Устройство и шлюз должны иметь разные хостовые адреса этой LAN; шлюз доступен напрямую в той же подсети.<br>Настроено на устройстве: <code>${task.device.ip}/${task.device.prefix}</code> (маска ${maskText(task.device.prefix)})<br>Шлюз: <code>${task.gateway}</code>`;
+    const reason=answer==='network'?`${task.device.ip} — адрес сети, его нельзя назначать устройству.`:answer==='broadcast'?`${task.device.ip} — broadcast, его нельзя назначать устройству.`:answer==='gateway'?`Шлюз ${task.gateway} должен быть отдельным хостовым адресом этой локальной подсети.`:answer==='mask'?`План требует /${task.plan.prefix} (${maskText(task.plan.prefix)}), настроено /${task.device.prefix} (${maskText(task.device.prefix)}).`:`${task.device.ip} и шлюз ${task.gateway} — разные хостовые адреса; маска совпадает с планом.`;
+    explain=`Локальная сеть: ${local.network}–${local.broadcast}; хосты ${local.first}–${local.last}. ${reason}${answer==='mask'?` План: ${intToIp(planned.start)}–${intToIp(planned.end)}.`:''}`;
+    choices=[['network','Устройству назначен адрес сети'],['broadcast','Устройству назначен broadcast'],['gateway','Адрес шлюза недопустим для этой LAN'],['mask','Маска устройства не соответствует плану'],['none','Конфигурация соответствует плану; исправления не нужны']];
+  }
+  return {prompt:prompt+'<br><b>Обычная LAN, /30 или крупнее. Выбери один ответ.</b>',fields:[['a','Проблема · один ответ','номер варианта']],
+    choices:shuffleItems(choices).map(([value,label],i)=>[value,`${i+1}. ${label}`]),answers:[answer],explain};
+}
 function createVlanTask(){
   const prefix=rand(23,27),network=subnet(randomIp(),prefix).network;
   const vlans=[1,2,3].map((extra,i)=>{
@@ -230,7 +287,7 @@ function validateVlanPlan(task,values){
   });
   for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++){
     const a=rows[i],b=rows[j];
-    if(a.start<=b.end&&b.start<=a.end)fail('overlap',`Пересечение VLAN ${a.id} и VLAN ${b.id}: их диапазоны адресов накладываются.`,[a.field,b.field]);
+    if(rangeIntersection(a,b))fail('overlap',`Пересечение VLAN ${a.id} и VLAN ${b.id}: их диапазоны адресов накладываются.`,[a.field,b.field]);
   }
   return {ok:errors.length===0,errors,invalidFields:[...new Set(errors.flatMap(e=>e.fields))],rows};
 }
@@ -289,6 +346,7 @@ function addressPair(prefix,same){
   return {src,dst:intToIp(other+offset)};
 }
 function createQuestion(){
+  if(mode==='diagnosis')return createDiagnosisQuestion();
   if(mode==='vlsm')return createVlsmQuestion();
   const prefix=practicePrefix(),ip=practiceIp(prefix),sub=subnet(ip,prefix),intr=interesting(prefix);
   if(mode==='same'||mode==='gateway'){
@@ -339,6 +397,7 @@ function boundaryReviewMarkup(visual){
 }
 function answerValue(value){
   const v=norm(value).toLowerCase();
+  if(mode==='diagnosis')return current?.choices?.[Number(v)-1]?.[0]||v;
   if(mode==='same')return ({'да':'yes','нет':'no','1':'yes','2':'no'})[v]||v;
   if(mode==='gateway')return ({'напрямую':'direct','напрямую в l2':'direct','l2':'direct','шлюз':'gateway','через шлюз':'gateway','1':'direct','2':'gateway'})[v]||v;
   if(/^\d{1,3}(\.\d{1,3}){3}$/.test(v)&&v.split('.').every(n=>+n<=255))return v.split('.').map(Number).join('.');
@@ -372,7 +431,7 @@ function check(){
   current.fields.forEach((f,i)=>{const input=$(f[0]);input.setAttribute('aria-readonly','true');input.setAttribute('aria-invalid',String(!matches[i]));input.style.borderColor=matches[i]?'var(--green)':'var(--red)'});
   document.querySelectorAll('.choice').forEach(btn=>btn.disabled=true);
   $('inputStatus').textContent='';$('feedback').className='feedback '+(ok?'good':'bad');
-  const titles={yes:'Да',no:'Нет',direct:'Напрямую в L2',gateway:'Через шлюз'};
+  const titles={yes:'Да',no:'Нет',direct:'Напрямую в L2',gateway:'Через шлюз',...(mode==='diagnosis'?Object.fromEntries(current.choices):{})};
   const wrong=verdict?verdict.errors.map(e=>e.message):current.fields.map((f,i)=>matches[i]?null:`${f[1]}: ${titles[expected[i]]||expected[i]}`).filter(Boolean);
   const invalid=!verdict&&current.fields.some((f,i)=>f[2].includes('.')&&(!/^\d{1,3}(\.\d{1,3}){3}(\/\d{1,2})?$/.test(given[i])||given[i].split('/')[0].split('.').some(n=>+n>255)));
   let explanation=verdict?(ok?'Все три VLAN помещаются: размеры минимальны, границы верны, пересечений нет.':'Сверь границы и размеры с одним примером ниже.'):current.explain;
@@ -384,15 +443,15 @@ function check(){
 }
 function next(){if(!checked||index>=TOTAL)return;index++;if(index<TOTAL){render();return}finish()}
 function finish(){const stats=loadStats();stats.best=Math.max(stats.best||0,correct);saveStats(stats);analytics('ipv4_mode_complete');$('bar').style.width='100%';$('question').innerHTML=`Подход завершён: <code>${correct} из ${TOTAL}</code>`;$('answers').innerHTML='';$('boundaryReview').classList.add('hidden');$('boundaryReview').replaceChildren();$('feedback').className='feedback '+(correct>=8?'good':'bad');$('feedback').innerHTML=correct>=8?'<strong>Отлично.</strong>Скорость придёт после нескольких коротких подходов.':'<strong>Продолжай.</strong>Повтори этот навык ещё одним коротким подходом.';$('next').classList.add('hidden');$('restart').classList.remove('hidden');updateStats();$('restart').focus({preventScroll:true})}
-function restart(){index=0;correct=0;started=false;render();startMode()}
+function restart(){index=0;correct=0;started=false;if(mode==='diagnosis')diagnosisSchedule=shuffleItems(DIAGNOSIS_TYPES);render();startMode()}
 function loadStats(){let s;try{s=JSON.parse(localStorage.getItem('ipv4TrainerStats'))}catch{}const n=k=>Number.isSafeInteger(s?.[k])&&s[k]>=0?s[k]:0;const done=n('done');return{done,right:Math.min(done,n('right')),best:Math.min(10,n('best'))}}
 function saveStats(s){try{localStorage.setItem('ipv4TrainerStats',JSON.stringify(s))}catch{}}
 function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||0)+(ok?1:0);saveStats(s);updateStats()}
 function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=`${s.best||0}/10`}
 function updatePrefixScope(){
   $('capacityOptions').classList.toggle('hidden',mode!=='vlsm');
-  $('prefixScope').disabled=mode==='vlsm';
-  $('prefixHint').textContent=mode==='vlsm'?'VLSM / агрегация использует свой набор префиксов.':scope==='boundaries'?'В каждом подходе /23, /22 и /21 идут по очереди. Биты и разбор появятся после ответа.':'Обычный случайный подбор префиксов /8–/30.';
+  $('prefixScope').disabled=mode==='vlsm'||mode==='diagnosis';
+  $('prefixHint').textContent=mode==='diagnosis'?'В подходе смешаны ошибки и корректные конфигурации. Условия плана указаны в каждой карточке.':mode==='vlsm'?'VLSM / агрегация использует свой набор префиксов.':scope==='boundaries'?'В каждом подходе /23, /22 и /21 идут по очереди. Биты и разбор появятся после ответа.':'Обычный случайный подбор префиксов /8–/30.';
 }
 $('prefixScope').onchange=()=>{scope=$('prefixScope').value;updatePrefixScope();restart()};
 $('capacityPractice').onchange=()=>{capacityPractice=$('capacityPractice').value;restart()};

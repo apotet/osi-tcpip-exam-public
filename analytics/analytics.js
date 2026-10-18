@@ -17,7 +17,7 @@
   // No raw answer, search, feedback, URL, user ID or stored statistics enters a goal.
   function parameters(name, input = {}) {
     if (name === 'ipv4_mode_start' || name === 'ipv4_mode_complete') {
-      if (!['mask','cidr','step','network','broadcast','first','last','full','same','gateway','vlsm'].includes(input.mode) || input.total !== 10 ||
+      if (!['mask','cidr','step','network','broadcast','first','last','full','same','gateway','vlsm','diagnosis'].includes(input.mode) || input.total !== 10 ||
           !Number.isInteger(input.score) || input.score < 0 || input.score > 10 || input.percent !== input.score * 10 ||
           (name === 'ipv4_mode_start' && input.score !== 0)) return null;
       return { mode: input.mode, score: input.score, total: input.total, percent: input.percent };
