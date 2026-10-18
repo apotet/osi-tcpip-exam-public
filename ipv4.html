@@ -26,6 +26,12 @@
     .boundary-bits span{min-width:0;padding:5px 0;text-align:center;background:var(--card2);font-family:ui-monospace,monospace;font-weight:800}
     .boundary-review summary{margin-top:14px;min-height:44px;padding:12px 0;cursor:pointer;font-weight:750}.boundary-review .steps{font-size:.86rem;line-height:1.5}
     @media(min-width:600px){.boundary-octets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .vlan-fields{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;min-width:0;margin:0;padding:12px;border:1px solid var(--line);border-radius:13px}
+    .vlan-fields legend{padding:0 5px;color:var(--cyan);font-size:.9rem;font-weight:800}
+    .allocation-map{display:grid;gap:7px;list-style:none;padding:0;margin:12px 0;font-size:.86rem}
+    .allocation-map li{min-width:0;padding:10px;border-left:3px solid var(--cyan);border-radius:5px;background:var(--card2);overflow-wrap:anywhere}
+    .allocation-map li.free{border-left:3px dashed var(--muted);color:var(--muted)}.allocation-map span{display:block;margin-top:4px}
+    @media(min-width:600px){.vlan-fields{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
   </style>
 <script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script><link rel="stylesheet" href="home-link.css"></head>
 <body data-analytics-section="ipv4">
@@ -132,6 +138,7 @@
         <option value="mixed">Смешанная · без запаса и агрегация</option>
         <option value="plain">Ёмкость без запаса</option>
         <option value="growth">Ёмкость с запасом</option>
+        <option value="vlans">Три VLAN в блоке</option>
       </select>
       <p id="capacityHint" class="memory">В подборе ёмкости шлюз занимает отдельный адрес. Рост задаётся в устройствах или процентах от текущего числа конечных устройств.</p>
     </div>
@@ -184,6 +191,70 @@ function capacityQuestion(devices,growth=0,growthUnit='devices'){
     fields:[['a','Префикс','например 27']],answers:[String(prefix)],
     explain:`${rounding}Нужно: ${devices} + ${added} + 1 (шлюз) = ${required}. /${prefix}: ${available+2} − 2 = ${available} адресов; network/broadcast исключены. ${next}`};
 }
+function subnetRange(network,prefix){
+  const sub=subnet(network,prefix);
+  return {network:sub.network,prefix,start:ipToInt(sub.network),end:ipToInt(sub.broadcast)};
+}
+function createVlanTask(){
+  const prefix=rand(23,27),network=subnet(randomIp(),prefix).network;
+  const vlans=[1,2,3].map((extra,i)=>{
+    const p=prefix+extra,required=rand(Math.max(2,usableCapacity(p+1)+1),usableCapacity(p));
+    return {id:(i+1)*10,devices:required-1};
+  });
+  // VLAN identity does not imply allocation order or subnet size.
+  for(let i=vlans.length-1;i>0;i--){const j=rand(0,i);[vlans[i].devices,vlans[j].devices]=[vlans[j].devices,vlans[i].devices]}
+  return {block:{network,prefix},vlans};
+}
+function vlanExample(task){
+  let cursor=ipToInt(task.block.network);
+  return task.vlans.map(v=>({...v,...capacityPlan(v.devices)})).sort((a,b)=>a.prefix-b.prefix||a.id-b.id).map(v=>{
+    const row={...v,...subnetRange(intToIp(cursor),v.prefix)};cursor=row.end+1;return row;
+  });
+}
+function validateVlanPlan(task,values){
+  const parent=subnetRange(task.block.network,task.block.prefix),errors=[],rows=[];
+  const fail=(code,message,fields)=>errors.push({code,message,fields});
+  task.vlans.forEach((v,i)=>{
+    const n=i*2,p=n+1,address=String(values[n]??'').trim(),prefixText=norm(values[p]);
+    const validIp=/^\d{1,3}(\.\d{1,3}){3}$/.test(address)&&address.split('.').every(o=>+o<=255);
+    const validPrefix=/^\d{1,2}$/.test(prefixText)&&+prefixText<=30;
+    if(!validIp)fail('format',`VLAN ${v.id}: введи адрес сети из четырёх октетов 0–255.`,[n]);
+    if(!validPrefix)fail('prefix',`VLAN ${v.id}: нужен префикс 0–30; /31 и /32 не подходят для обычной LAN.`,[p]);
+    if(!validIp||!validPrefix)return;
+    const prefix=Number(prefixText),canonical=address.split('.').map(Number).join('.'),row={id:v.id,field:n,...subnetRange(canonical,prefix)},plan=capacityPlan(v.devices);
+    rows.push(row);
+    if(canonical!==row.network)fail('alignment',`Неверная граница VLAN ${v.id}: сеть /${prefix} для этого адреса начинается с ${row.network}.`,[n]);
+    if(prefix>plan.prefix)fail('capacity',`Тесная подсеть VLAN ${v.id}: ${usableCapacity(prefix)} адресов, нужно ${v.devices} + 1 шлюз = ${plan.required}; минимальный размер — /${plan.prefix}.`,[p]);
+    if(prefix<plan.prefix)fail('minimal',`VLAN ${v.id}: /${prefix} избыточна; для ${v.devices} + 1 шлюз = ${plan.required} достаточно /${plan.prefix}. Требуется минимальный размер.`,[p]);
+    if(row.start<parent.start||row.end>parent.end)fail('outside',`VLAN ${v.id} выходит за исходный блок ${task.block.network}/${task.block.prefix}.`,[n]);
+  });
+  for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++){
+    const a=rows[i],b=rows[j];
+    if(a.start<=b.end&&b.start<=a.end)fail('overlap',`Пересечение VLAN ${a.id} и VLAN ${b.id}: их диапазоны адресов накладываются.`,[a.field,b.field]);
+  }
+  return {ok:errors.length===0,errors,invalidFields:[...new Set(errors.flatMap(e=>e.fields))],rows};
+}
+function allocationSegments(block,rows){
+  const parent=subnetRange(block.network,block.prefix),segments=[];let cursor=parent.start;
+  for(const row of [...rows].sort((a,b)=>a.start-b.start)){
+    if(cursor<row.start)segments.push({free:true,start:cursor,end:row.start-1});
+    segments.push({...row,free:false});cursor=row.end+1;
+  }
+  if(cursor<=parent.end)segments.push({free:true,start:cursor,end:parent.end});
+  return segments;
+}
+function allocationMarkup(block,rows){
+  return `<ol class="allocation-map" aria-label="Распределение адресов по возрастанию">${allocationSegments(block,rows).map(s=>`<li${s.free?' class="free"':''}><strong>${s.free?'Свободно':`VLAN ${s.id} · ${s.network}/${s.prefix}`}</strong><span>${intToIp(s.start)} — ${intToIp(s.end)} · ${s.end-s.start+1} адресов</span></li>`).join('')}</ol>`;
+}
+function vlanReviewMarkup(task,verdict){
+  const example=vlanExample(task);
+  return `<h3>Один пример решения</h3><p class="memory">Размещай от крупных подсетей к мелким: так проще сохранить выравнивание. Это один из вариантов — другой корректный порядок и размещение тоже принимаются.</p><ol class="steps">${example.map(v=>`<li>VLAN ${v.id}: ${v.devices} + 1 шлюз = ${v.required}; /${v.prefix} даёт ${v.available} адресов без network/broadcast.</li>`).join('')}</ol>${allocationMarkup(task.block,example)}${verdict.ok?`<details><summary>Твоё размещение и свободные диапазоны</summary>${allocationMarkup(task.block,verdict.rows)}</details>`:''}`;
+}
+function createVlanQuestion(task=createVlanTask()){
+  const ids=['a','b','c','d','e','f'];
+  return {planTask:task,prompt:`Исходный блок: <code>${task.block.network}/${task.block.prefix}</code>.<br>${task.vlans.map(v=>`VLAN ${v.id}: <code>${v.devices}</code> конечных устройств`).join('<br>')}.<br>Для каждой VLAN дополнительно нужен <b>1 адрес шлюза</b>. Задай адрес сети и префикс минимальной LAN-подсети (/30 или крупнее). Размещай внутри блока, без пересечений; порядок любой.`,
+    fields:task.vlans.flatMap((v,i)=>[[ids[i*2],'Адрес сети','x.x.x.x'],[ids[i*2+1],'Префикс','например 26']]),answers:[],explain:'Размеры учитывают конечные устройства и отдельный адрес шлюза.'};
+}
 function practicePrefix(){return scope==='boundaries'?[23,22,21][index%3]:rand(8,30)}
 function practiceIp(prefix){
   const ip=randomIp();
@@ -195,6 +266,7 @@ function practiceIp(prefix){
 let capacityPractice='mixed';
 let mode='mask',index=0,correct=0,current=null,checked=false,started=false,scope='mixed';const TOTAL=10;
 function createVlsmQuestion(practice=capacityPractice){
+  if(practice==='vlans')return createVlanQuestion();
   if(practice==='growth'){
     const devices=rand(1,1500),percent=index%2===1;
     return capacityQuestion(devices,percent?[10,20,25,33,50][rand(0,4)]:rand(1,300),percent?'percent':'devices');
@@ -282,7 +354,7 @@ function render(){
   $('answers').className='answer-area'+(mode==='full'?' full':'');
   // Keep inputs mounted between tasks: mobile keyboards retain focus and layout.
   const old=[...$('answers').querySelectorAll('input')];
-  if(old.length!==current.fields.length||!old.every((el,i)=>el.id===current.fields[i][0]))$('answers').innerHTML=current.fields.map(f=>field(...f)).join('');
+  if(old.length!==current.fields.length||!old.every((el,i)=>el.id===current.fields[i][0]))$('answers').innerHTML=current.planTask?current.planTask.vlans.map((v,i)=>`<fieldset class="vlan-fields"><legend>VLAN ${v.id}</legend>${current.fields.slice(i*2,i*2+2).map(f=>field(...f)).join('')}</fieldset>`).join(''):current.fields.map(f=>field(...f)).join('');
   current.fields.forEach(([id,label,placeholder])=>{const input=$(id);input.value='';input.readOnly=false;input.setAttribute('aria-readonly','false');input.onbeforeinput=e=>{if(checked)e.preventDefault()};input.oninput=()=>{if(checked)input.value=current.submitted[id]};input.style.borderColor='';input.placeholder=placeholder;input.inputMode=current.choices?'text':placeholder.includes('.')?'url':'numeric';input.previousElementSibling.textContent=label;input.setAttribute('aria-invalid','false')});
   $('answers').querySelector('.choices')?.remove();
   if(current.choices){const choices=document.createElement('div');choices.className='two choices';for(const [value,label] of current.choices){const btn=document.createElement('button');btn.type='button';btn.className='choice';btn.textContent=label;btn.dataset.value=value;btn.setAttribute('aria-pressed','false');btn.onclick=()=>{if(checked)return;$('a').value=value;document.querySelectorAll('.choice').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn))});$('inputStatus').textContent=''};choices.append(btn)}$('answers').append(choices)}
@@ -294,18 +366,20 @@ function check(){
   if(checked||index>=TOTAL)return;
   const given=current.fields.map(f=>answerValue($(f[0]).value));
   if(given.some(v=>!v)){$('inputStatus').textContent='Заполни все поля ответа.';return}
-  current.submitted=Object.fromEntries(current.fields.map(f=>[f[0],$(f[0]).value]));startMode();const expected=current.answers.map(answerValue),ok=expected.every((a,i)=>a===given[i]);checked=true;if(ok)correct++;
-  current.fields.forEach((f,i)=>{const input=$(f[0]);input.setAttribute('aria-readonly','true');input.setAttribute('aria-invalid',String(given[i]!==expected[i]));input.style.borderColor=given[i]===expected[i]?'var(--green)':'var(--red)'});
+  current.submitted=Object.fromEntries(current.fields.map(f=>[f[0],$(f[0]).value]));startMode();
+  const verdict=current.planTask?validateVlanPlan(current.planTask,given):null,expected=current.answers.map(answerValue);
+  const matches=verdict?current.fields.map((_,i)=>!verdict.invalidFields.includes(i)):expected.map((a,i)=>a===given[i]),ok=verdict?verdict.ok:matches.every(Boolean);checked=true;if(ok)correct++;
+  current.fields.forEach((f,i)=>{const input=$(f[0]);input.setAttribute('aria-readonly','true');input.setAttribute('aria-invalid',String(!matches[i]));input.style.borderColor=matches[i]?'var(--green)':'var(--red)'});
   document.querySelectorAll('.choice').forEach(btn=>btn.disabled=true);
   $('inputStatus').textContent='';$('feedback').className='feedback '+(ok?'good':'bad');
   const titles={yes:'Да',no:'Нет',direct:'Напрямую в L2',gateway:'Через шлюз'};
-  const wrong=current.fields.map((f,i)=>given[i]===expected[i]?null:`${f[1]}: ${titles[expected[i]]||expected[i]}`).filter(Boolean);
-  const invalid=current.fields.some((f,i)=>f[2].includes('.')&&(!/^\d{1,3}(\.\d{1,3}){3}(\/\d{1,2})?$/.test(given[i])||given[i].split('/')[0].split('.').some(n=>+n>255)));
-  let explanation=current.explain;
+  const wrong=verdict?verdict.errors.map(e=>e.message):current.fields.map((f,i)=>matches[i]?null:`${f[1]}: ${titles[expected[i]]||expected[i]}`).filter(Boolean);
+  const invalid=!verdict&&current.fields.some((f,i)=>f[2].includes('.')&&(!/^\d{1,3}(\.\d{1,3}){3}(\/\d{1,2})?$/.test(given[i])||given[i].split('/')[0].split('.').some(n=>+n>255)));
+  let explanation=verdict?(ok?'Все три VLAN помещаются: размеры минимальны, границы верны, пересечений нет.':'Сверь границы и размеры с одним примером ниже.'):current.explain;
   if(mode==='full'&&!ok){if(given[0]!==expected[0]||given[1]!==expected[1])explanation=current.explain;else if(given[2]!==expected[2])explanation=`Первый usable — сеть + 1: ${current.answers[0]} → ${current.answers[2]}.`;else if(given[3]!==expected[3])explanation=`Последний usable — broadcast − 1: ${current.answers[1]} → ${current.answers[3]}.`}
-  $('feedback').replaceChildren();const title=document.createElement('strong');title.textContent=ok?'Верно!':invalid?'Неверный формат IPv4.':'Проверь расчёт.';$('feedback').append(title);
+  $('feedback').replaceChildren();const title=document.createElement('strong');title.textContent=ok?'Верно!':verdict?'Проверь план.':invalid?'Неверный формат IPv4.':'Проверь расчёт.';$('feedback').append(title);
   if(!ok){const result=document.createElement('div');result.textContent=wrong.join(' · ');$('feedback').append(result)}$('feedback').append(document.createTextNode(explanation));
-  const review=boundaryReviewMarkup(current.visual);$('boundaryReview').innerHTML=review;$('boundaryReview').classList.toggle('hidden',!review);
+  const review=verdict?vlanReviewMarkup(current.planTask,verdict):boundaryReviewMarkup(current.visual);$('boundaryReview').setAttribute('aria-label',verdict?'Размещение VLAN и свободные диапазоны':'Биты и границы подсети');$('boundaryReview').innerHTML=review;$('boundaryReview').classList.toggle('hidden',!review);
   $('score').textContent=`${correct} верно`;$('check').classList.add('hidden');$('next').classList.remove('hidden');saveOne(ok);
 }
 function next(){if(!checked||index>=TOTAL)return;index++;if(index<TOTAL){render();return}finish()}
@@ -327,5 +401,6 @@ document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.datase
 </script>
 </body>
 </html>
+
 
 
