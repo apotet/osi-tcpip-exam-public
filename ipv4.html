@@ -126,6 +126,15 @@
       </select>
       <p id="prefixHint" class="memory">Обычный случайный подбор префиксов. VLSM / агрегация использует свой набор.</p>
     </div>
+    <div id="capacityOptions" class="prefix-filter hidden">
+      <label for="capacityPractice">Практика VLSM / агрегации</label>
+      <select id="capacityPractice" aria-describedby="capacityHint">
+        <option value="mixed">Смешанная · без запаса и агрегация</option>
+        <option value="plain">Ёмкость без запаса</option>
+        <option value="growth">Ёмкость с запасом</option>
+      </select>
+      <p id="capacityHint" class="memory">В подборе ёмкости шлюз занимает отдельный адрес. Рост задаётся в устройствах или процентах от текущего числа конечных устройств.</p>
+    </div>
     <p class="memory">Вводи ответ с клавиатуры или выбирай кнопкой. Enter — проверить, ещё Enter — следующее задание.</p>
     <div class="progress-row"><span id="round">Задание 1 из 10</span><span id="score">0 верно</span></div>
     <div class="track"><i id="bar"></i></div>
@@ -157,6 +166,24 @@ function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function norm(s){return String(s??'').trim().replace(/[，,]/g,'.').replace(/^\//,'')}
 function field(id,label,placeholder=''){const dotted=placeholder.includes('.');return `<div class="field"><label for="${id}">${label}</label><input id="${id}" inputmode="${dotted?'url':'numeric'}" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${placeholder}"></div>`}
 
+function usableCapacity(prefix){return 2**(32-prefix)-2}
+function capacityPlan(devices,growth=0,growthUnit='devices'){
+  const added=growthUnit==='percent'?Math.ceil(devices*growth/100):growth;
+  const required=devices+added+1; // One gateway address, outside the endpoint count.
+  if(required>usableCapacity(0))throw new RangeError('Недостаточно адресов IPv4');
+  let prefix=30;
+  while(usableCapacity(prefix)<required)prefix--;
+  return {added,required,prefix,available:usableCapacity(prefix),smaller:prefix<30?usableCapacity(prefix+1):null};
+}
+function capacityQuestion(devices,growth=0,growthUnit='devices'){
+  const plan=capacityPlan(devices,growth,growthUnit),{added,required,prefix,available,smaller}=plan;
+  const growthText=growth===0?'Рост не предусмотрен (0 устройств).':growthUnit==='percent'?`Рост: <code>${growth}%</code> от текущего числа конечных устройств, округлить вверх.`:`Рост: ещё <code>${growth}</code> конечных устройств.`;
+  const rounding=growthUnit==='percent'?`Запас: ⌈${devices} × ${growth} / 100⌉ = ${added}. `:'';
+  const next=prefix<30?`/${prefix+1}: ${smaller} < ${required} — не хватает.`:'/31 — point-to-point, для этой обычной LAN не используется.';
+  return {prompt:`Сейчас <code>${devices}</code> конечных устройств (шлюз не входит).<br>${growthText}<br>Дополнительно нужен <b>1 адрес шлюза</b>. Выбери минимальную по размеру обычную LAN-подсеть (/30 или крупнее).`,
+    fields:[['a','Префикс','например 27']],answers:[String(prefix)],
+    explain:`${rounding}Нужно: ${devices} + ${added} + 1 (шлюз) = ${required}. /${prefix}: ${available+2} − 2 = ${available} адресов; network/broadcast исключены. ${next}`};
+}
 function practicePrefix(){return scope==='boundaries'?[23,22,21][index%3]:rand(8,30)}
 function practiceIp(prefix){
   const ip=randomIp();
@@ -165,11 +192,16 @@ function practiceIp(prefix){
   // Include usable .0 and .255 addresses, then the end of the whole subnet.
   return intToIp(base+[256,255,size-2,size-1][Math.floor(index/3)%4]);
 }
+let capacityPractice='mixed';
 let mode='mask',index=0,correct=0,current=null,checked=false,started=false,scope='mixed';const TOTAL=10;
-function createVlsmQuestion(){
-  if(Math.random()<0.5){
-    const prefix=rand(25,29),maxHosts=Math.pow(2,32-prefix)-2,smallerMax=Math.pow(2,32-(prefix+1))-2,needed=rand(smallerMax+1,maxHosts);
-    return{prompt:`Для VLAN нужно минимум <code>${needed}</code> хостов. Какой CIDR даст наименьшую обычную подсеть с достаточным числом адресов хостов?`,fields:[['a','Префикс','например 27']],answers:[String(prefix)],explain:`/${prefix} даёт ${maxHosts} usable-хостов. /${prefix+1} даёт только ${smallerMax}, поэтому минимальный подходящий вариант — /${prefix}.`};
+function createVlsmQuestion(practice=capacityPractice){
+  if(practice==='growth'){
+    const devices=rand(1,1500),percent=index%2===1;
+    return capacityQuestion(devices,percent?[10,20,25,33,50][rand(0,4)]:rand(1,300),percent?'percent':'devices');
+  }
+  if(practice==='plain'||Math.random()<0.5){
+    const prefix=practice==='plain'?rand(21,30):rand(25,29),needed=rand(Math.max(2,usableCapacity(prefix+1)+1),usableCapacity(prefix));
+    return capacityQuestion(needed-1);
   }
   const count=Math.random()<0.5?2:4,prefix=count===2?23:22,second=rand(1,200),step=count,third=rand(0,Math.floor(255/step))*step;
   const nets=Array.from({length:count},(_,i)=>`10.${second}.${third+i}.0/24`);
@@ -284,13 +316,16 @@ function saveStats(s){try{localStorage.setItem('ipv4TrainerStats',JSON.stringify
 function saveOne(ok){const s=loadStats();s.done=(s.done||0)+1;s.right=(s.right||0)+(ok?1:0);saveStats(s);updateStats()}
 function updateStats(){const s=loadStats();$('doneStat').textContent=s.done||0;$('rightStat').textContent=s.right||0;$('bestStat').textContent=`${s.best||0}/10`}
 function updatePrefixScope(){
+  $('capacityOptions').classList.toggle('hidden',mode!=='vlsm');
   $('prefixScope').disabled=mode==='vlsm';
   $('prefixHint').textContent=mode==='vlsm'?'VLSM / агрегация использует свой набор префиксов.':scope==='boundaries'?'В каждом подходе /23, /22 и /21 идут по очереди. Биты и разбор появятся после ответа.':'Обычный случайный подбор префиксов /8–/30.';
 }
 $('prefixScope').onchange=()=>{scope=$('prefixScope').value;updatePrefixScope();restart()};
-document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));updatePrefixScope();restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat&&e.target.closest?.('.practice')){e.preventDefault();return}if(e.key!=='Enter'||e.repeat||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if((target!==document.body&&!target.closest?.('.practice'))||target.closest('#modes')||target.id==='restart'||target.id==='prefixScope'||target.closest('details'))return;if(target.tagName==='BUTTON'&&!['check','next'].includes(target.id)&&!target.classList.contains('choice'))return;if(index>=TOTAL)return;e.preventDefault();checked?next():check()});updateStats();render();
+$('capacityPractice').onchange=()=>{capacityPractice=$('capacityPractice').value;restart()};
+document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===btn));updatePrefixScope();restart()});$('check').onclick=check;$('next').onclick=next;$('restart').onclick=restart;document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.repeat&&e.target.closest?.('.practice')){e.preventDefault();return}if(e.key!=='Enter'||e.repeat||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if((target!==document.body&&!target.closest?.('.practice'))||target.closest('#modes')||target.id==='restart'||target.id==='capacityPractice'||target.id==='prefixScope'||target.closest('details'))return;if(target.tagName==='BUTTON'&&!['check','next'].includes(target.id)&&!target.classList.contains('choice'))return;if(index>=TOTAL)return;e.preventDefault();checked?next():check()});updateStats();render();
 })();
 </script>
 </body>
 </html>
+
 
