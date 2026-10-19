@@ -38,9 +38,19 @@ const SCALANCE_VLAN_PROFILE = {
   access: 'VLAN 120 OFFICE уже существует. Задай его полный список: Fa0/1–2 tagged, Fa0/3 untagged, затем PVID Fa0/3 = 120. VLAN 1 и 110 не изменяй.'
 };
 
+const H3C_VLAN_PROFILE = {
+  label: 'H3C S6805-54HF · Comware 7 · Release 6715',
+  status: 'Сверено по официальным Command References Release 6715-6W100. Модель подтверждена; установленная версия ПО неизвестна. На устройстве не проверено.',
+  source: 'https://www.h3c.com/en/d_202501/2346056_294551_0.htm',
+  assumptions: 'Учебный network-admin; real-time system view, без private/exclusive/commit. Ten-GigabitEthernet1/0/5 — L2 access VLAN 1; Ten-GigabitEthernet1/0/1 — уже L2 trunk с разрешёнными VLAN 1,110 и PVID 1. VLAN 1 и 110 сохраняются. save force предполагает существующий next-startup файл; диалоги обычного save опущены.',
+  goal: 'Создай VLAN 120 OFFICE, назначь XGE1/0/5 как access VLAN 120 (его PVID = 120) и добавь VLAN 120 на trunk XGE1/0/1. Сохрани разрешённые VLAN 1,110, PVID trunk 1 и итоговую конфигурацию.',
+  access: 'VLAN 120 OFFICE уже существует. Назначь Ten-GigabitEthernet1/0/5 как access VLAN 120; его PVID станет 120. Trunk пока не меняй.',
+  trunk: 'VLAN 120 OFFICE уже существует. Добавь VLAN 120 на существующий trunk Ten-GigabitEthernet1/0/1, сохрани разрешённые VLAN 1,110 и PVID 1. Access-порт пока не меняй.'
+};
+
 // Shared parser/reducer and goal evaluator; each profile supplies its own grammar.
 function createVlanCli(profile='Cisco') {
-  const eltex=profile==='Eltex',scalance=profile==='SCALANCE';
+  const eltex=profile==='Eltex',scalance=profile==='SCALANCE',h3c=profile==='H3C';
   const modes = {user:'User EXEC (>)',exec:'Privileged EXEC (#)',config:'глобальная конфигурация (config)#',vlan:'конфигурация VLAN (config-vlan)#',interface:'конфигурация интерфейса (config-if)#'};
   // Conservative lower bounds, NOT claims about shortest prefixes on all IOS builds.
   // Never infer uniqueness from our small grammar: e, c, i, s, etc. stay unsupported.
@@ -95,23 +105,51 @@ function createVlanCli(profile='Cisco') {
       ['ports','fastethernet',':tagged','untagged','fastethernet',':untagged','name',':name']
     ])rules.push({words,modes:['vlan'],action:'ports'});
   }
+  if(h3c) {
+    Object.assign(modes,{user:'user view <SW1>',config:'system view [SW1]',vlan:'VLAN view [SW1-vlan120]',interface:'Ethernet interface view'});
+    for(const word of ['system-view','immediate','vlan','name','interface','ten-gigabitethernet','port','link-type','access','trunk','permit','pvid','undo','quit','return','save','force','safely'])keywords[word]=word;
+    rules.splice(0,rules.length,
+      {words:['system-view'],modes:['user'],action:'configure'},
+      {words:['system-view','immediate'],modes:['user'],action:'configure'},
+      {words:['vlan',':vlan'],modes:['config'],action:'h3cVlan'},
+      {words:['name',':name'],modes:['vlan'],action:'h3cName'},
+      {words:['interface','ten-gigabitethernet',':h3cPort'],modes:['config'],action:'h3cInterface'},
+      {words:['port','link-type','access'],modes:['interface'],action:'h3cAccessMode'},
+      {words:['port','access','vlan',':vlan'],modes:['interface'],action:'h3cAccessVlan'},
+      {words:['port','link-type','trunk'],modes:['interface'],action:'h3cTrunkMode'},
+      {words:['port','trunk','pvid','vlan',':pvid'],modes:['interface'],action:'h3cPvid'},
+      {words:['quit'],modes:['config','vlan','interface'],action:'h3cQuit'},
+      {words:['return'],modes:['config','vlan','interface'],action:'h3cReturn'});
+    for(const words of [['save'],['save','force'],['save','safely'],['save','safely','force']])rules.push({words,modes:['user','config','vlan','interface'],action:'save'});
+    for(let count=1;count<=3;count++) {
+      const tail=Array.from({length:count},(_,i)=>':allowed'+i);
+      rules.push({words:['port','trunk','permit','vlan',...tail],modes:['interface'],action:'h3cPermit'},
+        {words:['undo','port','trunk','permit','vlan',...tail],modes:['interface'],action:'h3cRemove'});
+    }
+  }
   const isKeyword = (input,word) => input.length >= keywords[word].length && word.startsWith(input.toLowerCase());
   const preservedVlans = () => ({1:{name:'MGMT',ports:{'0/5':'untagged','0/6':'untagged'}},110:{name:'CONTROL',ports:{'0/1':'tagged','0/2':'tagged','0/4':'untagged'}}});
-  const snapshot = s => scalance ? {vlanExists:s.vlanExists,name:s.name,members:Object.fromEntries(Object.entries(s.members).sort()),pvid:s.pvid,existingVlans:JSON.parse(JSON.stringify(s.existingVlans))} : {vlanExists:s.vlanExists,name:s.name,accessMode:s.accessMode,accessVlan:s.accessVlan};
-  const same = (a,b) => a && b && (scalance?JSON.stringify(a)===JSON.stringify(b):Object.keys(a).every(k=>a[k]===b[k]));
+  const h3cOldVlans=()=>({1:'MGMT',110:'CONTROL'});
+  const snapshot = s => h3c ? {vlanExists:s.vlanExists,name:s.name,accessMode:s.accessMode,accessVlan:s.accessVlan,allowed:[...s.allowed].sort((a,b)=>a-b),trunkPvid:s.trunkPvid,existingVlans:{...s.existingVlans}} : scalance ? {vlanExists:s.vlanExists,name:s.name,members:Object.fromEntries(Object.entries(s.members).sort()),pvid:s.pvid,existingVlans:JSON.parse(JSON.stringify(s.existingVlans))} : {vlanExists:s.vlanExists,name:s.name,accessMode:s.accessMode,accessVlan:s.accessVlan};
+  const same = (a,b) => a && b && (scalance||h3c?JSON.stringify(a)===JSON.stringify(b):Object.keys(a).every(k=>a[k]===b[k]));
   function initial(task='lab') {
     const state={mode:task==='lab'?'user':'config',vlanExists:task==='access',name:task==='access'?'OFFICE':null,draftVlan:null,accessMode:false,accessVlan:1,saved:null};
+    if(h3c){Object.assign(state,{vlanExists:['access','trunk'].includes(task),name:['access','trunk'].includes(task)?'OFFICE':null,accessMode:true,h3cPort:null,allowed:[1,110],trunkPvid:1,existingVlans:h3cOldVlans()});state.saved=snapshot(state);}
     if(scalance){Object.assign(state,{members:{},pvid:1,existingVlans:preservedVlans()});state.saved=snapshot(state);}
     return state;
   }
-  function prompt(s) {if(scalance)return (!same(snapshot(s),s.saved)?'*':'')+'cli'+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan-120)#',interface:'(config-if-Fa0-3)#'}[s.mode]);return (eltex?'console':'SW1')+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan)#',interface:'(config-if)#'}[s.mode]);}
+  function prompt(s) {if(h3c)return ({user:'<SW1>',config:'[SW1]',vlan:'[SW1-vlan120]',interface:'[SW1-Ten-GigabitEthernet'+s.h3cPort+']'}[s.mode]);if(scalance)return (!same(snapshot(s),s.saved)?'*':'')+'cli'+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan-120)#',interface:'(config-if-Fa0-3)#'}[s.mode]);return (eltex?'console':'SW1')+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan)#',interface:'(config-if)#'}[s.mode]);}
   function fail(state,code,message) {return {ok:false,state,code,message};}
   function apply(state,line) {
     if (typeof line!=='string' || /[\r\n]/.test(line)) return fail(state,'line','Вводи одну команду на строке.');
     const tokens=line.trim().split(/\s+/);
     if (!line.trim()) return fail(state,'empty','Введите команду.');
+    if(h3c) {
+      const alias={exit:'quit',end:'return',write:'save'}[tokens[0]];if(alias)tokens[0]=alias; // R6715 system-defined aliases, exact spelling.
+      if(tokens[0].toLowerCase()==='interface'&&tokens.length===2){const m=/^ten-gigabitethernet(1\/0\/[15])$/i.exec(tokens[1]);if(m)tokens.splice(1,1,'ten-gigabitethernet',m[1]);}
+    }
     // Interface type and numeric identifier may be joined or separated; values stay intact.
-    if (!eltex && !scalance && isKeyword(tokens[0],'interface') && tokens.length===3) tokens.splice(1,2,tokens[1]+tokens[2]);
+    if (!eltex && !scalance && !h3c && isKeyword(tokens[0],'interface') && tokens.length===3) tokens.splice(1,2,tokens[1]+tokens[2]);
     const candidates=rules.filter(r=>tokens.length<=r.words.length && tokens.every((t,i)=>r.words[i].startsWith(':')||isKeyword(t,r.words[i])));
     if (!candidates.length) {
       const extra=rules.find(r=>tokens.length>r.words.length && r.words.every((w,i)=>w.startsWith(':')||isKeyword(tokens[i],w)));
@@ -125,7 +163,7 @@ function createVlanCli(profile='Cisco') {
     const complete=candidates.filter(r=>r.words.length===tokens.length);
     if (!complete.length) return fail(state,'incomplete','Неполная команда: не хватает ключевого слова или аргумента.');
     const rule=complete.find(r=>r.modes.includes(state.mode));
-    if (!rule) return fail(state,'mode',`Сейчас ${modes[state.mode]}. Эта команда в упражнении доступна: ${[...new Set(complete.flatMap(r=>r.modes))].map(m=>modes[m]).join(', ')}. Используй exit/end для выхода из режима конфигурации.`);
+    if (!rule) return fail(state,'mode',`Сейчас ${modes[state.mode]}. Эта команда в упражнении доступна: ${[...new Set(complete.flatMap(r=>r.modes))].map(m=>modes[m]).join(', ')}. Используй ${h3c?'quit/return':'exit/end'} для выхода из режима конфигурации.`);
     const args={};
     for (let i=0;i<rule.words.length;i++) {
       const key=rule.words[i];
@@ -134,6 +172,13 @@ function createVlanCli(profile='Cisco') {
         if (!/^\d+$/.test(tokens[i]) || +tokens[i]<min || +tokens[i]>4094) return fail(state,'argument',`VLAN ID должен быть целым числом от ${min} до 4094. В упражнении используется 120.`);
         if(scalance&&tokens[i].startsWith('0'))return fail(state,'argument','В CLI V4.3.1 VLAN ID вводится без ведущих нулей. В упражнении используется 120.');
         if (tokens[i]!=='120') return fail(state,'scope','В этом упражнении разрешён только VLAN 120; другие VLAN не моделируются.');
+      } else if(key===':h3cPort') {
+        if(!/^1\/0\/[15]$/.test(tokens[i]))return fail(state,'scope','В профиле доступны только Ten-GigabitEthernet 1/0/5 (access) и 1/0/1 (существующий trunk); другие интерфейсы не моделируются.');
+        args.port=tokens[i];
+      } else if(key===':pvid'||key.startsWith(':allowed')) {
+        if(!/^\d+$/.test(tokens[i])||+tokens[i]<1||+tokens[i]>4094)return fail(state,'argument','VLAN ID должен быть целым числом от 1 до 4094. В списках упражнения доступны 1,110,120.');
+        const id=+tokens[i];if(![1,110,120].includes(id))return fail(state,'scope','В списках и PVID упражнения доступны только VLAN 1,110,120. Другие VLAN не моделируются.');
+        if(key===':pvid')args.pvid=id;else (args.allowed??=[]).push(id);
       } else if (key===':interface') {
         if (!(scalance ? /^0\/3$/.test(tokens[i]) : eltex ? /^1\/0\/5$/.test(tokens[i]) : /^(?:gi|gigabitethernet)1\/0\/5$/i.test(tokens[i]))) return fail(state,'scope',scalance?'В упражнении доступен только interface fastethernet 0/3 (fa 0/3). Fa0/1–2 задаются в списке ports.':eltex?'В упражнении доступен только interface gigabitethernet 1/0/5. Другие порты не моделируются.':'В упражнении доступен только GigabitEthernet1/0/5 (Gi1/0/5). Другие порты и типы не моделируются.');
       } else if(key===':tagged'||key===':untagged') {
@@ -149,18 +194,36 @@ function createVlanCli(profile='Cisco') {
         }
         args[key.slice(1)]=ports;
       } else if (key===':name') {
-        if (!(eltex||scalance ? /^[A-Za-z0-9_-]{1,32}$/ : /^[A-Za-z0-9_-]{1,20}$/).test(tokens[i])) return fail(state,'argument',`В упражнении имя — 1–${eltex||scalance?32:20} латинских букв, цифр, _ или -, без пробелов. Целевое имя: OFFICE.`);
+        if (!(eltex||scalance||h3c ? /^[A-Za-z0-9_-]{1,32}$/ : /^[A-Za-z0-9_-]{1,20}$/).test(tokens[i])) return fail(state,'argument',`В упражнении имя — 1–${eltex||scalance||h3c?32:20} латинских букв, цифр, _ или -, без пробелов. Целевое имя: OFFICE.`);
         args.name=tokens[i]; // Do not lowercase values: office is not OFFICE.
       }
+    }
+    if(h3c) {
+      if(['h3cAccessMode','h3cAccessVlan'].includes(rule.action)&&state.h3cPort!=='1/0/5')return fail(state,'context','Выбран trunk XGE1/0/1. Access-команды этого упражнения относятся только к XGE1/0/5; выйди через quit и выбери нужный интерфейс.');
+      if(['h3cTrunkMode','h3cPermit','h3cRemove','h3cPvid'].includes(rule.action)&&state.h3cPort!=='1/0/1')return fail(state,'context','Выбран access-порт XGE1/0/5. Trunk-команды этого упражнения относятся только к существующему trunk XGE1/0/1.');
+      if(rule.action==='h3cAccessVlan'&&!state.vlanExists)return fail(state,'context','Сначала создай VLAN 120. Comware требует существующий VLAN для port access vlan; автоматического создания здесь нет.');
+      if(rule.action==='h3cPermit'&&args.allowed.includes(120)&&!state.vlanExists)return fail(state,'scope','Сначала создай VLAN 120. Разрешение ещё не созданного VLAN на trunk в этом упражнении не моделируется.');
     }
     if(scalance && rule.action==='pvid' && !state.vlanExists)return fail(state,'scope','Сначала создай VLAN 120. PVID отсутствующего VLAN в упражнении не моделируется.');
     if(eltex && rule.action==='accessVlan' && !state.vlanExists) return fail(state,'scope','Сначала создай VLAN 120 через vlan database. Назначение отсутствующего VLAN в профиле не моделируется.');
     const next={...state,draftVlan:state.draftVlan?{...state.draftVlan}:null,saved:state.saved?{...state.saved}:null};
+    if(h3c){next.allowed=[...state.allowed];next.existingVlans={...state.existingVlans};}
     if(scalance)next.members={...state.members};
     const commitVlan=()=>{if(next.draftVlan){next.vlanExists=true;next.name=next.draftVlan.name;next.draftVlan=null;}};
     switch(rule.action) {
       case 'enable': next.mode='exec'; break;
       case 'configure': next.mode='config'; break;
+      case 'h3cVlan': next.vlanExists=true;next.name??='VLAN 0120';next.mode='vlan';break;
+      case 'h3cName': next.name=args.name;break;
+      case 'h3cInterface': next.h3cPort=args.port;next.mode='interface';break;
+      case 'h3cAccessMode': next.accessMode=true;break;
+      case 'h3cAccessVlan': next.accessVlan=120;break;
+      case 'h3cTrunkMode': break; // This exercise starts with an existing L2 trunk.
+      case 'h3cPvid': next.trunkPvid=args.pvid;break;
+      case 'h3cPermit': next.allowed=[...new Set([...next.allowed,...args.allowed])].sort((a,b)=>a-b);break;
+      case 'h3cRemove': next.allowed=next.allowed.filter(v=>!args.allowed.includes(v));break;
+      case 'h3cQuit': next.mode=next.mode==='config'?'user':'config';next.h3cPort=null;break;
+      case 'h3cReturn': next.mode='user';next.h3cPort=null;break;
       case 'scalanceVlan': next.vlanExists=true;next.mode='vlan';break;
       case 'scalanceName': next.name=args.name;break;
       case 'ports': next.members=Object.fromEntries((args.tagged||[]).map(p=>[p,'tagged']));for(const p of args.untagged||[])next.members[p]='untagged';if(args.name!==undefined)next.name=args.name;break;
@@ -181,6 +244,17 @@ function createVlanCli(profile='Cisco') {
   }
   function remaining(s,task='lab') {
     const missing=[];
+    if(h3c) {
+      if(!s.vlanExists)missing.push('создай VLAN 120');
+      if(s.name!=='OFFICE')missing.push('задай имя OFFICE с точным регистром');
+      if(!s.accessMode||s.accessVlan!==(task==='lab'||task==='access'?120:1))missing.push(task==='lab'||task==='access'?'назначь access XGE1/0/5 в VLAN 120 (PVID 120)':'сохрани исходное назначение access-порта VLAN 1');
+      const expected=task==='lab'||task==='trunk'?[1,110,120]:[1,110];
+      if(!same([...s.allowed].sort((a,b)=>a-b),expected))missing.push('задай разрешённые VLAN trunk: '+expected.join(',')+'; port trunk permit vlan добавляет, undo удаляет');
+      if(s.trunkPvid!==1)missing.push('сохрани PVID trunk 1 отдельно от разрешённого списка');
+      if(!same(s.existingVlans,h3cOldVlans()))missing.push('сохрани существующие VLAN 1 и 110');
+      if(task==='lab'&&!same(snapshot(s),s.saved))missing.push('сохрани итоговую конфигурацию: save force (доступно в любом view)');
+      return missing;
+    }
     if(scalance) {
       if(!s.vlanExists)missing.push('создай VLAN 120');
       if(s.name!=='OFFICE')missing.push('задай имя OFFICE с точным регистром');
@@ -217,6 +291,19 @@ function createVlanCli(profile='Cisco') {
     return {ok:!missing.length,state,code:missing.length?'goal':'complete',message:missing.length?'Ещё нужно: '+missing.join('; ')+'.':'Целевое состояние достигнуто.'};
   }
   function hint(s) {
+    if(h3c) {
+      if(s.mode==='user')return remaining(s).some(x=>!x.startsWith('сохрани итоговую'))?'system-view':'save force';
+      if(s.mode==='vlan')return s.name!=='OFFICE'?'name OFFICE':'quit';
+      if(s.mode==='interface') {
+        if(s.h3cPort==='1/0/5')return !s.vlanExists?'quit':s.accessVlan!==120?'port access vlan 120':'quit';
+        if(s.trunkPvid!==1)return 'port trunk pvid vlan 1';
+        return !same([...s.allowed].sort((a,b)=>a-b),[1,110,120])?'port trunk permit vlan 1 110 120':'quit';
+      }
+      if(!s.vlanExists||s.name!=='OFFICE')return 'vlan 120';
+      if(s.accessVlan!==120)return 'interface ten-gigabitethernet 1/0/5';
+      if(s.trunkPvid!==1||!same([...s.allowed].sort((a,b)=>a-b),[1,110,120]))return 'interface ten-gigabitethernet 1/0/1';
+      return 'return';
+    }
     if(scalance) {
       if(s.mode==='user')return 'enable';
       if(s.mode==='exec')return remaining(s).some(x=>!x.startsWith('сохрани итоговую'))?'configure terminal':'write startup-config';
@@ -246,15 +333,17 @@ function createVlanCli(profile='Cisco') {
 const VLAN_CLI = createVlanCli();
 const ELTEX_VLAN_CLI = createVlanCli('Eltex');
 const SCALANCE_VLAN_CLI = createVlanCli('SCALANCE');
-function vlanCli(vendor){return {Cisco:VLAN_CLI,Eltex:ELTEX_VLAN_CLI,SCALANCE:SCALANCE_VLAN_CLI}[vendor];}
-function vlanCliProfile(vendor){return {Cisco:VLAN_CLI_PROFILE,Eltex:ELTEX_VLAN_PROFILE,SCALANCE:SCALANCE_VLAN_PROFILE}[vendor];}
+const H3C_VLAN_CLI=createVlanCli('H3C');
+function vlanCli(vendor){return {H3C:H3C_VLAN_CLI,Cisco:VLAN_CLI,Eltex:ELTEX_VLAN_CLI,SCALANCE:SCALANCE_VLAN_CLI}[vendor];}
+function vlanCliProfile(vendor){return {H3C:H3C_VLAN_PROFILE,Cisco:VLAN_CLI_PROFILE,Eltex:ELTEX_VLAN_PROFILE,SCALANCE:SCALANCE_VLAN_PROFILE}[vendor];}
 function contextualVlanExpected(task,vendor){
+  if(vendor==='H3C')return task.id==='create'?'vlan 120\nname OFFICE\nquit':task.id==='trunk'?'interface ten-gigabitethernet 1/0/1\nport trunk permit vlan 120':'interface ten-gigabitethernet 1/0/5\nport link-type access\nport access vlan 120';
   if(vendor==='SCALANCE')return task.id==='create'?'vlan 120\nname OFFICE\nexit':'vlan 120\nports fastethernet 0/1-2 untagged fastethernet 0/3\nexit\ninterface fastethernet 0/3\nswitchport pvid 120';
   if(vendor==='Eltex')return task.id==='create'?'vlan database\nvlan 120 name OFFICE\nexit':'interface gigabitethernet 1/0/5\nswitchport mode access\nswitchport access vlan 120';
   return task.commands[vendor]+(task.id==='create'?'\nexit':'');
 }
 
-function contextualVlanTask(task,vendor) {return !!vlanCli(vendor) && ['create','access'].includes(task.id);}
+function contextualVlanTask(task,vendor) {return !!vlanCli(vendor) && (vendor==='H3C'?['create','access','trunk']:['create','access']).includes(task.id);}
 function practiceCommandResult(input,task,vendor) {
   if(contextualVlanTask(task,vendor)) return vlanCli(vendor).evaluate(input,task.id);
   const ok=acceptedCommand(input,task.commands[vendor],vendor);
