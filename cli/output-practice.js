@@ -247,6 +247,7 @@ Group  Port-channel  Protocol    Ports
 
 function outputProfile(os){
   if(os==='Cisco')return {label:CLI_OUTPUT_PROFILE,tasks:CLI_OUTPUT_TASKS,sources:CLI_OUTPUT_SOURCES,sourceLabel:'IOS XE 17.12.x'};
+  if(os==='SCALANCE')return {label:SCALANCE_VLAN_PROFILE.label,tasks:SCALANCE_OUTPUT_TASKS,sourceLabel:'CLI V4.3.1 · XC206-2SFP',sources:{port:SCALANCE_OUTPUT_DOC+'#page=97',ports:SCALANCE_OUTPUT_DOC+'#page=237',pvid:SCALANCE_OUTPUT_DOC+'#page=233'}};
   if(os==='Eltex')return {label:'Eltex MES2324 · ПО 4.0.27.3 · заводская версия неизвестна',tasks:ELTEX_OUTPUT_TASKS,
     sources:{interfaces:ELTEX_OUTPUT_DOC+'#page=123',vlan:ELTEX_OUTPUT_DOC+'#page=134',switchport:ELTEX_OUTPUT_DOC+'#page=135',stp:ELTEX_OUTPUT_DOC+'#page=173'},sourceLabel:'MES2324 · ПО 4.0.27.3'};
   return null;
