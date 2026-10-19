@@ -20,7 +20,15 @@ const VLAN_CLI_PROFILE = {
   assumptions: 'VTP transparent; Gi1/0/5 — существующий L2-порт. Имя OFFICE с учётом регистра. Пароли и диалоги сохранения опущены.'
 };
 
-const VLAN_CLI = (() => {
+const ELTEX_VLAN_PROFILE = {
+  label: 'Eltex MES2324 · ПО 4.0.27.3',
+  status: 'Сверено по официальному руководству 4.0.27.3; на устройстве не проверено. Заводская версия ПО неизвестна.',
+  source: 'https://eltex.ru/storage/upload_center/files/60/MES_Series_user_manual_4.0.27.3.pdf',
+  assumptions: 'Учебное начальное состояние: gi1/0/5 — существующий порт, ещё не настроенный как access; access VLAN 1. Цель — VLAN 120 OFFICE с точным регистром. Только полные ключевые слова; диалоги сохранения опущены.'
+};
+
+// Shared parser/reducer and goal evaluator; each profile supplies its own grammar.
+function createVlanCli(eltex=false) {
   const modes = {user:'User EXEC (>)',exec:'Privileged EXEC (#)',config:'глобальная конфигурация (config)#',vlan:'конфигурация VLAN (config-vlan)#',interface:'конфигурация интерфейса (config-if)#'};
   // Conservative lower bounds, NOT claims about shortest prefixes on all IOS builds.
   // Never infer uniqueness from our small grammar: e, c, i, s, etc. stay unsupported.
@@ -37,29 +45,45 @@ const VLAN_CLI = (() => {
     {words:['end'],modes:['config','vlan','interface'],action:'end'},
     {words:['copy','running-config','startup-config'],modes:['exec'],action:'save'}
   ];
+  if(eltex) {
+    for(const word of Object.keys(keywords)) keywords[word]=word;
+    keywords.database='database'; keywords.gigabitethernet='gigabitethernet';
+    rules.splice(1,3,
+      {words:['configure'],modes:['exec'],action:'configure'},
+      {words:['configure','terminal'],modes:['exec'],action:'configure'},
+      {words:['vlan','database'],modes:['config','vlan','interface'],action:'database'},
+      {words:['vlan',':vlan'],modes:['vlan'],action:'eltexVlan'},
+      {words:['vlan',':vlan','name',':name'],modes:['vlan'],action:'eltexVlan'});
+    const port=rules.find(r=>r.action==='interface');
+    port.words=['interface','gigabitethernet',':interface'];
+    port.modes=['config','vlan','interface']; // Global commands available in config submodes, §5.
+    rules.push({words:['write'],modes:['exec'],action:'save'},
+      {words:['write','memory'],modes:['exec'],action:'save'});
+    keywords.write='write'; keywords.memory='memory';
+  }
   const isKeyword = (input,word) => input.length >= keywords[word].length && word.startsWith(input.toLowerCase());
   const snapshot = s => ({vlanExists:s.vlanExists,name:s.name,accessMode:s.accessMode,accessVlan:s.accessVlan});
   const same = (a,b) => a && b && Object.keys(a).every(k=>a[k]===b[k]);
   function initial(task='lab') {
     return {mode:task==='lab'?'user':'config',vlanExists:task==='access',name:task==='access'?'OFFICE':null,draftVlan:null,accessMode:false,accessVlan:1,saved:null};
   }
-  function prompt(s) {return 'SW1'+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan)#',interface:'(config-if)#'}[s.mode]);}
+  function prompt(s) {return (eltex?'console':'SW1')+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan)#',interface:'(config-if)#'}[s.mode]);}
   function fail(state,code,message) {return {ok:false,state,code,message};}
   function apply(state,line) {
     if (typeof line!=='string' || /[\r\n]/.test(line)) return fail(state,'line','Вводи одну команду на строке.');
     const tokens=line.trim().split(/\s+/);
     if (!line.trim()) return fail(state,'empty','Введите команду.');
     // Interface type and numeric identifier may be joined or separated; values stay intact.
-    if (isKeyword(tokens[0],'interface') && tokens.length===3) tokens.splice(1,2,tokens[1]+tokens[2]);
+    if (!eltex && isKeyword(tokens[0],'interface') && tokens.length===3) tokens.splice(1,2,tokens[1]+tokens[2]);
     const candidates=rules.filter(r=>tokens.length<=r.words.length && tokens.every((t,i)=>r.words[i].startsWith(':')||isKeyword(t,r.words[i])));
     if (!candidates.length) {
       const extra=rules.find(r=>tokens.length>r.words.length && r.words.every((w,i)=>w.startsWith(':')||isKeyword(tokens[i],w)));
       if(extra) return fail(state,'arity','Лишние аргументы после команды '+extra.words.filter(w=>!w.startsWith(':')).join(' ')+'.');
       for(let i=0;i<tokens.length;i++) {
         const short=rules.find(r=>r.words[i] && !r.words[i].startsWith(':') && r.words[i].startsWith(tokens[i].toLowerCase()) && !isKeyword(tokens[i],r.words[i]) && tokens.slice(0,i).every((t,j)=>r.words[j].startsWith(':')||isKeyword(t,r.words[j])));
-        if(short) return fail(state,'abbreviation',`Сокращение «${tokens[i]}» не подтверждено для упражнения и может быть неоднозначным в IOS. Используй ${short.words[i]} целиком.`);
+        if(short) return fail(state,'abbreviation',`Сокращение «${tokens[i]}» не подтверждено для упражнения и может быть неоднозначным в CLI. Используй ${short.words[i]} целиком.`);
       }
-      return fail(state,'unsupported','Команда или ключевое слово вне VLAN-упражнения. Используй поддерживаемые переходы, VLAN, access-порт и сохранение; полная грамматика IOS здесь не моделируется.');
+      return fail(state,'unsupported','Команда или ключевое слово вне VLAN-упражнения. Используй поддерживаемые переходы, VLAN, access-порт и сохранение; полная грамматика устройства здесь не моделируется.');
     }
     const complete=candidates.filter(r=>r.words.length===tokens.length);
     if (!complete.length) return fail(state,'incomplete','Неполная команда: не хватает ключевого слова или аргумента.');
@@ -69,20 +93,24 @@ const VLAN_CLI = (() => {
     for (let i=0;i<rule.words.length;i++) {
       const key=rule.words[i];
       if (key===':vlan') {
-        if (!/^\d+$/.test(tokens[i]) || +tokens[i]<1 || +tokens[i]>4094) return fail(state,'argument','VLAN ID должен быть целым числом от 1 до 4094. В упражнении используется 120.');
+        const min=eltex&&rule.action==='eltexVlan'?2:1;
+        if (!/^\d+$/.test(tokens[i]) || +tokens[i]<min || +tokens[i]>4094) return fail(state,'argument',`VLAN ID должен быть целым числом от ${min} до 4094. В упражнении используется 120.`);
         if (tokens[i]!=='120') return fail(state,'scope','В этом упражнении разрешён только VLAN 120; другие VLAN не моделируются.');
       } else if (key===':interface') {
-        if (!/^(?:gi|gigabitethernet)1\/0\/5$/i.test(tokens[i])) return fail(state,'scope','В упражнении доступен только GigabitEthernet1/0/5 (Gi1/0/5). Другие порты и типы не моделируются.');
+        if (!(eltex ? /^1\/0\/5$/.test(tokens[i]) : /^(?:gi|gigabitethernet)1\/0\/5$/i.test(tokens[i]))) return fail(state,'scope',eltex?'В упражнении доступен только interface gigabitethernet 1/0/5. Другие порты не моделируются.':'В упражнении доступен только GigabitEthernet1/0/5 (Gi1/0/5). Другие порты и типы не моделируются.');
       } else if (key===':name') {
-        if (!/^[A-Za-z0-9_-]{1,20}$/.test(tokens[i])) return fail(state,'argument','В упражнении имя — 1–20 латинских букв, цифр, _ или -, без пробелов. Целевое имя: OFFICE.');
+        if (!(eltex ? /^[A-Za-z0-9_-]{1,32}$/ : /^[A-Za-z0-9_-]{1,20}$/).test(tokens[i])) return fail(state,'argument',`В упражнении имя — 1–${eltex?32:20} латинских букв, цифр, _ или -, без пробелов. Целевое имя: OFFICE.`);
         args.name=tokens[i]; // Do not lowercase values: office is not OFFICE.
       }
     }
+    if(eltex && rule.action==='accessVlan' && !state.vlanExists) return fail(state,'scope','Сначала создай VLAN 120 через vlan database. Назначение отсутствующего VLAN в профиле не моделируется.');
     const next={...state,draftVlan:state.draftVlan?{...state.draftVlan}:null,saved:state.saved?{...state.saved}:null};
     const commitVlan=()=>{if(next.draftVlan){next.vlanExists=true;next.name=next.draftVlan.name;next.draftVlan=null;}};
     switch(rule.action) {
       case 'enable': next.mode='exec'; break;
       case 'configure': next.mode='config'; break;
+      case 'database': next.mode='vlan';break;
+      case 'eltexVlan': next.vlanExists=true;next.name=args.name??(next.name||'120');break;
       case 'vlan': next.draftVlan={name:next.vlanExists?next.name:'VLAN0120'};next.mode='vlan';break;
       case 'name': next.draftVlan.name=args.name;break;
       case 'interface': next.mode='interface';break;
@@ -97,8 +125,8 @@ const VLAN_CLI = (() => {
   }
   function remaining(s,task='lab') {
     const missing=[];
-    if (!s.vlanExists) missing.push('создай VLAN 120 и выйди из VLAN-режима через exit/end');
-    if (s.name!=='OFFICE') missing.push('задай имя OFFICE с точным регистром и примени exit/end');
+    if (!s.vlanExists) missing.push(eltex?'создай VLAN 120 в vlan database':'создай VLAN 120 и выйди из VLAN-режима через exit/end');
+    if (s.name!=='OFFICE') missing.push(eltex?'задай имя OFFICE с точным регистром в vlan database':'задай имя OFFICE с точным регистром и примени exit/end');
     if (s.draftVlan) missing.push('примени параметры VLAN через exit/end');
     if (task!=='create') {
       if (!s.accessMode) missing.push('задай switchport mode access на Gi1/0/5');
@@ -119,6 +147,14 @@ const VLAN_CLI = (() => {
     return {ok:!missing.length,state,code:missing.length?'goal':'complete',message:missing.length?'Ещё нужно: '+missing.join('; ')+'.':'Целевое состояние достигнуто.'};
   }
   function hint(s) {
+    if(eltex) {
+      if(s.mode==='user')return 'enable';
+      if(s.mode==='exec')return remaining(s).some(x=>!x.startsWith('сохрани'))?'configure':'write memory';
+      if(!s.vlanExists||s.name!=='OFFICE')return s.mode==='vlan'?'vlan 120 name OFFICE':'vlan database';
+      if(s.mode==='vlan')return 'exit';
+      if(s.mode==='interface')return !s.accessMode?'switchport mode access':s.accessVlan!==120?'switchport access vlan 120':'end';
+      return !s.accessMode||s.accessVlan!==120?'interface gigabitethernet 1/0/5':'end';
+    }
     if(s.mode==='user') return 'enable';
     if(s.mode==='exec') return remaining(s).some(x=>!x.startsWith('сохрани'))?'configure terminal':'copy running-config startup-config';
     if(s.mode==='vlan') return s.draftVlan.name==='OFFICE'?'exit':'name OFFICE';
@@ -128,12 +164,21 @@ const VLAN_CLI = (() => {
     return 'end';
   }
   return {initial,apply,prompt,remaining,evaluate,hint};
-})();
+}
+const VLAN_CLI = createVlanCli();
+const ELTEX_VLAN_CLI = createVlanCli(true);
+function vlanCli(vendor){return {Cisco:VLAN_CLI,Eltex:ELTEX_VLAN_CLI}[vendor];}
+function vlanCliProfile(vendor){return {Cisco:VLAN_CLI_PROFILE,Eltex:ELTEX_VLAN_PROFILE}[vendor];}
+function contextualVlanExpected(task,vendor){
+  if(vendor==='Eltex')return task.id==='create'?'vlan database\nvlan 120 name OFFICE\nexit':'interface gigabitethernet 1/0/5\nswitchport mode access\nswitchport access vlan 120';
+  return task.commands[vendor]+(task.id==='create'?'\nexit':'');
+}
 
-function contextualVlanTask(task,vendor) {return vendor==='Cisco' && ['create','access'].includes(task.id);}
+function contextualVlanTask(task,vendor) {return !!vlanCli(vendor) && ['create','access'].includes(task.id);}
 function practiceCommandResult(input,task,vendor) {
-  if(contextualVlanTask(task,vendor)) return VLAN_CLI.evaluate(input,task.id);
+  if(contextualVlanTask(task,vendor)) return vlanCli(vendor).evaluate(input,task.id);
   const ok=acceptedCommand(input,task.commands[vendor],vendor);
   return {ok,message:ok?'Команда принята.':'Команда не соответствует образцу или поддерживаемым учебным сокращениям.'};
 }
+
 

@@ -245,10 +245,16 @@ Group  Port-channel  Protocol    Ports
   }
 ];
 
+function outputProfile(os){
+  if(os==='Cisco')return {label:CLI_OUTPUT_PROFILE,tasks:CLI_OUTPUT_TASKS,sources:CLI_OUTPUT_SOURCES,sourceLabel:'IOS XE 17.12.x'};
+  if(os==='Eltex')return {label:'Eltex MES2324 · ПО 4.0.27.3 · заводская версия неизвестна',tasks:ELTEX_OUTPUT_TASKS,
+    sources:{interfaces:ELTEX_OUTPUT_DOC+'#page=123',vlan:ELTEX_OUTPUT_DOC+'#page=134',switchport:ELTEX_OUTPUT_DOC+'#page=135',stp:ELTEX_OUTPUT_DOC+'#page=173'},sourceLabel:'MES2324 · ПО 4.0.27.3'};
+  return null;
+}
 function startOutputPractice(){
-  if(vendor!=='Cisco')return;
+  const profile=outputProfile(vendor);if(!profile)return;
   lab=null;
-  exam={items:shuffle(CLI_OUTPUT_TASKS),i:0,score:0,answered:false,type:'output'};
+  exam={items:shuffle(profile.tasks),i:0,score:0,answered:false,type:'output'};
   switchMode('exam');
 }
 function outputQuestionView(){
@@ -256,12 +262,13 @@ function outputQuestionView(){
   exam.current=task;exam.qtype='output';
   exam.options=shuffle(task.options.map(o=>({label:o.text,correct:o.id===task.answer})));
   const lines=task.output.split('\n').map((line,i)=>`<span class="cli-output-line" id="output-line-${i+1}" data-line="${i+1}">${esc(line)||' '}</span>`).join('');
-  $('#app').innerHTML=`<div class="workspace cli-output-workspace"><div class="meta">Cisco · ${exam.i+1} / ${exam.items.length} · ${esc(task.topic)}</div><div class="progress"><div style="width:${100*exam.i/exam.items.length}%"></div></div><h1>${esc(task.question)}</h1><p class="meta">${esc(CLI_OUTPUT_PROFILE)}</p><p>${esc(task.context)}</p><p class="meta" id="output-label">Учебный вывод · составлен для задания, не запись с оборудования. Номера строк добавлены тренажёром.</p><pre class="cli-output" tabindex="0" role="region" aria-labelledby="output-label"><code>${lines}</code></pre><p class="meta">Длинные строки прокручиваются внутри блока вывода.</p><div class="options">${exam.options.map((o,i)=>`<button data-answer="${i}">${esc(o.label)}</button>`).join('')}</div><div id="feedback" aria-live="polite"></div></div>`;
+  $('#app').innerHTML=`<div class="workspace cli-output-workspace"><div class="meta">${esc(vendor)} · ${exam.i+1} / ${exam.items.length} · ${esc(task.topic)}</div><div class="progress"><div style="width:${100*exam.i/exam.items.length}%"></div></div><h1>${esc(task.question)}</h1><p class="meta">${esc(outputProfile(vendor).label)}</p><p>${esc(task.context)}</p><p class="meta" id="output-label">Учебный вывод · составлен для задания, не запись с оборудования. Номера строк добавлены тренажёром.</p><pre class="cli-output" tabindex="0" role="region" aria-labelledby="output-label"><code>${lines}</code></pre><p class="meta">Длинные строки прокручиваются внутри блока вывода.</p><div class="options">${exam.options.map((o,i)=>`<button data-answer="${i}">${esc(o.label)}</button>`).join('')}</div><div id="feedback" aria-live="polite"></div></div>`;
   if(exam.answered)outputFeedback(exam.lastCorrect);
 }
 function outputFeedback(correct){
   $('#app').querySelectorAll('.options button').forEach(b=>b.disabled=true);
   const task=exam.current;
   const references=task.evidence.map(n=>`<a href="#output-line-${n}">строка ${n}</a>`).join(', ');
-  $('#feedback').innerHTML=`<div class="feedback ${correct?'':'bad'}"><strong>${correct?'Верно':'Пока неверно'}</strong><p>${esc(task.options.find(o=>o.id===task.answer).text)}</p><p>${esc(task.explanation)}</p><p>Основание: ${references}.</p><a href="${esc(CLI_OUTPUT_SOURCES[task.source])}" target="_blank" rel="noopener">Официальное руководство · IOS XE 17.12.x ↗</a></div><button class="primary" data-next="1">${exam.i+1===exam.items.length?'Результат':'Следующий вопрос'}</button>`;
+  $('#feedback').innerHTML=`<div class="feedback ${correct?'':'bad'}"><strong>${correct?'Верно':'Пока неверно'}</strong><p>${esc(task.options.find(o=>o.id===task.answer).text)}</p><p>${esc(task.explanation)}</p><p>Основание: ${references}.</p><a href="${esc(outputProfile(vendor).sources[task.source])}" target="_blank" rel="noopener">Официальное руководство · ${esc(outputProfile(vendor).sourceLabel)} ↗</a></div><button class="primary" data-next="1">${exam.i+1===exam.items.length?'Результат':'Следующий вопрос'}</button>`;
 }
+
