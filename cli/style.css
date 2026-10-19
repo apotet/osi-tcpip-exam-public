@@ -6,3 +6,12 @@
 @media(max-width:700px){.toolbar>label{flex-basis:100%}.toolbar select{width:100%}}
 
 nav{flex-wrap:wrap}a{overflow-wrap:anywhere}
+
+/* Output exercises: preserve table columns inside a bounded, keyboard-scrollable region. */
+.cli-output-workspace{min-width:0;max-width:100%}
+pre.cli-output{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;overflow-x:auto;white-space:pre;overflow-wrap:normal}
+.cli-output code{display:block;width:max-content;min-width:100%;overflow-wrap:normal}
+.cli-output-line{display:block}
+.cli-output-line::before{content:attr(data-line);display:inline-block;width:3ch;margin-right:2ch;text-align:right;color:var(--muted);user-select:none}
+.cli-output:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
