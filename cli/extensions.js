@@ -142,3 +142,9 @@ const auditContexts={
  membership:'H3C: покажи trunk-порты и VLAN 120. Cisco: покажи switchport и trunk. RouterOS: порты bridge и таблицу bridge VLAN.'
 };
 for(const [id,context] of Object.entries(auditContexts)){const t=TASKS.find(t=>t.id===id);for(const v of Object.keys(t.commands))t.examContext[v]=context;}
+// The bounded RouterOS VLAN exercises use their own menu context; other cards stay unchanged.
+for(const [id,title] of [['create','Добавить статическую запись bridge VLAN 120'],['access','Настроить untagged-порт ether5 для VLAN 120'],['trunk','Добавить ether2 в tagged-список VLAN 120']]){
+ const t=TASKS.find(t=>t.id===id);
+ t.examTitle={...t.examTitle,MikroTik:title};
+ t.examMode={...t.examMode,MikroTik:'RouterOS Normal mode · терминал / bridge menus'};
+}

@@ -58,6 +58,22 @@ const HUAWEI_VLAN_PROFILE = {
   trunk: 'VLAN 120 с описанием OFFICE уже существует. Добавь VLAN 120 на существующий trunk GE0/0/1, сохрани разрешённые VLAN 1,110 и PVID 1. GE0/0/5 пока не меняй.'
 };
 
+// Shared execution, rejection and final-state evaluation for all profile adapters.
+function contextualVlanEngine({initial,apply,prompt,remaining,hint}) {
+  function evaluate(input,task) {
+    let state=initial(task);
+    const lines=input.replace(/\r\n/g,'\n').trim().split('\n');
+    for(let i=0;i<lines.length;i++) {
+      const result=apply(state,lines[i]);
+      if(!result.ok) return {...result,line:i+1,message:`Строка ${i+1}: ${result.message}`};
+      state=result.state;
+    }
+    const missing=remaining(state,task);
+    return {ok:!missing.length,state,code:missing.length?'goal':'complete',message:missing.length?'Ещё нужно: '+missing.join('; ')+'.':'Целевое состояние достигнуто.'};
+  }
+  return {initial,apply,prompt,remaining,evaluate,hint};
+}
+
 // Shared parser/reducer and goal evaluator; each profile supplies its own grammar.
 function createVlanCli(profile='Cisco') {
   const eltex=profile==='Eltex',scalance=profile==='SCALANCE',h3c=profile==='H3C',huawei=profile==='Huawei',l2=h3c||huawei;
@@ -327,17 +343,6 @@ function createVlanCli(profile='Cisco') {
     if (task==='lab' && !same(snapshot(s),s.saved)) missing.push('сохрани итоговую конфигурацию из Privileged EXEC');
     return missing;
   }
-  function evaluate(input,task) {
-    let state=initial(task);
-    const lines=input.replace(/\r\n/g,'\n').trim().split('\n');
-    for(let i=0;i<lines.length;i++) {
-      const result=apply(state,lines[i]);
-      if(!result.ok) return {...result,line:i+1,message:`Строка ${i+1}: ${result.message}`};
-      state=result.state;
-    }
-    const missing=remaining(state,task);
-    return {ok:!missing.length,state,code:missing.length?'goal':'complete',message:missing.length?'Ещё нужно: '+missing.join('; ')+'.':'Целевое состояние достигнуто.'};
-  }
   function hint(s) {
     if(l2) {
       if(s.mode==='user')return remaining(s).some(x=>!x.startsWith('сохрани итоговую'))?'system-view':huawei?'save':'save force';
@@ -376,16 +381,18 @@ function createVlanCli(profile='Cisco') {
     if(!s.accessMode || s.accessVlan!==120) return 'interface GigabitEthernet1/0/5';
     return 'end';
   }
-  return {initial,apply,prompt,remaining,evaluate,hint};
+  return contextualVlanEngine({initial,apply,prompt,remaining,hint});
 }
 const VLAN_CLI = createVlanCli();
 const ELTEX_VLAN_CLI = createVlanCli('Eltex');
 const SCALANCE_VLAN_CLI = createVlanCli('SCALANCE');
 const H3C_VLAN_CLI=createVlanCli('H3C');
 const HUAWEI_VLAN_CLI=createVlanCli('Huawei');
-function vlanCli(vendor){return {Huawei:HUAWEI_VLAN_CLI,H3C:H3C_VLAN_CLI,Cisco:VLAN_CLI,Eltex:ELTEX_VLAN_CLI,SCALANCE:SCALANCE_VLAN_CLI}[vendor];}
-function vlanCliProfile(vendor){return {Huawei:HUAWEI_VLAN_PROFILE,H3C:H3C_VLAN_PROFILE,Cisco:VLAN_CLI_PROFILE,Eltex:ELTEX_VLAN_PROFILE,SCALANCE:SCALANCE_VLAN_PROFILE}[vendor];}
+const MIKROTIK_VLAN_CLI=contextualVlanEngine(mikrotikVlanAdapter());
+function vlanCli(vendor){return {MikroTik:MIKROTIK_VLAN_CLI,Huawei:HUAWEI_VLAN_CLI,H3C:H3C_VLAN_CLI,Cisco:VLAN_CLI,Eltex:ELTEX_VLAN_CLI,SCALANCE:SCALANCE_VLAN_CLI}[vendor];}
+function vlanCliProfile(vendor){return {MikroTik:MIKROTIK_VLAN_PROFILE,Huawei:HUAWEI_VLAN_PROFILE,H3C:H3C_VLAN_PROFILE,Cisco:VLAN_CLI_PROFILE,Eltex:ELTEX_VLAN_PROFILE,SCALANCE:SCALANCE_VLAN_PROFILE}[vendor];}
 function contextualVlanExpected(task,vendor){
+  if(vendor==='MikroTik')return task.id==='create'?'/interface bridge vlan add bridge=bridge1 vlan-ids=120 tagged=ether1,ether2':task.id==='access'?'/interface bridge vlan set [find bridge=bridge1 vlan-ids=120] untagged=ether5\n/interface bridge port set [find interface=ether5] pvid=120 frame-types=admit-only-untagged-and-priority-tagged ingress-filtering=yes':'/interface bridge vlan set [find bridge=bridge1 vlan-ids=120] tagged=ether1,ether2\n/interface bridge port set [find interface=ether1] frame-types=admit-only-vlan-tagged ingress-filtering=yes\n/interface bridge port set [find interface=ether2] frame-types=admit-only-vlan-tagged ingress-filtering=yes';
   if(vendor==='Huawei')return task.id==='create'?'vlan 120\ndescription OFFICE\nquit':task.id==='trunk'?'interface gigabitethernet 0/0/1\nport trunk allow-pass vlan 120':'interface gigabitethernet 0/0/5\nport link-type access\nport default vlan 120';
   if(vendor==='H3C')return task.id==='create'?'vlan 120\nname OFFICE\nquit':task.id==='trunk'?'interface ten-gigabitethernet 1/0/1\nport trunk permit vlan 120':'interface ten-gigabitethernet 1/0/5\nport link-type access\nport access vlan 120';
   if(vendor==='SCALANCE')return task.id==='create'?'vlan 120\nname OFFICE\nexit':'vlan 120\nports fastethernet 0/1-2 untagged fastethernet 0/3\nexit\ninterface fastethernet 0/3\nswitchport pvid 120';
@@ -393,7 +400,7 @@ function contextualVlanExpected(task,vendor){
   return task.commands[vendor]+(task.id==='create'?'\nexit':'');
 }
 
-function contextualVlanTask(task,vendor) {return !!vlanCli(vendor) && (['H3C','Huawei'].includes(vendor)?['create','access','trunk']:['create','access']).includes(task.id);}
+function contextualVlanTask(task,vendor) {return !!vlanCli(vendor) && (['H3C','Huawei','MikroTik'].includes(vendor)?['create','access','trunk']:['create','access']).includes(task.id);}
 function practiceCommandResult(input,task,vendor) {
   if(contextualVlanTask(task,vendor)) return vlanCli(vendor).evaluate(input,task.id);
   const ok=acceptedCommand(input,task.commands[vendor],vendor);

@@ -246,6 +246,7 @@ Group  Port-channel  Protocol    Ports
 ];
 
 function outputProfile(os){
+  if(os==='MikroTik')return {label:MIKROTIK_VLAN_PROFILE.label,tasks:MIKROTIK_OUTPUT_TASKS,sources:MIKROTIK_OUTPUT_SOURCES,sourceLabel:'RouterOS 7.16.2 · Bridge VLAN Table / Console'};
   if(os==='Huawei')return {label:HUAWEI_VLAN_PROFILE.label,tasks:HUAWEI_OUTPUT_TASKS,sources:HUAWEI_OUTPUT_SOURCES,sourceLabel:'VRP V200R023C00 · EDOC1100333403'};
   if(os==='Cisco')return {label:CLI_OUTPUT_PROFILE,tasks:CLI_OUTPUT_TASKS,sources:CLI_OUTPUT_SOURCES,sourceLabel:'IOS XE 17.12.x'};
   if(os==='H3C')return {label:H3C_VLAN_PROFILE.label,tasks:H3C_OUTPUT_TASKS,sources:H3C_OUTPUT_SOURCES,sourceLabel:'Comware 7 · Release 6715'};
