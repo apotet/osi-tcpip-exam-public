@@ -246,6 +246,7 @@ Group  Port-channel  Protocol    Ports
 ];
 
 function outputProfile(os){
+  if(os==='Huawei')return {label:HUAWEI_VLAN_PROFILE.label,tasks:HUAWEI_OUTPUT_TASKS,sources:HUAWEI_OUTPUT_SOURCES,sourceLabel:'VRP V200R023C00 · EDOC1100333403'};
   if(os==='Cisco')return {label:CLI_OUTPUT_PROFILE,tasks:CLI_OUTPUT_TASKS,sources:CLI_OUTPUT_SOURCES,sourceLabel:'IOS XE 17.12.x'};
   if(os==='H3C')return {label:H3C_VLAN_PROFILE.label,tasks:H3C_OUTPUT_TASKS,sources:H3C_OUTPUT_SOURCES,sourceLabel:'Comware 7 · Release 6715'};
   if(os==='SCALANCE')return {label:SCALANCE_VLAN_PROFILE.label,tasks:SCALANCE_OUTPUT_TASKS,sourceLabel:'CLI V4.3.1 · XC206-2SFP',sources:{port:SCALANCE_OUTPUT_DOC+'#page=97',ports:SCALANCE_OUTPUT_DOC+'#page=237',pvid:SCALANCE_OUTPUT_DOC+'#page=233'}};
