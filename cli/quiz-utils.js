@@ -75,7 +75,7 @@ function contextualVlanEngine({initial,apply,prompt,remaining,hint}) {
 }
 
 // Shared parser/reducer and goal evaluator; each profile supplies its own grammar.
-function createVlanCli(profile='Cisco') {
+function createVlanCli(profile='Cisco',extension=null) {
   const eltex=profile==='Eltex',scalance=profile==='SCALANCE',h3c=profile==='H3C',huawei=profile==='Huawei',l2=h3c||huawei;
   const accessPort=huawei?'0/0/5':'1/0/5',trunkPort=huawei?'0/0/1':'1/0/1',portType=huawei?'gigabitethernet':'ten-gigabitethernet',portLabel=huawei?'GE':'XGE';
   const selectedPort=s=>huawei?s.huaweiPort:s.h3cPort;
@@ -176,6 +176,8 @@ function createVlanCli(profile='Cisco') {
         {words:['undo','port','trunk','allow-pass','vlan',...tail],modes:['interface'],action:'l2Remove'});
     }
   }
+  // Optional exercise adapter: existing profiles keep the exact original rules/state.
+  if(extension){Object.assign(keywords,extension.keywords);rules.unshift(...extension.rules);}
   const isKeyword = (input,word) => input.length >= keywords[word].length && word.startsWith(input.toLowerCase());
   const preservedVlans = () => ({1:{name:'MGMT',ports:{'0/5':'untagged','0/6':'untagged'}},110:{name:'CONTROL',ports:{'0/1':'tagged','0/2':'tagged','0/4':'untagged'}}});
   const l2OldVlans=()=>({1:'MGMT',110:'CONTROL'});
@@ -186,7 +188,7 @@ function createVlanCli(profile='Cisco') {
     if(h3c){Object.assign(state,{vlanExists:['access','trunk'].includes(task),name:['access','trunk'].includes(task)?'OFFICE':null,accessMode:true,h3cPort:null,allowed:[1,110],trunkPvid:1,existingVlans:l2OldVlans()});state.saved=snapshot(state);}
     if(huawei){Object.assign(state,{vlanExists:['access','trunk'].includes(task),name:null,description:['access','trunk'].includes(task)?'OFFICE':null,huaweiPort:null,allowed:[1,110],trunkPvid:1,existingVlans:l2OldVlans()});state.saved=snapshot(state);}
     if(scalance){Object.assign(state,{members:{},pvid:1,existingVlans:preservedVlans()});state.saved=snapshot(state);}
-    return state;
+    return extension?extension.initial(state,task):state;
   }
   function prompt(s) {if(huawei)return ({user:'<SW1>',config:'[SW1]',vlan:'[SW1-vlan120]',interface:'[SW1-GigabitEthernet'+s.huaweiPort+']'}[s.mode]);if(h3c)return ({user:'<SW1>',config:'[SW1]',vlan:'[SW1-vlan120]',interface:'[SW1-Ten-GigabitEthernet'+s.h3cPort+']'}[s.mode]);if(scalance)return (!same(snapshot(s),s.saved)?'*':'')+'cli'+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan-120)#',interface:'(config-if-Fa0-3)#'}[s.mode]);return (eltex?'console':'SW1')+({user:'>',exec:'#',config:'(config)#',vlan:'(config-vlan)#',interface:'(config-if)#'}[s.mode]);}
   function fail(state,code,message) {return {ok:false,state,code,message};}
@@ -221,6 +223,11 @@ function createVlanCli(profile='Cisco') {
     const args={};
     for (let i=0;i<rule.words.length;i++) {
       const key=rule.words[i];
+      if(extension?.arguments?.[key]){
+        const result=extension.arguments[key](tokens[i],state);
+        if(!result.ok)return fail(state,result.code,result.message);
+        Object.assign(args,result.args);continue;
+      }
       if (key===':vlan') {
         const min=eltex&&rule.action==='eltexVlan'?2:1;
         if (!/^\d+$/.test(tokens[i]) || +tokens[i]<min || +tokens[i]>4094) return fail(state,'argument',`VLAN ID должен быть целым числом от ${min} до 4094. В упражнении используется 120.`);
@@ -254,6 +261,11 @@ function createVlanCli(profile='Cisco') {
         if (!(eltex||scalance||h3c ? /^[A-Za-z0-9_-]{1,32}$/ : /^[A-Za-z0-9_-]{1,20}$/).test(tokens[i])) return fail(state,'argument',`В упражнении имя — 1–${eltex||scalance||h3c?32:20} латинских букв, цифр, _ или -, без пробелов. Целевое имя: OFFICE.`);
         args.name=tokens[i]; // Do not lowercase values: office is not OFFICE.
       }
+    }
+    if(extension){
+      const error=extension.validate(rule.action,args,state);
+      if(error)return fail(state,error.code,error.message);
+      if(extension.actions.includes(rule.action))return extension.apply(state,rule.action,args);
     }
     if(l2) {
       if(['l2AccessMode','l2AccessVlan'].includes(rule.action)&&selectedPort(state)!==accessPort)return fail(state,'context',`Выбран trunk ${portLabel}${trunkPort}. Access-команды этого упражнения относятся только к ${portLabel}${accessPort}; выйди через quit и выбери нужный интерфейс.`);

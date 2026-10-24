@@ -261,11 +261,14 @@ function startOutputPractice(){
   exam={items:shuffle(profile.tasks),i:0,score:0,answered:false,type:'output'};
   switchMode('exam');
 }
+function cliOutputLines(output,prefix='output-line-'){
+  return output.split('\n').map((line,i)=>`<span class="cli-output-line" id="${prefix}${i+1}" data-line="${i+1}">${esc(line)||' '}</span>`).join('');
+}
 function outputQuestionView(){
   const task=exam.items[exam.i];
   exam.current=task;exam.qtype='output';
   exam.options=shuffle(task.options.map(o=>({label:o.text,correct:o.id===task.answer})));
-  const lines=task.output.split('\n').map((line,i)=>`<span class="cli-output-line" id="output-line-${i+1}" data-line="${i+1}">${esc(line)||' '}</span>`).join('');
+  const lines=cliOutputLines(task.output);
   $('#app').innerHTML=`<div class="workspace cli-output-workspace"><div class="meta">${esc(vendor)} · ${exam.i+1} / ${exam.items.length} · ${esc(task.topic)}</div><div class="progress"><div style="width:${100*exam.i/exam.items.length}%"></div></div><h1>${esc(task.question)}</h1><p class="meta">${esc(outputProfile(vendor).label)}</p><p>${esc(task.context)}</p><p class="meta" id="output-label">Учебный вывод · составлен для задания, не запись с оборудования. Номера строк добавлены тренажёром.</p><pre class="cli-output" tabindex="0" role="region" aria-labelledby="output-label"><code>${lines}</code></pre><p class="meta">Длинные строки прокручиваются внутри блока вывода.</p><div class="options">${exam.options.map((o,i)=>`<button data-answer="${i}">${esc(o.label)}</button>`).join('')}</div><div id="feedback" aria-live="polite"></div></div>`;
   if(exam.answered)outputFeedback(exam.lastCorrect);
 }
