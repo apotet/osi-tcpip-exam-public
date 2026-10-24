@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <title>Чтение пакетов · Wireshark Basics</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/wireshark/style.css">
+  <script src="assets/wireshark/first-steps-data.js" defer></script>
+  <script src="assets/wireshark/practice.js" defer></script>
+  <script src="assets/wireshark/view.js" defer></script>
+</head>
+<body>
+<main>
+  <nav aria-label="Навигация"><a href="index.html">← На главную</a> · <a href="#exercise">К заданию</a> · <a href="#fields-title">К полям кадра</a></nav>
+  <header class="card">
+    <p class="eyebrow">Wireshark Basics · пакет 1</p>
+    <h1>Прочитай пакет</h1>
+    <p>Найди кадр, прочитай поля и подтверди вывод. Это учебное представление восьми кадров из скачиваемого файла.</p>
+    <p><strong>Точка захвата:</strong> Ethernet-интерфейс узла A (192.0.2.10 /24, MAC 02:00:00:00:00:10), входящий и исходящий трафик. B — 192.0.2.20, C — 192.0.2.30; все в одном Ethernet-сегменте /24. Шлюз не участвует.</p>
+    <p>A сначала узнаёт MAC B через ARP и делает ping, затем узнаёт MAC C и делает ping. Начальные ARP-записи B/C у A отсутствуют; B и C узнают A из его запросов. Файл содержит весь этот синтетический обмен за 0,103 с, без фонового трафика.</p>
+    <a class="action" href="assets/wireshark/first-steps.pcap" download="first-steps.pcap">Скачать трассу · pcap · 632 байта</a>
+    <p class="muted">Собственный синтетический трафик проекта, CC BY-SA 4.0. <a href="assets/wireshark/README.md">Происхождение и ограничения</a> · <a href="assets/wireshark/manifest.json">Метаданные и SHA-256</a></p>
+  </header>
+  <noscript><p class="card">Для интерактивных заданий нужен JavaScript. Скачай pcap выше и открой в Wireshark; инструкция ниже доступна без JavaScript.</p></noscript>
+  <section id="exercise" class="card" aria-labelledby="exercise-title">
+    <h2 id="exercise-title">Практика чтения полей</h2>
+    <p id="task-count"></p>
+    <form id="task-form">
+      <fieldset><legend id="prompt" tabindex="-1"></legend><div id="choices"></div></fieldset>
+      <button id="check" type="submit">Проверить</button>
+    </form>
+    <p id="result" role="status" aria-live="polite" aria-atomic="true"></p>
+    <button id="next" type="button" hidden>Следующее задание</button>
+    <p><a href="#packets-title">Выбрать кадр ↓</a> · <a href="#fields-title">Читать поля выбранного кадра ↓</a></p>
+  </section>
+  <section aria-labelledby="packets-title">
+    <h2 id="packets-title">Восемь кадров</h2>
+    <p>Выбери карточку, затем <a href="#fields-title">перейди к полям</a>. Номера совпадают с Wireshark; время — от начала трассы.</p>
+    <ol id="packets"></ol>
+  </section>
+  <section class="card" aria-labelledby="fields-title">
+    <h2 id="fields-title" tabindex="-1">Поля кадра</h2>
+    <p class="muted">Названия — поля Wireshark. Числа в основном десятичные; EtherType и checksum — шестнадцатеричные. Статус checksum 1 означает «верна». ARP не содержит IP-заголовка и своей контрольной суммы.</p>
+    <div id="fields"></div>
+    <p><a href="#exercise">↑ Вернуться к заданию</a> · <a href="#packets-title">Выбрать другой кадр</a></p>
+  </section>
+  <section class="card" aria-labelledby="repeat-title">
+    <h2 id="repeat-title">Повтори в Wireshark</h2>
+    <ol>
+      <li>Скачай pcap и открой через File → Open. Захват с сетевой карты запускать не нужно.</li>
+      <li>Очисти строку display filter и сортируй по No. по возрастанию: должно быть 8 кадров. Выбери View → Time Display Format → Seconds Since Beginning of Capture.</li>
+      <li>Найди номер из задания. В Packet Details раскрой Ethernet II, Address Resolution Protocol либо Internet Protocol Version 4 и Internet Control Message Protocol. При выборе поля его имя видно в строке состояния.</li>
+      <li>Для пары 3/4 или 7/8 сравни IPv4 Source/Destination, ICMP Type, Identifier (BE) и Sequence Number (BE). BE — порядок байтов сети; здесь Identifier 4660 или 22136, Sequence 1.</li>
+      <li>При желании включи проверку IPv4 checksum в Preferences → Protocols → IPv4. Длины кадров — 60 байт без Ethernet FCS; FCS, преамбула и межкадровый интервал в файл не включены.</li>
+    </ol>
+    <p>Ответ на ping подтверждает только видимый ICMP-обмен. Файл не проверяет доступность веба, реальную сеть или оборудование. Фильтры и диагностика не входят в этот пакет.</p>
+  </section>
+</main>
+</body>
+</html>

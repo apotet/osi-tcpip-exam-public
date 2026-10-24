@@ -1,0 +1,84 @@
+{
+  "id": "first-steps",
+  "file": "assets/wireshark/first-steps.pcap",
+  "format": "pcap 2.4 little-endian",
+  "linkType": "Ethernet (DLT_EN10MB = 1)",
+  "author": "Network Engineer Trainer / apotet",
+  "created": "2026-10-24",
+  "origin": "own synthetic; no traffic sent; no third-party material",
+  "generator": "scripts/generate-wireshark-basics.py, Python 3 stdlib, algorithm v1, no random seed required",
+  "license": "CC-BY-SA-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "sha256": "a791e88520af088466f6378fa631c1574c83735cdf34a21f6122331a610ca416",
+  "bytes": 632,
+  "frames": 8,
+  "durationSeconds": 0.103,
+  "capturePoint": "A Ethernet interface 192.0.2.10/24, 02:00:00:00:00:10, both directions",
+  "timestampOrigin": "2026-01-01T00:00:00Z (synthetic)",
+  "snaplen": 65535,
+  "fcsIncluded": false,
+  "limitations": [
+    "idealized local ARP/ICMP exchange only",
+    "no device or real network validation",
+    "Echo Reply does not prove application availability"
+  ],
+  "verifiedWith": "TShark/Capinfos 4.4.18, IPv4 checksum validation enabled; ICMP checksum decoded as Good",
+  "taskEvidence": [
+    {
+      "task": "eth-destination",
+      "frames": [
+        1
+      ],
+      "fields": [
+        "eth.dst"
+      ]
+    },
+    {
+      "task": "ip-destination",
+      "frames": [
+        3
+      ],
+      "fields": [
+        "ip.dst"
+      ]
+    },
+    {
+      "task": "protocol",
+      "frames": [
+        5
+      ],
+      "fields": [
+        "eth.type",
+        "arp.opcode"
+      ]
+    },
+    {
+      "task": "echo-pair",
+      "frames": [
+        3,
+        4
+      ],
+      "fields": [
+        "ip.src",
+        "ip.dst",
+        "icmp.type",
+        "icmp.ident",
+        "icmp.seq"
+      ]
+    },
+    {
+      "task": "conclusion",
+      "frames": [
+        7,
+        8
+      ],
+      "fields": [
+        "ip.src",
+        "ip.dst",
+        "icmp.type",
+        "icmp.ident",
+        "icmp.seq"
+      ]
+    }
+  ]
+}
