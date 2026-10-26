@@ -1,0 +1,33 @@
+(function(root){'use strict';
+const hosts={a:{name:'ПК A',ip:'192.0.2.10',mac:'02:00:00:00:10:0a'},b:{name:'ПК B',ip:'192.0.2.20',mac:'02:00:00:00:10:0b'},c:{name:'ПК C',ip:'198.51.100.30',mac:'02:00:00:00:20:0c'}};
+const normal=()=>({s1Allowed:[10,20],s2Allowed:[10,20],bVlan:10});
+function frame(kind,tag){const reverse=kind==='arp-reply'||kind==='echo-reply',src=hosts[reverse?'b':'a'],dst=hosts[reverse?'a':'b'],isARP=kind.startsWith('arp');return {kind,Ethernet:{source:src.mac,destination:kind==='arp-request'?'ff:ff:ff:ff:ff:ff':dst.mac,type:tag===null?(isARP?'0x0806':'0x0800'):'0x8100'},dot1q:tag===null?null:{VID:tag,PCP:0,DEI:0,innerType:isARP?'0x0806':'0x0800'},ARP:isARP?{operation:reverse?'Reply':'Request',senderIP:src.ip,senderMAC:src.mac,targetIP:dst.ip,targetMAC:reverse?dst.mac:'00:00:00:00:00:00'}:null,IP:isARP?null:{source:src.ip,destination:dst.ip,TTL:64,protocol:1},ICMP:isARP?null:{type:reverse?0:8,code:0,id:10,sequence:1}};}
+const descriptions=['Доставь ping между ПК VLAN 10.', 'Access принимает кадр без тега. S1 относит его к VLAN 10.', 'ARP пересекает trunk с тегом VLAN 10.', 'S2 снимает тег на access. Broadcast получает только ПК B.', 'ПК B отвечает. S2 изучает его MAC в VLAN 10.', 'ARP Reply идёт к S1: на trunk снова тег 10.', 'ПК A узнаёт MAC B. Access передаёт без тега.', 'ПК A отправляет Echo Request к известному MAC B.', 'Trunk несёт ICMP с тегом 10. TTL остаётся 64.', 'ПК B получает untagged кадр с теми же MAC и IP.', 'ПК B отправляет Echo Reply. TTL нового пакета 64.', 'Ответ пересекает trunk в VLAN 10, MAC/IP/TTL сохранены.', 'ПК A получает Echo Reply. Ping доставлен.'];
+function trace(config=normal()){
+ const cfg=JSON.parse(JSON.stringify(config)),fdb={s1:{},s2:{}},arp={a:{},b:{},c:{}},steps=[];
+ const snapshot=(data)=>({...data,fdb:JSON.parse(JSON.stringify(fdb)),arp:JSON.parse(JSON.stringify(arp))});
+ steps.push(snapshot({index:0,text:descriptions[0],path:[],frame:null,internal:null}));
+ const kinds=['arp-request','arp-reply','echo-request','echo-reply'];
+ for(let k=0;k<4;k++)for(let hop=0;hop<3;hop++){
+ const reverse=k%2===1,paths=reverse?[['b','s2'],['s2','s1'],['s1','a']]:[['a','s1'],['s1','s2'],['s2','b']],path=paths[hop],idx=k*3+hop+1,tag=hop===1?10:null,src=hosts[reverse?'b':'a'];
+ if(hop===1&&(!cfg.s1Allowed.includes(10)||!cfg.s2Allowed.includes(10))){steps.push(snapshot({index:idx,path,frame:frame(kinds[k],10),internal:10,blocked:true,at:!cfg.s1Allowed.includes(10)?'s1':'s2',text:'VLAN 10 не разрешена на одном конце trunk. Кадр отброшен.'}));return steps;}
+ if(hop===2&&!reverse&&cfg.bVlan!==10){steps.push(snapshot({index:idx,path:['s2'],frame:null,internal:10,blocked:true,at:'s2',text:'В VLAN 10 на S2 нет подходящего access-порта к ПК B. В VLAN 20 broadcast не передаётся.'}));return steps;}
+ const target=path[1];if(target==='s1'||target==='s2')fdb[target]['10|'+src.mac]=hop===1?'trunk':target==='s1'?'access A':'access B';
+ if(k===0&&hop===2)arp.b[hosts.a.ip]=hosts.a.mac;
+ if(k===1&&hop===2)arp.a[hosts.b.ip]=hosts.b.mac;
+ steps.push(snapshot({index:idx,text:descriptions[idx],path,at:target,frame:frame(kinds[k],tag),internal:target==='s1'||target==='s2'?10:null,success:idx===12}));
+ }
+ return steps;
+}
+const questions={2:{text:'Куда S2 передаст ARP VLAN 10? Выбери ПК.',answers:['ПК B в VLAN 10','ПК C в VLAN 20'],correct:0,nodes:{b:0,c:1}},8:{text:'Какой тег будет на trunk?',answers:['802.1Q VLAN 10','Без тега','802.1Q VLAN 20'],correct:0},9:{text:'Каким кадр придёт ПК B?',answers:['Без тега (access)','С тегом VLAN 10'],correct:0}};
+function grade(step,choice){return Number.isInteger(choice)&&questions[step]?.correct===choice;}
+function makeCase(id){return {config:{...normal(),...(id==='allowed'?{s2Allowed:[20]}:{bVlan:20})},facts:[],phase:'broken',step:0,message:''};}
+function normalizeCase(id,raw){if(!raw||!['broken','applied','checking','verified'].includes(raw.phase))return makeCase(id);const s=makeCase(id);s.phase=raw.phase;if(raw.config&&Array.isArray(raw.config.s1Allowed)&&Array.isArray(raw.config.s2Allowed)&&[10,20].includes(raw.config.bVlan))s.config={s1Allowed:[...raw.config.s1Allowed],s2Allowed:[...raw.config.s2Allowed],bVlan:raw.config.bVlan};else if(raw.phase!=='broken')s.config=normal();s.facts=Array.isArray(raw.facts)?raw.facts.filter(x=>['ping','trunk','ports','tables'].includes(x)):[];s.step=Number.isInteger(raw.step)?Math.max(0,Math.min(12,raw.step)):0;return s;}
+function checkText(id,c,check){if(check==='trunk')return `План trunk: allowed 10,20 на обоих концах. Факт S1: ${c.config.s1Allowed.join(',')}; S2: ${c.config.s2Allowed.join(',')}. VLAN 10 передаётся tagged.`;if(check==='ports')return `Access A: VLAN 10. План access B: VLAN 10; факт: VLAN ${c.config.bVlan}. Access C: VLAN 20. Конечные ПК принимают untagged.`;if(check==='tables')return c.phase==='broken'?(id==='allowed'?'Наблюдение: S1 послал tagged VLAN 10, S2 отбрасывает на входе trunk.':'Наблюдение: S2 получил VLAN 10 на trunk; access B и C в VLAN 20, передачи им нет.'):'В исправленной VLAN 10 MAC A/B изучаются по входным портам; VLAN 20 не меняется.';return c.phase==='broken'?'Echo Reply не получен. Один ping не устанавливает причину.':'Исправление применено. Нажми «Повторить ping» для контроля.';}
+function transition(id,current,event){const c=normalizeCase(id,current);if(event.type==='check'){if(!['ping','trunk','ports','tables'].includes(event.check))return c;if(!c.facts.includes(event.check))c.facts.push(event.check);c.message=checkText(id,c,event.check);}
+ if(event.type==='fix'){const needed=id==='allowed'?'trunk':'ports';if(!c.facts.includes(needed))c.message='Нужно получить данные конфигурации.';else if(event.choice!==id)c.message='Выбрано неподходящее исправление.';else{if(id==='allowed')c.config.s2Allowed=[...new Set([...c.config.s2Allowed,10])].sort((a,b)=>a-b);else c.config.bVlan=10;c.phase='applied';c.message='Исправлено, проверь связь. Другие VLAN сохранены.';}}
+ if(event.type==='ping'&&c.phase!=='broken'){c.phase='checking';c.step=1;c.message='Контрольный ping: идём от ARP до Echo Reply.';}
+ if(event.type==='next'&&c.phase==='checking'){c.step=Math.min(12,c.step+1);if(trace(c.config)[c.step]?.success){c.phase='verified';c.message='Echo Reply получен. Случай завершён.';}}
+ return c;}
+const api={hosts,normal,frame,trace,questions,grade,makeCase,normalizeCase,checkText,transition};if(typeof module!=='undefined')module.exports=api;root.VlanLesson=api;
+})(typeof window==='undefined'?globalThis:window);
