@@ -140,7 +140,7 @@ function createChainAdapter(node){
   const baseline=initialConfig().vlans;for(const id of [1,110])if(JSON.stringify(s.chainVlans[id])!==JSON.stringify(baseline[id]))issue('vlan','Изменена прежняя конфигурация VLAN '+id);
   return out;
  }
- return {node,label,initial:()=>cli.initial(),apply:cli.apply,prompt,snapshot,render,proofs,required,checks,readCommand,member,issues};
+ return {node,label,initial:()=>cli.initial(),apply:cli.apply,completionGrammar:cli.completionGrammar,prompt,snapshot,render,proofs,required,checks,readCommand,member,issues};
 }
 
 const VLAN_CHAIN_ADAPTERS=VLAN_CHAIN_NODES.map(createChainAdapter);

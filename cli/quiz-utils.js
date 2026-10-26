@@ -59,7 +59,7 @@ const HUAWEI_VLAN_PROFILE = {
 };
 
 // Shared execution, rejection and final-state evaluation for all profile adapters.
-function contextualVlanEngine({initial,apply,prompt,remaining,hint}) {
+function contextualVlanEngine({initial,apply,prompt,remaining,hint,completionGrammar}) {
   function evaluate(input,task) {
     let state=initial(task);
     const lines=input.replace(/\r\n/g,'\n').trim().split('\n');
@@ -71,7 +71,7 @@ function contextualVlanEngine({initial,apply,prompt,remaining,hint}) {
     const missing=remaining(state,task);
     return {ok:!missing.length,state,code:missing.length?'goal':'complete',message:missing.length?'Ещё нужно: '+missing.join('; ')+'.':'Целевое состояние достигнуто.'};
   }
-  return {initial,apply,prompt,remaining,evaluate,hint};
+  return {initial,apply,prompt,remaining,evaluate,hint,completionGrammar};
 }
 
 // Shared parser/reducer and goal evaluator; each profile supplies its own grammar.
@@ -393,7 +393,22 @@ function createVlanCli(profile='Cisco',extension=null) {
     if(!s.accessMode || s.accessVlan!==120) return 'interface GigabitEthernet1/0/5';
     return 'end';
   }
-  return contextualVlanEngine({initial,apply,prompt,remaining,hint});
+  // Completion reads these same rules and checks candidate syntax through apply.
+  // Probe values are internal parser fixtures, never suggestions or goal answers.
+  function completionGrammar(state) {
+    const probes={':vlan':'120',':name':'Example',':description':'Example',':interface':scalance?'0/3':eltex?'1/0/5':'GigabitEthernet1/0/5',':l2Port':accessPort,':pvid':'1',':tagged':'0/1-2',':untagged':'0/3',':chainPort':ciscoPort(),':chainNew':'120',':chainId':'120',':chainList':'110,120',':repairPort':'Gi1/0/5',':repairPortNumber':'1/0/5',':repairList':'110,120',':repairVlan':'120'};
+    function ciscoPort(){return scalance?'0/1':eltex?'1/0/1':'Gi1/0/1'}
+    const out=rules.filter(r=>r.modes.includes(state.mode)).map(r=>({
+      words:r.words,
+      matches:(token,i)=>r.words[i].startsWith(':')?true:isKeyword(token,r.words[i]),
+      valid:tokens=>apply(state,r.words.map((w,i)=>tokens[i]??(w.startsWith(':')?(probes[w]??'1'):w)).join(' ')).ok
+    }));
+    if(h3c)for(const [alias,word] of Object.entries({exit:'quit',end:'return',write:'save'}))for(const r of [...out])if(r.words[0]===word)out.push({...r,words:[alias,...r.words.slice(1)],matches:(t,i)=>i===0?t===alias:r.matches(t,i)});
+    // Joined interface forms are accepted by the parser too.
+    if(l2)out.push(...out.filter(r=>r.words[0]==='interface').map(r=>({...r,words:['interface',':joinedPort'],matches:(t,i)=>i===0?t.toLowerCase()==='interface':true,valid:tokens=>apply(state,'interface '+(tokens[1]??portType+accessPort)).ok})));
+    return out;
+  }
+  return contextualVlanEngine({initial,apply,prompt,remaining,hint,completionGrammar});
 }
 const VLAN_CLI = createVlanCli();
 const ELTEX_VLAN_CLI = createVlanCli('Eltex');

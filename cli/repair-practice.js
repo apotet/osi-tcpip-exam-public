@@ -87,7 +87,7 @@ function ciscoRepairAdapter(){
   controlHint:'Вводи по одной команде. Из режима настройки вернись через end или exit к Privileged EXEC для show. Startup-config в этом упражнении не проверяется.',
   commandHelp:'enable; configure terminal; interface Gi1/0/5 или Gi1/0/1; exit; end. В interface mode: switchport access vlan ID (access), switchport trunk allowed vlan [add|remove] LIST (trunk), shutdown / no shutdown. VLAN: 1,110,120,130. Существующие сокращения переходов/access сохранены; новые trunk/shutdown и show (кроме interface/Gi) — полные слова.',
   assumptions:'Учебный SW1, VTP transparent, Privileged EXEC (#), пароли опущены. VLAN 1 MGMT, 110 CONTROL, 120 OFFICE и 130 CAMERAS уже существуют. Gi1/0/5 — static access, Gi1/0/1 — статический trunk с native VLAN 1. Цель: access 120, trunk 1/110/120, оба порта включены. В каждом упражнении одна исходная неисправность; остальные настройки соответствуют цели. Физические линки исправны; STP forwarding стабилен, VTP pruning выключен. Это предпосылки, не результаты измерений. Проверяется локальная рабочая конфигурация; startup-config и сквозная доставка вне задания.',
-  initial:id=>cli.initial(id),apply:cli.apply,prompt:cli.prompt,commands,source,render,snapshot,remaining};
+  initial:id=>cli.initial(id),apply:cli.apply,completionGrammar:cli.completionGrammar,prompt:cli.prompt,commands,source,render,snapshot,remaining};
 }
 
 // Workflow independent of vendor syntax. Add future adapters only after separate source checks.

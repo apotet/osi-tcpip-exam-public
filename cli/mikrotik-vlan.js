@@ -12,6 +12,14 @@ const MIKROTIK_VLAN_PROFILE={
  trunk:'VLAN 120 уже имеет tagged ether1 и untagged ether5; ether5 уже настроен как конечный порт VLAN 120. Добавь ether2 как tagged, сохрани ether1/ether5 и прежние VLAN. ether1,ether2: frame-types=admit-only-vlan-tagged, ingress-filtering=yes, PVID 1.'
 };
 
+// Shared menu/action/parameter vocabulary for parsing and completion.
+const MIKROTIK_CLI_MENUS=['','interface','interface bridge','interface bridge port','interface bridge vlan'];
+const MIKROTIK_CLI_PARAMS={
+ 'interface bridge vlan':{add:['bridge','vlan-ids','tagged','untagged'],set:['tagged','untagged']},
+ 'interface bridge port':{set:['pvid','frame-types','ingress-filtering']},
+ 'interface bridge':{set:['vlan-filtering']}
+};
+const MIKROTIK_CLI_ENUMS={'frame-types':['admit-all','admit-only-vlan-tagged','admit-only-untagged-and-priority-tagged'],'ingress-filtering':['yes','no'],'vlan-filtering':['yes','no']};
 function mikrotikVlanAdapter(){
  const taggedOnly='admit-only-vlan-tagged',accessOnly='admit-only-untagged-and-priority-tagged';
  const clone=x=>JSON.parse(JSON.stringify(x)),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
@@ -45,7 +53,7 @@ function mikrotikVlanAdapter(){
    }
    if(path.length)menu=(absolute?[]:menu?menu.split(' '):[]).concat(path).join(' ');
   }
-  const menus=['','interface','interface bridge','interface bridge port','interface bridge vlan'];
+  const menus=MIKROTIK_CLI_MENUS;
   if(!menus.includes(menu))return fail('mode','Такого меню нет в учебной грамматике. Используй /interface bridge, /interface bridge port или /interface bridge vlan.');
   if(!tokens.length){s.menu=menu;return success('Меню /'+menu.split(' ').join('/')+'.');}
   const action=tokens.shift();
@@ -68,7 +76,7 @@ function mikrotikVlanAdapter(){
   const clear=emptyLists?tokens.filter(t=>['!tagged','!untagged'].includes(t)):[];
   if(tokens.some(t=>/^[a-z-]+=$/.test(t)))return fail('argument','Пустой key=value не включён в учебную грамматику. Для сброса списка используй документированный set … !tagged или !untagged.');
   const values=params(tokens.map(t=>clear.includes(t)?t.slice(1)+'=':t));if(!values||!tokens.length)return fail('argument','Ожидаются уникальные параметры key=value, разделённые пробелами; список портов задаётся через запятую.');
-  const permitted=menu==='interface bridge vlan'?(action==='add'?['bridge','vlan-ids','tagged','untagged']:['tagged','untagged']):menu==='interface bridge port'?['pvid','frame-types','ingress-filtering']:['vlan-filtering'];
+  const permitted=MIKROTIK_CLI_PARAMS[menu]?.[action]||[];
   for(const k of Object.keys(values))if(!permitted.includes(k))return fail('argument','Параметр '+k+' не поддержан в этом меню/действии. Допустимы: '+permitted.join(', ')+'. Только полные имена параметров.');
   if(menu==='interface bridge vlan'){
    if(action==='add'){
@@ -92,13 +100,13 @@ function mikrotikVlanAdapter(){
    const port=selected.interface;if(!Object.hasOwn(s.ports,port))return fail('scope','Менять можно только ether1,ether2,ether5; имена чувствительны к регистру. ether3/4 сохраняют исходную конфигурацию.');
    for(const [k,v] of Object.entries(values)){
     if(k==='pvid'&&(!/^\d+$/.test(v)||+v<1||+v>4094))return fail('argument','PVID должен быть целым VLAN ID от 1 до 4094. Он не заменяет статические tagged/untagged списки.');
-    if(k==='frame-types'&&!['admit-all',taggedOnly,accessOnly].includes(v))return fail('argument','frame-types: admit-all, admit-only-vlan-tagged или admit-only-untagged-and-priority-tagged; нужен полный литерал.');
-    if(k==='ingress-filtering'&&!['yes','no'].includes(v))return fail('argument','ingress-filtering принимает yes или no; регистр литерала сохраняется.');
+    if(k==='frame-types'&&!MIKROTIK_CLI_ENUMS['frame-types'].includes(v))return fail('argument','frame-types: admit-all, admit-only-vlan-tagged или admit-only-untagged-and-priority-tagged; нужен полный литерал.');
+    if(k==='ingress-filtering'&&!MIKROTIK_CLI_ENUMS[k].includes(v))return fail('argument','ingress-filtering принимает yes или no; регистр литерала сохраняется.');
     s.ports[port][k]=k==='pvid'?+v:v;
    }
   }else{
    if(action!=='set'||selected.name!=='bridge1')return fail('scope','Учебный bridge1 уже существует; поддержан только set bridge1 vlan-filtering=yes/no.');
-   if(!['yes','no'].includes(values['vlan-filtering']))return fail('argument','vlan-filtering принимает yes или no; без фильтрации VLAN-задача не завершена.');
+   if(!MIKROTIK_CLI_ENUMS['vlan-filtering'].includes(values['vlan-filtering']))return fail('argument','vlan-filtering принимает yes или no; без фильтрации VLAN-задача не завершена.');
    s.bridge['vlan-filtering']=values['vlan-filtering'];
   }
   // An absolute command executes without changing the user's current menu.
@@ -130,5 +138,45 @@ function mikrotikVlanAdapter(){
   }
   return '/';
  }
- return {initial,apply,prompt,remaining,hint};
+ function completionGrammar(state){
+  const out=[];
+  const add=words=>out.push({words,sensitive:true,matches:(t,i)=>{
+    const w=words[i];if(!w.includes(':'))return t===w;
+    const key=w.slice(0,w.indexOf(':')),close=w.endsWith(']');
+    if(!t.startsWith(key)||close&&!t.endsWith(']'))return false;
+    const value=t.slice(key.length,close?-1:undefined);
+    if(/^(bridge|name)=/.test(w))return value==='bridge1';
+    if(w.startsWith('interface='))return ['ether1','ether2','ether5'].includes(value);
+    if(w.startsWith('vlan-ids='))return value==='120';
+    if(w.startsWith('pvid='))return /^\d+$/.test(value)&&+value>0&&+value<=4094;
+    if(/^(tagged|untagged)=/.test(w)){const ports=value.split(',');return ports.every(p=>['ether1','ether2','ether5'].includes(p))&&new Set(ports).size===ports.length;}
+    return !!value;
+  }});
+  add(['/']);if(state.menu)add(['..']);
+  for(const menu of MIKROTIK_CLI_MENUS.filter(Boolean)){
+   const paths=[['/'+menu.split(' ').join('/')],['/'+menu.split(' ')[0],...menu.split(' ').slice(1)]];
+   const relative=state.menu?menu.startsWith(state.menu+' ')?menu.slice(state.menu.length+1):null:menu;
+   if(relative)paths.push(relative.split(' '),[relative.split(' ').join('/')]);
+   if(menu===state.menu)paths.push([]);
+   for(const path of paths){
+    if(path.length)add(path);
+    for(const [action,keys] of Object.entries(MIKROTIK_CLI_PARAMS[menu]||{})){
+     if(menu==='interface bridge vlan'&&(action==='add'?!!state.vlans[120]:!state.vlans[120]))continue;
+     const selectors=action==='add'?[[]]:menu==='interface bridge vlan'?[['[find','bridge=:bridge','vlan-ids=:id]'],['[find','where','bridge=:bridge','vlan-ids=:id]'],['[find','vlan-ids=:id','bridge=:bridge]'],['[find','where','vlan-ids=:id','bridge=:bridge]']]:menu==='interface bridge port'?[['[find','interface=:port]'],['[find','where','interface=:port]']]:[['bridge1'],['[find','name=:bridge]'],['[find','where','name=:bridge]']];
+     for(const selector of selectors){
+      const base=[...path,action,...selector];add(base);
+      function params(words,remaining){for(const key of remaining){
+       const variants=MIKROTIK_CLI_ENUMS[key]?.map(v=>key+'='+v)||[key+'=:value'];
+       if(menu==='interface bridge vlan'&&action==='set')variants.push('!'+key);
+       for(const v of variants){const next=[...words,v];add(next);params(next,remaining.filter(k=>k!==key));}
+      }}
+      params(base,keys);
+      if(menu==='interface bridge vlan'&&action==='set')for(const key of keys)add([...base,'!'+key]);
+     }
+    }
+   }
+  }
+  return out;
+ }
+ return {initial,apply,prompt,remaining,hint,completionGrammar};
 }
