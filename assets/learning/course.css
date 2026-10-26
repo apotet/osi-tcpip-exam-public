@@ -1,0 +1,20 @@
+/* Reuse the host palette, cards, answer options, feedback and buttons. */
+#courseScreen .learning-hero h1 { font-size: clamp(1.65rem, 6vw, 2.5rem); }
+#courseScreen .course-sections { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+#courseScreen .course-sections a, #courseScreen a { color: var(--blue); overflow-wrap: anywhere; }
+#courseScreen .course-sections a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; }
+#courseSteps { list-style: none; padding: 0; display: grid; gap: 8px; }
+#courseSteps .secondary-button { text-align: left; padding: 12px 14px; margin: 0; overflow-wrap: anywhere; }
+#courseSteps [aria-current="step"] { border: 2px solid var(--cyan); }
+#courseScreen .course-diagram { list-style: none; display: grid; gap: 8px; padding: 0; margin: 16px 0; }
+#courseScreen .course-diagram li { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--surface-2); overflow-wrap: anywhere; }
+#courseScreen fieldset { min-width: 0; margin: 20px 0 0; padding: 0; border: 0; }
+#courseScreen legend { font-weight: 800; margin-bottom: 14px; padding: 0; }
+#courseScreen .answer-option:focus-within { outline: 3px solid var(--amber); outline-offset: 3px; }
+#courseScreen :focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+#courseScreen h3 { line-height: 1.4; }
+#courseScreen p, #courseScreen legend, #courseScreen .answer-text { overflow-wrap: anywhere; }
+#courseScreen .course-meta { color: var(--muted); line-height: 1.5; }
+.main-nav { gap: 2px; }
+.main-nav .nav-button { min-width: 0; padding: 7px 5px; text-align: center; overflow-wrap: anywhere; font-size: .9rem; }
+@media (max-width: 430px) { .main-nav { grid-template-columns: repeat(3,minmax(0,1fr)) !important; } }

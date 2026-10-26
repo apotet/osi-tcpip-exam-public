@@ -215,7 +215,8 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 #progressCode { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: var(--surface-2); }
 @media (max-width: 767px), (pointer: coarse) { .keyboard-hint { display: none; } }
 </style>
-<script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script></head>
+<script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script><link rel="stylesheet" href="assets/learning/course.css">
+</head>
 <body data-analytics-section="exam">
   <main class="shell">
     <header class="topbar">
@@ -228,10 +229,10 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
       </button>
       <nav class="main-nav" aria-label="Основные разделы" style="grid-template-columns:repeat(5,1fr)">
         <button id="examNav" class="nav-button active" type="button">Экзамен</button>
-        <button id="learnNav" class="nav-button" type="button">Обучение</button>
+        <button id="learnNav" class="nav-button" type="button">Модель OSI</button>
+        <button id="courseNav" class="nav-button" type="button">Обучение</button>
         <a id="ipv4Nav" class="nav-button" href="ipv4.html">IPv4</a>
         <a id="ipv6Nav" class="nav-button" href="ipv6.html">IPv6</a>
-        <a class="nav-button" href="cli/">CLI</a>
       </nav>
     </header>
 
@@ -298,18 +299,51 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
       <button id="homeButton" class="secondary-button" type="button">Выбрать другой режим</button>
     </section>
 
+    <section id="courseScreen" class="screen" aria-labelledby="courseTitle">
+      <div class="learning-hero">
+        <p class="eyebrow">Объяснение → пример → упражнение → разбор</p>
+        <h1 id="courseTitle">Обучение</h1>
+        <p class="lead">Пройди один связный мини-курс или открой существующую практику. Справочник по уровням доступен во вкладке «Модель OSI».</p>
+        <nav class="course-sections" aria-label="Разделы обучения"><a href="#miniCourse">Мини-курс</a><a href="#practice">Практика</a></nav>
+      </div>
+      <section id="miniCourse" class="model-card" aria-labelledby="miniCourseTitle">
+        <h2 id="miniCourseTitle">Мини-курс</h2>
+        <h3>Как компьютер отправляет данные в другую подсеть</h3>
+        <p>Начни с первого шага. После верного ответа продолжай дальше. Любую тему можно открыть вручную, в том числе до прохождения предыдущих.</p>
+        <p id="courseProgress" class="course-meta" role="status"></p>
+        <ol id="courseSteps" aria-label="Пять шагов мини-курса"></ol>
+        <p id="courseSaveStatus" class="course-meta" role="status"></p>
+        <article aria-labelledby="courseLessonTitle">
+          <h3 id="courseLessonTitle" tabindex="-1"></h3>
+          <p><strong>Условия примера:</strong> <span id="courseConditions"></span></p>
+          <p id="courseExplanation"></p>
+          <ol id="courseDiagram" class="course-diagram" aria-label="Схема текущего шага"></ol>
+          <form id="courseForm">
+            <fieldset><legend id="coursePrompt"></legend><div id="courseAnswers" class="answers"></div></fieldset>
+            <button id="courseCheck" class="primary-button" type="submit">Проверить ответ</button>
+          </form>
+          <div id="courseFeedback" class="feedback" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+          <button id="courseRetry" class="secondary-button" type="button" hidden>Повторить упражнение</button>
+          <button id="courseNext" class="primary-button" type="button" hidden>Следующий шаг →</button>
+          <p id="courseFinish" role="status" hidden></p>
+          <p><a id="courseIpv4Practice" href="ipv4.html" hidden>Практика адресов и масок в IPv4-тренажёре →</a></p>
+        </article>
+      </section>
+      <section id="practice" class="model-card" aria-labelledby="practiceTitle">
+        <h2 id="practiceTitle">Практика</h2>
+        <p><a href="cli/">CLI и оборудование →</a> · справочник команд, консоль, чтение вывода и сценарии по существующим профилям.</p>
+        <p><a href="ipv4.html">IPv4 →</a> · адреса, маски и подсети.</p>
+        <p><a href="ipv6.html">IPv6 →</a> · существующий раздел адресации IPv6.</p>
+      </section>
+      <noscript>Для упражнений нужен JavaScript. Справочник «Модель OSI» и прежние тренажёры сохранены.</noscript>
+    </section>
+
     <section id="learningScreen" class="screen" aria-labelledby="learningTitle">
       <div class="learning-hero">
         <p class="eyebrow">От сигнала до приложения</p>
-        <h1 id="learningTitle">Обучение по модели OSI</h1>
+        <h1 id="learningTitle">Модель OSI</h1>
         <p class="lead">Сначала пойми задачу каждого уровня, затем свяжи её с адресами, устройствами и протоколами. Открывай уровни по порядку — от L1 к L7.</p>
         <div class="learning-note"><strong>Главная логика диагностики:</strong> если сеть не работает, проверяй снизу вверх: питание и Link → VLAN и MAC → IP и маршрут → TCP/UDP → приложение.</div>
-      </div>
-
-      <div class="model-card">
-        <h2>Практика чтения пакетов</h2>
-        <p>Восемь кадров ARP и ICMP: Ethernet/IP-адреса, протоколы и пары запрос–ответ.</p>
-        <a class="nav-button" href="wireshark.html">Wireshark Basics · пакет 1 →</a>
       </div>
 
       <div class="model-card">
@@ -427,6 +461,8 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   <script src="quiz/questions.js"></script>
   <script src="quiz/engine.js"></script>
+  <script src="assets/learning/course.js"></script>
+  <script src="assets/learning/course-view.js"></script>
   <script>(() => {
   'use strict';
   const bank = window.QUESTION_BANK || [];
@@ -439,7 +475,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   const trackEvent = (name, params) => window.SiteAnalytics?.trackEvent(name, params);
   const $ = id => document.getElementById(id);
-  const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen'];
+  const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen', 'courseScreen'];
   const state = { mode: 'mixed', questions: [], index: 0, score: 0, answers: [], checked: false, completed: false, shown: new Set(), photoReady: true };
 
   function shuffle(items) {
@@ -451,12 +487,20 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     return out;
   }
 
-  function showScreen(id) {
-    const trainingOpened = id === 'learningScreen' && !$('learningScreen').classList.contains('active');
+  function showScreen(id, syncRoute = true) {
+    if (!screens.includes(id)) return;
+    const trainingOpened = ['learningScreen','courseScreen'].includes(id) && !$(id).classList.contains('active');
     screens.forEach(name => $(name).classList.toggle('active', name === id));
     const learning = id === 'learningScreen';
     $('learnNav').classList.toggle('active', learning);
-    $('examNav').classList.toggle('active', !learning);
+    $('courseNav').classList.toggle('active', id === 'courseScreen');
+    $('examNav').classList.toggle('active', !learning && id !== 'courseScreen');
+    for (const [nav, active] of [['learnNav',learning],['courseNav',id === 'courseScreen'],['examNav',!learning && id !== 'courseScreen']]) {
+      if (active) $(nav).setAttribute?.('aria-current','page'); else $(nav).removeAttribute?.('aria-current');
+    }
+    if (syncRoute && window.LearningCourse && window.history?.replaceState && window.location) {
+      window.history.replaceState(null,'',window.LearningCourse.hashForScreen(id));
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (trainingOpened) trackEvent('training_open');
   }
@@ -847,8 +891,9 @@ function buildDetailedExplanation(q){
   }
 
   $('startButton').addEventListener('click', () => startQuiz());
-  $('examNav').addEventListener('click', () => showScreen('startScreen'));
-  $('learnNav').addEventListener('click', () => showScreen('learningScreen'));
+  $('examNav').addEventListener('click', () => navigateLearning('#exam'));
+  $('learnNav').addEventListener('click', () => navigateLearning('#osi'));
+  $('courseNav').addEventListener('click', () => navigateLearning('#course'));
   $('checkButton').addEventListener('click', () => checkAnswer());
   $('nextButton').addEventListener('click', nextQuestion);
   $('detailButton').addEventListener('click', () => {
@@ -908,6 +953,21 @@ function buildDetailedExplanation(q){
   document.querySelectorAll('.layer-quiz').forEach(button => button.addEventListener('click', () => startQuiz(button.dataset.quizMode)));
   updateAvailable();
   syncResume();
+
+  function navigateLearning(hash, push = true) {
+    const route = window.LearningCourse?.resolveRoute(hash);
+    if (!route) return;
+    if (push && window.history?.pushState) window.history.pushState(null,'',hash);
+    showScreen(route.screen, false);
+    if (route.section) $(route.section).scrollIntoView({block:'start'});
+  }
+  window.addEventListener?.('hashchange', () => navigateLearning(window.location.hash, false));
+  window.addEventListener?.('popstate', () => navigateLearning(window.location.hash, false));
+  window.LearningCourseView?.mount($('courseScreen'), {
+    getItem: key => localStorage.getItem(key),
+    setItem: (key,value) => localStorage.setItem(key,value)
+  });
+  if (window.location) navigateLearning(window.location.hash, false);
 
   // Локальная версия требует соседние quiz/questions.js и quiz/engine.js; Service Worker не используется.
 
