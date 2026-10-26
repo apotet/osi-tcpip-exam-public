@@ -215,7 +215,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 #progressCode { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: var(--surface-2); }
 @media (max-width: 767px), (pointer: coarse) { .keyboard-hint { display: none; } }
 </style>
-<script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script><link rel="stylesheet" href="assets/learning/course.css">
+<script src="analytics/config.js"></script><script src="analytics/analytics.js" defer></script><link rel="stylesheet" href="assets/learning/course.css?v=catalog-20261026">
 </head>
 <body data-analytics-section="exam">
   <main class="shell">
@@ -301,12 +301,20 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
     <section id="courseScreen" class="screen" aria-labelledby="courseTitle">
       <div class="learning-hero">
-        <p class="eyebrow">Объяснение → пример → упражнение → разбор</p>
         <h1 id="courseTitle">Обучение</h1>
-        <p class="lead">Пройди один связный мини-курс или открой существующую практику. Справочник по уровням доступен во вкладке «Модель OSI».</p>
-        <nav class="course-sections" aria-label="Разделы обучения"><a href="#miniCourse">Мини-курс</a><a href="#practice">Практика</a></nav>
+        <p class="lead">Выбери тему и попробуй на схеме или в консоли</p>
+        <nav id="learningCatalog" class="course-catalog" aria-label="Темы обучения">
+          <a href="packet-journey.html?v=catalog-20261026">Путь пакета</a>
+          <a href="cli/">CLI</a>
+        </nav>
       </div>
-      <div class="model-card"><h2>Новый формат · прототип</h2><p>Один пакет: схема, прогноз и диагностика двух неисправностей.</p><a class="nav-button" href="packet-journey.html">Путь пакета · прототип</a><p>Текущий мини-курс остаётся ниже до оценки прототипа.</p></div>
+    </section>
+
+    <section id="textCourseScreen" class="screen" aria-labelledby="textCourseTitle">
+      <div class="learning-hero">
+        <a href="packet-journey.html?v=catalog-20261026">← Путь пакета</a>
+        <h1 id="textCourseTitle">Текстовый разбор</h1>
+      </div>
       <section id="miniCourse" class="model-card" aria-labelledby="miniCourseTitle">
         <h2 id="miniCourseTitle">Мини-курс</h2>
         <h3>Как компьютер отправляет данные в другую подсеть</h3>
@@ -330,13 +338,6 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
           <p><a id="courseIpv4Practice" href="ipv4.html" hidden>Практика адресов и масок в IPv4-тренажёре →</a></p>
         </article>
       </section>
-      <section id="practice" class="model-card" aria-labelledby="practiceTitle">
-        <h2 id="practiceTitle">Практика</h2>
-        <p><a href="cli/">CLI и оборудование →</a> · справочник команд, консоль, чтение вывода и сценарии по существующим профилям.</p>
-        <p><a href="ipv4.html">IPv4 →</a> · адреса, маски и подсети.</p>
-        <p><a href="ipv6.html">IPv6 →</a> · существующий раздел адресации IPv6.</p>
-      </section>
-      <noscript>Для упражнений нужен JavaScript. Справочник «Модель OSI» и прежние тренажёры сохранены.</noscript>
     </section>
 
     <section id="learningScreen" class="screen" aria-labelledby="learningTitle">
@@ -462,7 +463,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   <script src="quiz/questions.js"></script>
   <script src="quiz/engine.js"></script>
-  <script src="assets/learning/course.js"></script>
+  <script src="assets/learning/course.js?v=catalog-20261026"></script>
   <script src="assets/learning/course-view.js"></script>
   <script>(() => {
   'use strict';
@@ -476,7 +477,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   const trackEvent = (name, params) => window.SiteAnalytics?.trackEvent(name, params);
   const $ = id => document.getElementById(id);
-  const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen', 'courseScreen'];
+  const screens = ['startScreen', 'quizScreen', 'resultScreen', 'learningScreen', 'courseScreen', 'textCourseScreen'];
   const state = { mode: 'mixed', questions: [], index: 0, score: 0, answers: [], checked: false, completed: false, shown: new Set(), photoReady: true };
 
   function shuffle(items) {
@@ -490,13 +491,14 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   function showScreen(id, syncRoute = true) {
     if (!screens.includes(id)) return;
-    const trainingOpened = ['learningScreen','courseScreen'].includes(id) && !$(id).classList.contains('active');
+    const trainingOpened = ['learningScreen','courseScreen','textCourseScreen'].includes(id) && !$(id).classList.contains('active');
     screens.forEach(name => $(name).classList.toggle('active', name === id));
     const learning = id === 'learningScreen';
+    const course = ['courseScreen','textCourseScreen'].includes(id);
     $('learnNav').classList.toggle('active', learning);
-    $('courseNav').classList.toggle('active', id === 'courseScreen');
-    $('examNav').classList.toggle('active', !learning && id !== 'courseScreen');
-    for (const [nav, active] of [['learnNav',learning],['courseNav',id === 'courseScreen'],['examNav',!learning && id !== 'courseScreen']]) {
+    $('courseNav').classList.toggle('active', course);
+    $('examNav').classList.toggle('active', !learning && !course);
+    for (const [nav, active] of [['learnNav',learning],['courseNav',course],['examNav',!learning && !course]]) {
       if (active) $(nav).setAttribute?.('aria-current','page'); else $(nav).removeAttribute?.('aria-current');
     }
     if (syncRoute && window.LearningCourse && window.history?.replaceState && window.location) {
@@ -964,7 +966,7 @@ function buildDetailedExplanation(q){
   }
   window.addEventListener?.('hashchange', () => navigateLearning(window.location.hash, false));
   window.addEventListener?.('popstate', () => navigateLearning(window.location.hash, false));
-  window.LearningCourseView?.mount($('courseScreen'), {
+  window.LearningCourseView?.mount($('textCourseScreen'), {
     getItem: key => localStorage.getItem(key),
     setItem: (key,value) => localStorage.setItem(key,value)
   });

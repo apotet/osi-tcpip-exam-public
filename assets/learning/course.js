@@ -100,9 +100,10 @@
   // learningScreen/learnNav remain the existing OSI reference. Unknown anchors
   // (for example photoCredits) belong to the host page and are left alone.
   function resolveRoute(hash) {
-    const routes = {'#exam':['startScreen',null], '#osi':['learningScreen',null], '#learning':['learningScreen',null], '#learningScreen':['learningScreen',null], '#course':['courseScreen','miniCourse'], '#miniCourse':['courseScreen','miniCourse'], '#practice':['courseScreen','practice'], '#courseScreen':['courseScreen','miniCourse']};
+    const routes = {'#exam':['startScreen',null], '#osi':['learningScreen',null], '#learning':['learningScreen',null], '#learningScreen':['learningScreen',null], '#course':['courseScreen',null], '#miniCourse':['textCourseScreen','miniCourse'], '#practice':['courseScreen',null], '#courseScreen':['courseScreen',null]};
     return Object.hasOwn(routes,hash) ? {screen:routes[hash][0],section:routes[hash][1]} : null;
   }
-  function hashForScreen(id) { return id === 'learningScreen' ? '#osi' : id === 'courseScreen' ? '#course' : '#exam'; }
+  function hashForScreen(id) { return id === 'textCourseScreen' ? '#miniCourse' : id === 'learningScreen' ? '#osi' : id === 'courseScreen' ? '#course' : '#exam'; }
   return {storageKey, title, lessons, normalize, status, complete, recommended, grade, createController, resolveRoute, hashForScreen};
 });
+
