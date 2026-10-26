@@ -45,5 +45,7 @@ function maskTransition(raw,event){
  }
  return s;
 }
-const api={mac,ip,steps,cacheAt,faults,grade,repair,maskState,maskTransition};if(typeof module!=='undefined')module.exports=api;root.PacketJourney=api;
+function restartCase(progress,id){if(!['mask','gateway'].includes(id))return progress;return {...progress,...(id==='mask'?{maskCase:maskState(null)}:{})};}
+const api={mac,ip,steps,cacheAt,faults,grade,repair,maskState,maskTransition,restartCase};if(typeof module!=='undefined')module.exports=api;root.PacketJourney=api;
 })(typeof window==='undefined'?globalThis:window);
+
