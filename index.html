@@ -412,7 +412,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   </main>
 
   <dialog id="notesDialog" aria-labelledby="notesTitle"><div class="notes-actions"><button id="closeNotes" class="secondary-button" type="button">Закрыть пояснения</button></div><div id="notesContent"></div></dialog>
-  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button">По размеру</button></div><p class="zoom-hint">Увеличивай кнопкой +. Перемещай изображение прокруткой в любом направлении.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog" aria-labelledby="progressTitle">
+  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button" aria-pressed="true">По размеру</button><button id="zoom50" type="button" aria-pressed="false">50%</button><button id="zoom100" type="button" aria-pressed="false">100%</button></div><p class="zoom-hint">100% — натуральный размер фотографии. Увеличивай кнопкой +, перемещай прокруткой.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog" aria-labelledby="progressTitle">
     <div class="dialog-head"><h2 id="progressTitle">Мой прогресс</h2><button id="closeStats" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
     <div id="statsContent"></div>
     <button id="repeatMistakes" class="primary-button" type="button">Повторить ошибки</button>
@@ -629,31 +629,68 @@ function buildDetailedExplanation(q){
     (DETAIL_DIAGRAMS[lesson.diagram] || '');
 }
 
-  let photoZoom = 1, photoFitWidth = 0;
-  function setPhotoZoom(value) {
-    photoZoom = Math.max(1, Math.min(4, value));
-    const media = $('zoomContent').firstElementChild;
-    if(media) media.style.width = Math.round(photoFitWidth * photoZoom) + 'px';
-    $('zoomLevel').textContent = Math.round(photoZoom * 100) + '%';
-    $('zoomOut').disabled = photoZoom <= 1;
+  let photoZoom = 1, photoWidth = 0, photoHeight = 0, photoFit = true;
+  function setPhotoZoom(value, fit = false) {
+    photoFit = fit;
+    const viewport = $('zoomContent');
+    photoZoom = fit
+      ? Math.min(1, viewport.clientWidth / photoWidth, viewport.clientHeight / photoHeight)
+      : Math.max(.5, Math.min(4, value));
+    const media = viewport.firstElementChild;
+    if(media) media.style.width = (photoWidth * photoZoom) + 'px';
+    $('zoomLevel').textContent = Number((photoZoom * 100).toFixed(1)) + '%';
+    $('zoomOut').disabled = photoZoom <= .5;
     $('zoomIn').disabled = photoZoom >= 4;
+    $('zoomFit').setAttribute('aria-pressed', String(fit));
+    $('zoom50').setAttribute('aria-pressed', String(!fit && photoZoom === .5));
+    $('zoom100').setAttribute('aria-pressed', String(!fit && photoZoom === 1));
+  }
+  function fitPhoto() {
+    if(!photoWidth || !photoHeight) return;
+    setPhotoZoom(1, true);
+    $('zoomContent').scrollTo(0, 0);
   }
   function openPhotoViewer(q) {
-    $('zoomDialog').setAttribute('aria-label', 'Просмотр фотографии');
+    const dialog = $('zoomDialog'), viewport = $('zoomContent');
+    dialog.setAttribute('aria-label', 'Просмотр фотографии');
     const photo = $('questionGraphic').querySelector('img');
-    $('zoomContent').innerHTML = q.image
+    viewport.innerHTML = q.image
       ? '<img src="' + escapeHtml(photo.currentSrc || photo.src) + '" alt="' + escapeHtml(q.imageAlt || 'Фото оборудования') + '">'
       : q.graphic;
-    $('zoomDialog').showModal();
-    photoFitWidth = $('zoomContent').clientWidth;
-    setPhotoZoom(2);
-    $('zoomContent').scrollTo(0, 0);
-    $('zoomContent').focus();
+    // Every opening starts fresh, including while the new image is decoding.
+    photoZoom = 1; photoWidth = 0; photoHeight = 0; photoFit = true;
+    $('zoomLevel').textContent = 'По размеру';
+    for(const id of ['zoomOut', 'zoomIn', 'zoomFit', 'zoom50', 'zoom100']) {
+      $(id).disabled = true;
+      if(['zoomFit', 'zoom50', 'zoom100'].includes(id)) $(id).setAttribute('aria-pressed', String(id === 'zoomFit'));
+    }
+    const media = viewport.firstElementChild;
+    media.style.visibility = 'hidden';
+    dialog.showModal();
+    viewport.scrollTo(0, 0);
+    viewport.focus();
     document.body.style.overflow = 'hidden';
+    const ready = () => {
+      if(!dialog.open || viewport.firstElementChild !== media) return;
+      const box = media.viewBox?.baseVal;
+      photoWidth = media.naturalWidth || box?.width || media.getBoundingClientRect().width;
+      photoHeight = media.naturalHeight || box?.height || media.getBoundingClientRect().height;
+      if(!photoWidth || !photoHeight) return;
+      for(const id of ['zoomFit', 'zoom50', 'zoom100']) $(id).disabled = false;
+      fitPhoto();
+      media.style.visibility = '';
+    };
+    if(q.image) media.decode().then(ready, () => {
+      if(dialog.open && viewport.firstElementChild === media) $('zoomLevel').textContent = 'Фото недоступно';
+    });
+    else ready();
   }
-  $('zoomIn').onclick = () => setPhotoZoom(photoZoom + .5);
-  $('zoomOut').onclick = () => setPhotoZoom(photoZoom - .5);
-  $('zoomFit').onclick = () => { setPhotoZoom(1); $('zoomContent').scrollTo(0, 0); };
+  $('zoomIn').onclick = () => setPhotoZoom((Math.floor(photoZoom * 2 + .000001) + 1) / 2);
+  $('zoomOut').onclick = () => setPhotoZoom((Math.ceil(photoZoom * 2 - .000001) - 1) / 2);
+  $('zoomFit').onclick = fitPhoto;
+  $('zoom50').onclick = () => setPhotoZoom(.5);
+  $('zoom100').onclick = () => setPhotoZoom(1);
+  window.addEventListener('resize', () => { if($('zoomDialog').open && photoFit) fitPhoto(); });
   $('zoomDialog').addEventListener('close', () => { document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
 
   function checkAnswer(replay = false) {
