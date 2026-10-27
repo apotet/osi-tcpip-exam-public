@@ -210,6 +210,13 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 .zoom-hint { margin: 8px 0; color: var(--muted); font-size: .82rem; }
 #zoomContent { flex: 1; min-height: 0; overflow: auto; margin: 0; touch-action: pan-x pan-y pinch-zoom; overscroll-behavior: contain; }
 #zoomContent img, #zoomContent svg { display: block; max-width: none; max-height: none; height: auto; border-radius: 0; }
+
+/* Desktop cheatsheets keep a margin around the viewer; mobile keeps the full-screen surface. */
+#zoomDialog.cheat-viewer #zoomContent { padding: 16px; box-sizing: border-box; }
+#zoomDialog.cheat-viewer #zoomContent img { margin: 0 auto; }
+@media (min-width: 701px) {
+  #zoomDialog.cheat-viewer { width: calc(100vw - 64px); max-width: 1440px; height: calc(100dvh - 64px); max-height: calc(100dvh - 64px); margin: auto; padding: 16px; border-radius: 16px; }
+}
 .question-photo { min-height: 100px; }
 #photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
 #retryPhoto { min-height: 44px; margin: 8px; }
@@ -454,7 +461,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   </main>
 
   <dialog id="notesDialog" aria-labelledby="notesTitle"><div class="notes-actions"><button id="closeNotes" class="secondary-button" type="button">Закрыть пояснения</button></div><div id="notesContent"></div></dialog>
-  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button" aria-pressed="true">По размеру</button><button id="zoom50" type="button" aria-pressed="false">50%</button><button id="zoom100" type="button" aria-pressed="false">100%</button></div><p class="zoom-hint">100% — натуральный размер фотографии. Увеличивай кнопкой +, перемещай прокруткой.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog" aria-labelledby="progressTitle">
+  <dialog id="zoomDialog" aria-label="Просмотр фотографии"><div class="zoom-toolbar"><button id="closeZoom" class="secondary-button" type="button">Закрыть</button><button id="zoomOut" type="button" aria-label="Уменьшить">−</button><output id="zoomLevel" aria-live="polite">100%</output><button id="zoomIn" type="button" aria-label="Увеличить">+</button><button id="zoomFit" type="button" aria-pressed="true">Вписать</button><button id="zoom50" type="button" aria-pressed="false">50%</button><button id="zoom100" type="button" aria-pressed="false">100%</button></div><p class="zoom-hint">100% — исходный размер изображения. Увеличивай кнопкой +, перемещай прокруткой.</p><div id="zoomContent" tabindex="0" aria-label="Увеличенная фотография"></div></dialog><dialog id="statsDialog" aria-labelledby="progressTitle">
     <div class="dialog-head"><h2 id="progressTitle">Мой прогресс</h2><button id="closeStats" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
     <div id="statsContent"></div>
     <button id="repeatMistakes" class="primary-button" type="button">Повторить ошибки</button>
@@ -525,14 +532,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   }
   function openCheat(src) {
     if ($('zoomDialog').open) return;
-    $('zoomDialog').setAttribute('aria-label', 'Просмотр шпаргалки');
-    $('zoomContent').innerHTML = '<img src="' + escapeHtml(src) + '" alt="Цветная шпаргалка по уровню OSI">';
-    $('zoomDialog').showModal();
-    photoFitWidth = $('zoomContent').clientWidth;
-    setPhotoZoom(2);
-    $('zoomContent').scrollTo(0, 0);
-    $('zoomContent').focus();
-    document.body.style.overflow = 'hidden';
+    openZoomMedia('<img src="' + escapeHtml(src) + '" alt="Цветная шпаргалка по уровню OSI">', true);
     const level = src.match(/\/l([1-7])\.webp$/)?.[1];
     if (level) trackEvent('cheatsheet_open', { section: 'learning', topic: LEVEL_NOTES[level].title });
   }
@@ -687,7 +687,11 @@ function buildDetailedExplanation(q){
     photoFit = fit;
     const viewport = $('zoomContent');
     photoZoom = fit
-      ? Math.min(1, viewport.clientWidth / photoWidth, viewport.clientHeight / photoHeight)
+      ? Math.min(1,
+          (viewport.clientWidth - parseFloat(getComputedStyle(viewport).paddingLeft) - parseFloat(getComputedStyle(viewport).paddingRight)) / photoWidth,
+          $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(max-width: 700px)').matches
+            ? Infinity
+            : (viewport.clientHeight - parseFloat(getComputedStyle(viewport).paddingTop) - parseFloat(getComputedStyle(viewport).paddingBottom)) / photoHeight)
       : Math.max(.5, Math.min(4, value));
     const media = viewport.firstElementChild;
     if(media) media.style.width = (photoWidth * photoZoom) + 'px';
@@ -704,15 +708,21 @@ function buildDetailedExplanation(q){
     $('zoomContent').scrollTo(0, 0);
   }
   function openPhotoViewer(q) {
-    const dialog = $('zoomDialog'), viewport = $('zoomContent');
-    dialog.setAttribute('aria-label', 'Просмотр фотографии');
     const photo = $('questionGraphic').querySelector('img');
-    viewport.innerHTML = q.image
+    openZoomMedia(q.image
       ? '<img src="' + escapeHtml(photo.currentSrc || photo.src) + '" alt="' + escapeHtml(q.imageAlt || 'Фото оборудования') + '">'
-      : q.graphic;
+      : q.graphic);
+  }
+  function openZoomMedia(markup, cheat = false) {
+    const dialog = $('zoomDialog'), viewport = $('zoomContent');
+    dialog.classList.toggle('cheat-viewer', cheat);
+    dialog.setAttribute('aria-label', cheat ? 'Просмотр шпаргалки' : 'Просмотр фотографии');
+    viewport.setAttribute('aria-label', cheat ? 'Увеличенная шпаргалка' : 'Увеличенная фотография');
+    $('zoom50').hidden = cheat;
+    viewport.innerHTML = markup;
     // Every opening starts fresh, including while the new image is decoding.
     photoZoom = 1; photoWidth = 0; photoHeight = 0; photoFit = true;
-    $('zoomLevel').textContent = 'По размеру';
+    $('zoomLevel').textContent = 'Вписать';
     for(const id of ['zoomOut', 'zoomIn', 'zoomFit', 'zoom50', 'zoom100']) {
       $(id).disabled = true;
       if(['zoomFit', 'zoom50', 'zoom100'].includes(id)) $(id).setAttribute('aria-pressed', String(id === 'zoomFit'));
@@ -733,8 +743,8 @@ function buildDetailedExplanation(q){
       fitPhoto();
       media.style.visibility = '';
     };
-    if(q.image) media.decode().then(ready, () => {
-      if(dialog.open && viewport.firstElementChild === media) $('zoomLevel').textContent = 'Фото недоступно';
+    if(media.tagName === 'IMG') media.decode().then(ready, () => {
+      if(dialog.open && viewport.firstElementChild === media) $('zoomLevel').textContent = 'Изображение недоступно';
     });
     else ready();
   }
