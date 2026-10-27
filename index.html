@@ -883,6 +883,43 @@ function buildDetailedExplanation(q){
       mobilePhotoGesture = mobilePhotoPair();
     });
   }
+  // A fast tap after a touch drag may lack the compatibility click.
+  // Activate these two mobile controls from a completed tap; keep mouse/keyboard clicks native.
+  let mobileControlClickUntil = 0;
+  document.addEventListener('pointerdown', () => { mobileControlClickUntil = 0; }, true);
+  document.addEventListener('click', event => {
+    if (event.isTrusted && event.detail > 0 && event.pointerType !== 'mouse' &&
+        performance.now() < mobileControlClickUntil) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      mobileControlClickUntil = 0;
+    }
+  }, true);
+  for (const id of ['zoomFit', 'closeZoom']) {
+    const button = $(id);
+    let tap = null;
+    button.addEventListener('pointerdown', event => {
+      if ($('zoomDialog').classList.contains('mobile-image-viewer') &&
+          event.pointerType === 'touch' && event.isPrimary && !button.disabled) {
+        tap = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      }
+    });
+    button.addEventListener('pointerup', event => {
+      const started = tap;
+      tap = null;
+      if (!started || event.pointerId !== started.id || button.disabled ||
+          Math.hypot(event.clientX - started.x, event.clientY - started.y) > 12) return;
+      const rect = button.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right ||
+          event.clientY < rect.top || event.clientY > rect.bottom) return;
+      event.preventDefault();
+      mobileControlClickUntil = performance.now() + 500;
+      button.click();
+    });
+    for (const type of ['pointercancel', 'lostpointercapture']) {
+      button.addEventListener(type, () => { tap = null; });
+    }
+  }
   window.addEventListener('blur', stopMobilePhotoGesture);
   window.addEventListener('blur', stopPhotoPan);
   $('zoomIn').onclick = () => setPhotoZoom((Math.floor(photoZoom * 2 + .000001) + 1) / 2);
