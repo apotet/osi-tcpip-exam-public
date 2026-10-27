@@ -544,15 +544,15 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   const LEVEL_NOTES = {"1":{"title":"L1 · Физический уровень","sections":[{"title":"1. Что передаётся","text":"Биты передаются электрическими, оптическими или радиосигналами. Способ кодирования зависит от физического стандарта; это не всегда простое «свет есть / света нет»."},{"title":"2. Что проверить при Link Down","text":"Питание, кабель и разъёмы, административное состояние порта, совместимость скорости и модулей, уровни оптического сигнала. Проверяй оба конца линии."},{"title":"3. Оптическая линия","text":"Согласуй тип волокна, длину волны, скорость, дальность и бюджет потерь. В duplex-линии TX одного конца должен приходить на RX другого. BiDi требует согласованной пары модулей."},{"title":"4. Разъёмы и волокно","text":"LC, SC, ST и FC — типы коннекторов. OS1/OS2 — одномодовое волокно; OM1–OM5 — многомодовое. Цвет — подсказка: окончательно сверяй маркировку. APC и UPC напрямую не соединяют."},{"title":"5. Измерения","text":"dBm — абсолютная оптическая мощность; dB — отношение мощностей, например потери. Power meter измеряет мощность. OTDR показывает события и расстояния вдоль волокна."},{"title":"6. Важные ограничения","text":"Дальность медной и оптической линии зависит от стандарта и условий. Link Up не доказывает отсутствие ошибок. Некоторые PHY применяют FEC — исправление ошибок возможно и на физическом уровне."}]},"2":{"title":"L2 · Канальный уровень","sections":[{"title":"1. Кадр и MAC","text":"Ethernet-коммутатор изучает Source MAC входящих кадров с учётом VLAN. Известный Destination MAC указывает выходной порт. Динамические записи стареют."},{"title":"2. Рассылка кадров","text":"Unknown unicast и broadcast обычно рассылаются на разрешённые forwarding-порты той же VLAN, кроме входного. Multicast может ограничиваться IGMP Snooping и другими механизмами."},{"title":"3. VLAN и 802.1Q","text":"VLAN разделяют широковещательные домены. Access-порт обычно обслуживает одну VLAN без тега. Trunk переносит несколько VLAN; native VLAN может передаваться без тега. Проверяй оба конца."},{"title":"4. Размер Ethernet-кадра","text":"Для нетегированного кадра минимум 64 байта: заголовок 14, данные с padding минимум 46, FCS 4. Преамбула и межкадровый интервал не входят. Тег 802.1Q занимает 4 байта."},{"title":"5. STP и LACP","text":"STP выбирает root по наименьшему Bridge ID и предотвращает петли. LACP согласует участников агрегата. Два линка по 1 Гбит/с дают суммарную ёмкость, но один поток обычно ограничен одним линком."},{"title":"6. Таблицы не взаимозаменяемы","text":"MAC-таблица коммутатора связывает MAC, VLAN и порт. ARP-кэш связывает IPv4 и MAC соседнего узла. LLDP показывает соседей. Ни одна из них сама по себе не доказывает весь путь VLAN."}]},"3":{"title":"L3 · Сетевой уровень","sections":[{"title":"1. Адрес и префикс","text":"IPv4 содержит 32 бита. /26 означает 26 сетевых бит и 6 хостовых. Маска /26 — 255.255.255.192, размер блока — 64 адреса."},{"title":"2. Пример: 192.168.10.70/26","text":"Сеть: 192.168.10.64. Broadcast: 192.168.10.127. Обычные адреса хостов: 192.168.10.65–192.168.10.126. Всего 64 адреса, из них 62 для хостов."},{"title":"3. Шаг и октет","text":"Для /25–/30 шаг в четвёртом октете: 128, 64, 32, 16, 8, 4. Для /24 соседняя сеть начинается с прибавления 1 к третьему октету. Всегда указывай, о каком октете идёт речь."},{"title":"4. Следующий узел и ARP","text":"Маршрут определяет следующий узел. Для локального назначения ARP ищет MAC получателя; для удалённого — MAC next hop. IP назначения обычно сохраняется, MAC меняются на каждом Ethernet-участке."},{"title":"5. Выбор маршрута","text":"Побеждает наиболее длинный подходящий префикс. Для 10.50.20.200 маршрут 10.50.20.128/25 точнее 10.50.20.0/24. Маршрут 0.0.0.0/0 используется, когда нет более точного."},{"title":"6. IPv6 и диагностика","text":"IPv6 — 128 бит; в обычной LAN часто /64. NDP использует ICMPv6. RA сообщает параметры маршрутизатора и префиксов. Проверяй адреса, маршрут туда и обратно, соседство и фильтры."}]},"4":{"title":"L4 · Транспортный уровень","sections":[{"title":"1. TCP","text":"Даёт приложению упорядоченный поток байтов, подтверждения и повторную передачу. Соединение может завершиться ошибкой: надёжность не означает, что любая сеть всегда доставит данные."},{"title":"2. UDP","text":"Передаёт датаграммы без установления соединения. Сам не гарантирует доставку и порядок. Скорость зависит от приложения и условий: утверждение «UDP всегда быстрее» неверно."},{"title":"3. Установка TCP-соединения","text":"Клиент → сервер: SYN. Сервер → клиент: SYN-ACK. Клиент → сервер: ACK. ACK подтверждает следующий ожидаемый номер байта. Повторы SYN требуют проверки пути, фильтров и службы."},{"title":"4. Порты","text":"TCP и UDP имеют отдельные пространства 16-битных портов. Примеры: SSH 22/TCP, DNS 53/UDP и TCP, NTP 123/UDP, Modbus TCP 502/TCP. Порт по умолчанию можно изменить в настройках службы."},{"title":"5. Проверка службы","text":"Успешный ping не подтверждает доступность TCP-порта. В Windows: Test-NetConnection -ComputerName 10.120.0.10 -Port 502. На Linux-сервере: sudo ss -tlnp. LISTEN проверяй на нужном адресе."},{"title":"6. MTU и MSS","text":"L3 MTU ограничивает размер IP-пакета. TCP MSS ограничивает данные сегмента без заголовков TCP/IP. При MTU 1500 и заголовках IPv4/TCP по 20 байт MSS составляет 1460."}]},"5":{"title":"L5 · Сеансовый уровень","sections":[{"title":"1. Функции в модели OSI","text":"Управление диалогом: установление, поддержание и завершение сеанса, синхронизация и контрольные точки. Модель описывает обязанности, а не отдельную программу для каждого уровня."},{"title":"2. Сеанс и TCP-соединение","text":"Прикладной сеанс может пережить разрыв TCP, если приложение умеет возобновление. Одно TCP-соединение также может обслуживать несколько прикладных диалогов."},{"title":"3. Контрольная точка","text":"Приложения согласовали обработку блока 100. После сбоя они продолжают с блока 101, если протокол и сохранённое состояние поддерживают такое восстановление."},{"title":"4. Как это устроено в TCP/IP","text":"Функции OSI L5–L7 обычно объединены в прикладном уровне TCP/IP. SIP, RPC, SMB и SSH не следует без оговорок объявлять исключительно протоколами L5."},{"title":"5. Что проверять","text":"Срок жизни сеанса, keepalive, повторную аутентификацию, состояние на сервере, журналы клиента и сервера. Совпадающее время событий помогает отделить сетевой разрыв от истечения сеанса."},{"title":"6. Не путать разные уровни","text":"Full-duplex Ethernet — режим линии. Управление очередностью сообщений — задача диалога. Наличие TCP ESTABLISHED ещё не доказывает, что пользовательский сеанс успешно создан."}]},"6":{"title":"L6 · Уровень представления","sections":[{"title":"1. Общая задача","text":"Отправитель и получатель должны одинаково понимать байты: кодировку текста, формат полей, порядок байтов и структуру сообщения. В OSI сюда относят также сжатие и шифрование."},{"title":"2. Кодировка","text":"UTF-8 кодирует символы последовательностями от 1 до 4 байт. Если принять UTF-8 за другую кодировку, доставка может быть исправной, а текст — нечитаемым."},{"title":"3. Формат и сериализация","text":"JSON — текстовый формат. Protobuf использует бинарное кодирование. ASN.1 описывает типы и структуры; конкретное представление задают правила кодирования, например BER или DER."},{"title":"4. TLS","text":"Защищает обмен: конфиденциальность, целостность и аутентификация в зависимости от режима. В учебной OSI-карте связан с L6; в TCP/IP обычно реализуется библиотеками и прикладным стеком."},{"title":"5. Сертификат","text":"Проверяй имя сервера, срок действия, цепочку доверия и часы клиента. Расширение .cer или .crt само по себе не определяет, текстовый PEM внутри или бинарный DER."},{"title":"6. Сжатие и безопасность","text":"Сжатие без потерь позволяет восстановить исходные данные. Уже сжатый файл может почти не уменьшиться. Base64 — кодирование, а не шифрование. SSL устарел; для защищённого обмена используют TLS."}]},"7":{"title":"L7 · Прикладной уровень","sections":[{"title":"1. Смысл сообщений","text":"Прикладной протокол задаёт запросы, ответы и их смысл. HTTP получает ресурсы, DNS запрашивает записи, SMTP передаёт почту. Исправный транспорт не гарантирует правильность прикладного ответа."},{"title":"2. HTTP и HTTPS","text":"HTTP 404 означает, что сервер не нашёл ресурс. HTTPS использует TLS. HTTP/1.1 и HTTP/2 обычно работают через TCP; HTTP/3 — через QUIC поверх UDP."},{"title":"3. DNS","text":"A — IPv4-адрес, AAAA — IPv6-адрес. Обычный DNS использует UDP или TCP 53. Для проверки: nslookup example.com; PowerShell: Resolve-DnsName example.com; Linux: dig example.com."},{"title":"4. DHCPv4","text":"Типичная первая выдача адреса: Discover → Offer → Request → ACK. Сервер может передать маску, шлюз, DNS и срок аренды. DHCPv6 отличается; IPv6-шлюз по умолчанию узнают из RA."},{"title":"5. Multicast: Query и Report","text":"IGMP Querier спрашивает, кому ещё нужна группа, сообщением Query. Получатели сообщают интерес через Report. Если подтверждения не доходят, динамические подписки могут истечь по таймеру."},{"title":"6. Порядок диагностики","text":"Проверь имя и адрес сервера, нужный транспорт и порт, затем TLS, права доступа, формат запроса и ответ приложения. Сопоставь журналы обеих сторон. Один успешный ping не проверяет всю службу."}]}};
   function openNotes(level) {
     const notes = LEVEL_NOTES[level];
-    if (!notes || $('notesDialog').open) return;
+    if (!notes || $('notesDialog').open || $('zoomDialog').open || performance.now() < mobileControlClickUntil) return;
     $('notesContent').innerHTML = `<h2 id="notesTitle">${escapeHtml(notes.title)}</h2>` + notes.sections.map(section => `<section class="notes-section"><h3>${escapeHtml(section.title)}</h3><p>${escapeHtml(section.text)}</p></section>`).join('');
     $('notesDialog').showModal();
     $('notesDialog').scrollTop = 0;
     trackEvent('cheatsheet_open', { section: 'learning', topic: notes.title });
   }
-  function openCheat(src) {
-    if ($('zoomDialog').open) return;
-    openZoomMedia('<img src="' + escapeHtml(src) + '" alt="Цветная шпаргалка по уровню OSI">', true);
+  function openCheat(src, opener) {
+    if ($('zoomDialog').open || performance.now() < mobileControlClickUntil) return;
+    openZoomMedia('<img src="' + escapeHtml(src) + '" alt="Цветная шпаргалка по уровню OSI">', true, false, opener);
     const level = src.match(/\/l([1-7])\.webp$/)?.[1];
     if (level) trackEvent('cheatsheet_open', { section: 'learning', topic: LEVEL_NOTES[level].title });
   }
@@ -703,6 +703,7 @@ function buildDetailedExplanation(q){
 }
 
   let photoZoom = 1, photoWidth = 0, photoHeight = 0, photoFit = true;
+  let photoReturnFocus = null, photoReturnScroll = null;
   function setPhotoZoom(value, fit = false) {
     stopPhotoPan();
     photoFit = fit;
@@ -737,10 +738,13 @@ function buildDetailedExplanation(q){
     const photo = $('questionGraphic').querySelector('img');
     openZoomMedia(q.image
       ? '<img src="' + escapeHtml(photo.currentSrc || photo.src) + '" alt="' + escapeHtml(q.imageAlt || 'Фото оборудования') + '">'
-      : q.graphic, false, q.group === 'visual-l1' && Boolean(q.image));
+      : q.graphic, false, q.group === 'visual-l1' && Boolean(q.image), $('zoomGraphic'));
   }
-  function openZoomMedia(markup, cheat = false, l1Photo = false) {
+  function openZoomMedia(markup, cheat = false, l1Photo = false, opener = document.activeElement) {
     const dialog = $('zoomDialog'), viewport = $('zoomContent');
+    if (dialog.open || $('notesDialog').open || performance.now() < mobileControlClickUntil) return;
+    photoReturnFocus = opener?.isConnected ? opener : null;
+    photoReturnScroll = { left: window.scrollX, top: window.scrollY };
     dialog.classList.toggle('cheat-viewer', cheat);
     dialog.classList.toggle('desktop-image-viewer', cheat || l1Photo);
     const mobileImage = (cheat || l1Photo) && matchMedia('(max-width: 700px)').matches;
@@ -891,15 +895,21 @@ function buildDetailedExplanation(q){
   // A fast tap after a touch drag may lack the compatibility click.
   // Activate these two mobile controls from a completed tap; keep mouse/keyboard clicks native.
   let mobileControlClickUntil = 0;
-  document.addEventListener('pointerdown', () => { mobileControlClickUntil = 0; }, true);
-  document.addEventListener('click', event => {
-    if (event.isTrusted && event.detail > 0 && event.pointerType !== 'mouse' &&
-        performance.now() < mobileControlClickUntil) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      mobileControlClickUntil = 0;
-    }
+  // Only a fresh touch or keyboard action ends the touch-close quarantine.
+  // WebKit may deliver compatibility mouse events to the newly exposed page.
+  document.addEventListener('touchstart', () => { mobileControlClickUntil = 0; }, { capture: true, passive: true });
+  document.addEventListener('keydown', () => { mobileControlClickUntil = 0; }, true);
+  document.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch') mobileControlClickUntil = 0;
   }, true);
+  for (const type of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click']) {
+    document.addEventListener(type, event => {
+      if (event.isTrusted && performance.now() < mobileControlClickUntil) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+  }
   for (const id of ['zoomFit', 'closeZoom']) {
     const button = $(id);
     let tap = null;
@@ -933,7 +943,18 @@ function buildDetailedExplanation(q){
   $('zoom50').onclick = () => setPhotoZoom(.5);
   $('zoom100').onclick = () => setPhotoZoom(1);
   window.addEventListener('resize', () => { if($('zoomDialog').open && photoFit) fitPhoto(); });
-  $('zoomDialog').addEventListener('close', () => { stopPhotoPan(); stopMobilePhotoGesture(); document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
+  $('zoomDialog').addEventListener('close', () => {
+    if ($('zoomDialog').classList.contains('mobile-image-viewer')) mobileControlClickUntil = performance.now() + 500;
+    stopPhotoPan();
+    stopMobilePhotoGesture();
+    document.body.style.overflow = '';
+    $('zoomContent').innerHTML = '';
+    const opener = photoReturnFocus, position = photoReturnScroll;
+    photoReturnFocus = null;
+    photoReturnScroll = null;
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
+    if (position) window.scrollTo({ ...position, behavior: 'auto' });
+  });
 
   function checkAnswer(replay = false) {
     if (state.checked || (!replay && !state.photoReady)) return;
@@ -1147,7 +1168,7 @@ function buildDetailedExplanation(q){
   $('closeZoom').onclick=()=> $('zoomDialog').close();
   $('closeNotes').addEventListener('click', () => $('notesDialog').close());
   document.querySelectorAll('[data-notes]').forEach(element => element.addEventListener('click', () => openNotes(element.dataset.notes)));
-  document.querySelectorAll('[data-cheat]').forEach(element => element.addEventListener('click', () => openCheat(element.dataset.cheat)));
+  document.querySelectorAll('[data-cheat]').forEach(element => element.addEventListener('click', () => openCheat(element.dataset.cheat, element)));
   document.querySelectorAll('.layer-quiz').forEach(button => button.addEventListener('click', () => startQuiz(button.dataset.quizMode)));
   updateAvailable();
   syncResume();
