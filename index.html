@@ -214,6 +214,12 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 /* Desktop cheatsheets keep a margin around the viewer; mobile keeps the full-screen surface. */
 #zoomDialog.cheat-viewer #zoomContent { padding: 16px; box-sizing: border-box; }
 #zoomDialog.cheat-viewer #zoomContent img { margin: 0 auto; }
+@media (max-width: 700px) {
+  #zoomDialog.cheat-viewer #zoomContent { padding: 0; }
+}
+#zoomContent.can-pan { cursor: grab; user-select: none; }
+#zoomContent.can-pan img { -webkit-user-drag: none; }
+#zoomContent.is-panning { cursor: grabbing; }
 @media (min-width: 701px) {
   #zoomDialog.cheat-viewer { width: calc(100vw - 64px); max-width: 1440px; height: calc(100dvh - 64px); max-height: calc(100dvh - 64px); margin: auto; padding: 16px; border-radius: 16px; }
 }
@@ -684,6 +690,7 @@ function buildDetailedExplanation(q){
 
   let photoZoom = 1, photoWidth = 0, photoHeight = 0, photoFit = true;
   function setPhotoZoom(value, fit = false) {
+    stopPhotoPan();
     photoFit = fit;
     const viewport = $('zoomContent');
     photoZoom = fit
@@ -695,6 +702,8 @@ function buildDetailedExplanation(q){
       : Math.max(.5, Math.min(4, value));
     const media = viewport.firstElementChild;
     if(media) media.style.width = (photoWidth * photoZoom) + 'px';
+    viewport.classList.toggle('can-pan', $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(min-width: 701px)').matches &&
+      (viewport.scrollWidth > viewport.clientWidth + 1 || viewport.scrollHeight > viewport.clientHeight + 1));
     $('zoomLevel').textContent = Number((photoZoom * 100).toFixed(1)) + '%';
     $('zoomOut').disabled = photoZoom <= .5;
     $('zoomIn').disabled = photoZoom >= 4;
@@ -718,8 +727,14 @@ function buildDetailedExplanation(q){
     dialog.classList.toggle('cheat-viewer', cheat);
     dialog.setAttribute('aria-label', cheat ? 'Просмотр шпаргалки' : 'Просмотр фотографии');
     viewport.setAttribute('aria-label', cheat ? 'Увеличенная шпаргалка' : 'Увеличенная фотография');
-    $('zoom50').hidden = cheat;
+    const mobileCheat = cheat && matchMedia('(max-width: 700px)').matches;
+    $('zoom50').hidden = cheat && !mobileCheat;
+    $('zoomFit').textContent = mobileCheat ? 'По размеру' : 'Вписать';
     viewport.innerHTML = markup;
+    viewport.classList.remove('can-pan');
+    dialog.querySelector('.zoom-hint').textContent = cheat && !mobileCheat
+      ? '100% — исходный размер. На ПК зажми левую кнопку мыши и перетаскивай изображение; также доступна прокрутка.'
+      : '100% — исходный размер изображения. Увеличивай кнопкой +, перемещай прокруткой.';
     // Every opening starts fresh, including while the new image is decoding.
     photoZoom = 1; photoWidth = 0; photoHeight = 0; photoFit = true;
     $('zoomLevel').textContent = 'Вписать';
@@ -748,13 +763,50 @@ function buildDetailedExplanation(q){
     });
     else ready();
   }
+  // Mouse-only panning: touch/pinch, wheel and browser zoom remain native.
+  let photoPan = null;
+  function stopPhotoPan() {
+    const viewport = $('zoomContent'), pan = photoPan;
+    photoPan = null;
+    viewport.classList.remove('is-panning');
+    if (pan && viewport.hasPointerCapture(pan.id)) viewport.releasePointerCapture(pan.id);
+  }
+  const photoViewport = $('zoomContent');
+  photoViewport.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0 ||
+        event.ctrlKey || event.metaKey || event.altKey || !photoViewport.classList.contains('can-pan')) return;
+    const rect = photoViewport.getBoundingClientRect();
+    // Leave native scrollbar interaction alone.
+    if (event.clientX >= rect.left + photoViewport.clientLeft + photoViewport.clientWidth ||
+        event.clientY >= rect.top + photoViewport.clientTop + photoViewport.clientHeight) return;
+    event.preventDefault();
+    photoPan = { id: event.pointerId, x: event.clientX, y: event.clientY,
+      left: photoViewport.scrollLeft, top: photoViewport.scrollTop };
+    photoViewport.setPointerCapture(event.pointerId);
+    photoViewport.classList.add('is-panning');
+  });
+  photoViewport.addEventListener('pointermove', event => {
+    if (!photoPan || event.pointerId !== photoPan.id) return;
+    if (!(event.buttons & 1)) { stopPhotoPan(); return; }
+    photoViewport.scrollLeft = photoPan.left + photoPan.x - event.clientX;
+    photoViewport.scrollTop = photoPan.top + photoPan.y - event.clientY;
+  });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    photoViewport.addEventListener(type, event => {
+      if (photoPan && event.pointerId === photoPan.id) stopPhotoPan();
+    });
+  }
+  photoViewport.addEventListener('dragstart', event => {
+    if (photoViewport.classList.contains('can-pan')) event.preventDefault();
+  });
+  window.addEventListener('blur', stopPhotoPan);
   $('zoomIn').onclick = () => setPhotoZoom((Math.floor(photoZoom * 2 + .000001) + 1) / 2);
   $('zoomOut').onclick = () => setPhotoZoom((Math.ceil(photoZoom * 2 - .000001) - 1) / 2);
   $('zoomFit').onclick = fitPhoto;
   $('zoom50').onclick = () => setPhotoZoom(.5);
   $('zoom100').onclick = () => setPhotoZoom(1);
   window.addEventListener('resize', () => { if($('zoomDialog').open && photoFit) fitPhoto(); });
-  $('zoomDialog').addEventListener('close', () => { document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
+  $('zoomDialog').addEventListener('close', () => { stopPhotoPan(); document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
 
   function checkAnswer(replay = false) {
     if (state.checked || (!replay && !state.photoReady)) return;
