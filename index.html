@@ -232,6 +232,11 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 #zoomDialog.mobile-image-viewer .zoom-toolbar > :not(#closeZoom):not(#zoomFit) { display: none; }
 #zoomDialog.mobile-image-viewer #zoomContent { touch-action: none; user-select: none; }
 #zoomDialog.mobile-image-viewer #zoomContent img { -webkit-user-drag: none; }
+.photo-open { display: block; width: 100%; margin: 0; padding: 0; border: 0; border-radius: 14px; background: transparent; cursor: zoom-in; }
+.photo-open:disabled { cursor: wait; }
+.photo-open:focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+.photo-status { margin: 8px 0; color: var(--muted); font-size: .82rem; }
+.photo-status:empty { display: none; }
 .question-photo { min-height: 100px; }
 #photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
 #retryPhoto { min-height: 44px; margin: 8px; }
@@ -589,7 +594,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     $('questionText').textContent = q.text;
     $('questionText').dataset.questionId = q.id;
     const visual = q.image
-      ? `<img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"><div id="photoError" role="status" hidden>Фото не загрузилось. Для ответа дождись загрузки. Проверь соединение и повтори. <button id="retryPhoto" type="button">Загрузить снова</button></div><button type="button" class="secondary-button" id="zoomGraphic" disabled>Загрузка фотографии…</button><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
+      ? `<button type="button" class="photo-open" id="zoomGraphic" aria-label="Увеличить фотографию" aria-describedby="photoStatus" disabled><img class="question-photo" src="${escapeHtml(q.image)}" alt="${escapeHtml(q.imageAlt || '')}"></button><p id="photoStatus" class="photo-status" role="status">Загрузка фотографии…</p><div id="photoError" role="status" hidden>Фото не загрузилось. Для ответа дождись загрузки. Проверь соединение и повтори. <button id="retryPhoto" type="button">Загрузить снова</button></div><p class="photo-credit">Фото: <a href="#photoCredits">источник и лицензия</a></p>`
       : (q.graphic ? q.graphic + '<button type="button" class="secondary-button" id="zoomGraphic">Увеличить схему</button>' : '');
     $('questionGraphic').innerHTML = visual;
     if(q.image) {
@@ -602,7 +607,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         markQuestionShown(q);
         $('photoError').hidden = true;
         $('zoomGraphic').disabled = false;
-        $('zoomGraphic').textContent = 'Увеличить фотографию';
+        $('photoStatus').textContent = '';
         syncPhotoControls();
       };
       const failed = () => {
@@ -610,7 +615,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         state.photoReady = false;
         $('photoError').hidden = false;
         $('zoomGraphic').disabled = true;
-        $('zoomGraphic').textContent = 'Фото недоступно';
+        $('photoStatus').textContent = 'Фото недоступно';
         syncPhotoControls();
       };
       const decode = () => { photo.decode().then(ready, failed); };
@@ -621,7 +626,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         syncPhotoControls();
         $('photoError').hidden = true;
         $('zoomGraphic').disabled = true;
-        $('zoomGraphic').textContent = 'Загрузка фотографии…';
+        $('photoStatus').textContent = 'Загрузка фотографии…';
         photo.src = q.image.startsWith('data:') ? q.image : q.image + (q.image.includes('?') ? '&' : '?') + 'retry=' + Date.now();
       };
       if(photo.complete) { if(photo.naturalWidth) decode(); else failed(); }
