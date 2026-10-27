@@ -221,10 +221,17 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 #zoomContent.can-pan img { -webkit-user-drag: none; }
 #zoomContent.is-panning { cursor: grabbing; }
 @media (min-width: 701px) {
-  #zoomDialog.cheat-viewer { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 16px; border-radius: 0; }
-  #zoomDialog.cheat-viewer #zoomContent { scrollbar-width: none; }
-  #zoomDialog.cheat-viewer #zoomContent::-webkit-scrollbar { display: none; }
+  #zoomDialog.desktop-image-viewer { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 16px; border-radius: 0; }
+  #zoomDialog.desktop-image-viewer #zoomContent { scrollbar-width: none; }
+  #zoomDialog.desktop-image-viewer #zoomContent::-webkit-scrollbar { display: none; }
+  #zoomDialog.desktop-image-viewer #zoomContent { padding: 16px; box-sizing: border-box; }
+  #zoomDialog.desktop-image-viewer #zoomContent img { margin: 0 auto; }
 }
+
+/* Image gestures stay inside the mobile viewport, leaving its toolbar reachable. */
+#zoomDialog.mobile-image-viewer .zoom-toolbar > :not(#closeZoom):not(#zoomFit) { display: none; }
+#zoomDialog.mobile-image-viewer #zoomContent { touch-action: none; user-select: none; }
+#zoomDialog.mobile-image-viewer #zoomContent img { -webkit-user-drag: none; }
 .question-photo { min-height: 100px; }
 #photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
 #retryPhoto { min-height: 44px; margin: 8px; }
@@ -700,11 +707,13 @@ function buildDetailedExplanation(q){
           $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(max-width: 700px)').matches
             ? Infinity
             : (viewport.clientHeight - parseFloat(getComputedStyle(viewport).paddingTop) - parseFloat(getComputedStyle(viewport).paddingBottom)) / photoHeight );
-    const minimum = $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(min-width: 701px)').matches ? Math.min(.5, fitZoom) : .5;
+    const minimum = $('zoomDialog').classList.contains('mobile-image-viewer')
+      ? fitZoom
+      : $('zoomDialog').classList.contains('desktop-image-viewer') && matchMedia('(min-width: 701px)').matches ? Math.min(.5, fitZoom) : .5;
     photoZoom = fit ? fitZoom : Math.max(minimum, Math.min(4, value));
     const media = viewport.firstElementChild;
     if(media) media.style.width = (photoWidth * photoZoom) + 'px';
-    viewport.classList.toggle('can-pan', $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(min-width: 701px)').matches &&
+    viewport.classList.toggle('can-pan', $('zoomDialog').classList.contains('desktop-image-viewer') && matchMedia('(min-width: 701px)').matches &&
       (viewport.scrollWidth > viewport.clientWidth + 1 || viewport.scrollHeight > viewport.clientHeight + 1));
     $('zoomLevel').textContent = Number((photoZoom * 100).toFixed(1)) + '%';
     $('zoomOut').disabled = photoZoom <= minimum + .000001;
@@ -714,6 +723,7 @@ function buildDetailedExplanation(q){
     $('zoom100').setAttribute('aria-pressed', String(!fit && photoZoom === 1));
   }
   function fitPhoto() {
+    stopMobilePhotoGesture();
     if(!photoWidth || !photoHeight) return;
     setPhotoZoom(1, true);
     $('zoomContent').scrollTo(0, 0);
@@ -722,19 +732,24 @@ function buildDetailedExplanation(q){
     const photo = $('questionGraphic').querySelector('img');
     openZoomMedia(q.image
       ? '<img src="' + escapeHtml(photo.currentSrc || photo.src) + '" alt="' + escapeHtml(q.imageAlt || 'Фото оборудования') + '">'
-      : q.graphic);
+      : q.graphic, false, q.group === 'visual-l1' && Boolean(q.image));
   }
-  function openZoomMedia(markup, cheat = false) {
+  function openZoomMedia(markup, cheat = false, l1Photo = false) {
     const dialog = $('zoomDialog'), viewport = $('zoomContent');
     dialog.classList.toggle('cheat-viewer', cheat);
+    dialog.classList.toggle('desktop-image-viewer', cheat || l1Photo);
+    const mobileImage = (cheat || l1Photo) && matchMedia('(max-width: 700px)').matches;
+    dialog.classList.toggle('mobile-image-viewer', mobileImage);
     dialog.setAttribute('aria-label', cheat ? 'Просмотр шпаргалки' : 'Просмотр фотографии');
     viewport.setAttribute('aria-label', cheat ? 'Увеличенная шпаргалка' : 'Увеличенная фотография');
     const mobileCheat = cheat && matchMedia('(max-width: 700px)').matches;
     $('zoom50').hidden = cheat && !mobileCheat;
-    $('zoomFit').textContent = mobileCheat ? 'По размеру' : 'Вписать';
+    $('zoomFit').textContent = mobileImage ? 'Сбросить' : mobileCheat ? 'По размеру' : 'Вписать';
     viewport.innerHTML = markup;
     viewport.classList.remove('can-pan');
-    dialog.querySelector('.zoom-hint').textContent = cheat && !mobileCheat
+    dialog.querySelector('.zoom-hint').textContent = mobileImage
+      ? 'Разведи пальцы, чтобы увеличить. Перемещай изображение одним пальцем.'
+      : (cheat || l1Photo) && matchMedia('(min-width: 701px)').matches
       ? 'Колесо — масштаб вокруг курсора. Зажми левую кнопку мыши и перемещай изображение. Ctrl+колесо — масштаб браузера.'
       : '100% — исходный размер изображения. Увеличивай кнопкой +, перемещай прокруткой.';
     // Every opening starts fresh, including while the new image is decoding.
@@ -799,10 +814,10 @@ function buildDetailedExplanation(q){
     });
   }
   photoViewport.addEventListener('dragstart', event => {
-    if (photoViewport.classList.contains('can-pan')) event.preventDefault();
+    if (photoViewport.classList.contains('can-pan') || $('zoomDialog').classList.contains('mobile-image-viewer')) event.preventDefault();
   });
   photoViewport.addEventListener('wheel', event => {
-    if (!$('zoomDialog').classList.contains('cheat-viewer') ||
+    if (!$('zoomDialog').classList.contains('desktop-image-viewer') ||
         !matchMedia('(min-width: 701px)').matches || event.ctrlKey || event.metaKey || event.altKey ||
         !photoWidth || !photoHeight || !event.deltaY) return;
     const media = photoViewport.firstElementChild;
@@ -817,6 +832,58 @@ function buildDetailedExplanation(q){
     photoViewport.scrollLeft += after.left + x * after.width - event.clientX;
     photoViewport.scrollTop += after.top + y * after.height - event.clientY;
   }, { passive: false });
+  const mobilePhotoTouches = new Map();
+  let mobilePhotoGesture = null;
+  function stopMobilePhotoGesture() {
+    const ids = [...mobilePhotoTouches.keys()];
+    mobilePhotoTouches.clear();
+    mobilePhotoGesture = null;
+    for (const id of ids) {
+      if (photoViewport.hasPointerCapture(id)) photoViewport.releasePointerCapture(id);
+    }
+  }
+  function mobilePhotoPair() {
+    const [a, b] = [...mobilePhotoTouches.values()];
+    return a && b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
+      distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)) } : null;
+  }
+  photoViewport.addEventListener('pointerdown', event => {
+    if (!$('zoomDialog').classList.contains('mobile-image-viewer') ||
+        event.pointerType !== 'touch' || !photoWidth || !photoHeight) return;
+    event.preventDefault();
+    mobilePhotoTouches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    photoViewport.setPointerCapture(event.pointerId);
+    mobilePhotoGesture = mobilePhotoPair();
+  });
+  photoViewport.addEventListener('pointermove', event => {
+    const previous = mobilePhotoTouches.get(event.pointerId);
+    if (!previous) return;
+    mobilePhotoTouches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    const pair = mobilePhotoPair();
+    if (pair && mobilePhotoGesture) {
+      const media = photoViewport.firstElementChild;
+      if (!media) { stopMobilePhotoGesture(); return; }
+      const before = media.getBoundingClientRect();
+      const x = (mobilePhotoGesture.x - before.left) / before.width;
+      const y = (mobilePhotoGesture.y - before.top) / before.height;
+      setPhotoZoom(photoZoom * pair.distance / mobilePhotoGesture.distance);
+      const after = media.getBoundingClientRect();
+      photoViewport.scrollLeft += after.left + x * after.width - pair.x;
+      photoViewport.scrollTop += after.top + y * after.height - pair.y;
+    } else if (mobilePhotoTouches.size === 1) {
+      photoViewport.scrollLeft += previous.x - event.clientX;
+      photoViewport.scrollTop += previous.y - event.clientY;
+    }
+    mobilePhotoGesture = pair;
+  });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    photoViewport.addEventListener(type, event => {
+      if (!mobilePhotoTouches.delete(event.pointerId)) return;
+      if (photoViewport.hasPointerCapture(event.pointerId)) photoViewport.releasePointerCapture(event.pointerId);
+      mobilePhotoGesture = mobilePhotoPair();
+    });
+  }
+  window.addEventListener('blur', stopMobilePhotoGesture);
   window.addEventListener('blur', stopPhotoPan);
   $('zoomIn').onclick = () => setPhotoZoom((Math.floor(photoZoom * 2 + .000001) + 1) / 2);
   $('zoomOut').onclick = () => setPhotoZoom((Math.ceil(photoZoom * 2 - .000001) - 1) / 2);
@@ -824,7 +891,7 @@ function buildDetailedExplanation(q){
   $('zoom50').onclick = () => setPhotoZoom(.5);
   $('zoom100').onclick = () => setPhotoZoom(1);
   window.addEventListener('resize', () => { if($('zoomDialog').open && photoFit) fitPhoto(); });
-  $('zoomDialog').addEventListener('close', () => { stopPhotoPan(); document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
+  $('zoomDialog').addEventListener('close', () => { stopPhotoPan(); stopMobilePhotoGesture(); document.body.style.overflow = ''; $('zoomContent').innerHTML = ''; });
 
   function checkAnswer(replay = false) {
     if (state.checked || (!replay && !state.photoReady)) return;
