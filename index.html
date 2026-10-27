@@ -221,7 +221,9 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 #zoomContent.can-pan img { -webkit-user-drag: none; }
 #zoomContent.is-panning { cursor: grabbing; }
 @media (min-width: 701px) {
-  #zoomDialog.cheat-viewer { width: calc(100vw - 64px); max-width: 1440px; height: calc(100dvh - 64px); max-height: calc(100dvh - 64px); margin: auto; padding: 16px; border-radius: 16px; }
+  #zoomDialog.cheat-viewer { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 16px; border-radius: 0; }
+  #zoomDialog.cheat-viewer #zoomContent { scrollbar-width: none; }
+  #zoomDialog.cheat-viewer #zoomContent::-webkit-scrollbar { display: none; }
 }
 .question-photo { min-height: 100px; }
 #photoError:not([hidden]) { padding: 12px; border: 1px solid #ffb84d; border-radius: 10px; margin-top: 8px; }
@@ -693,19 +695,19 @@ function buildDetailedExplanation(q){
     stopPhotoPan();
     photoFit = fit;
     const viewport = $('zoomContent');
-    photoZoom = fit
-      ? Math.min(1,
+    const fitZoom = Math.min(1,
           (viewport.clientWidth - parseFloat(getComputedStyle(viewport).paddingLeft) - parseFloat(getComputedStyle(viewport).paddingRight)) / photoWidth,
           $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(max-width: 700px)').matches
             ? Infinity
-            : (viewport.clientHeight - parseFloat(getComputedStyle(viewport).paddingTop) - parseFloat(getComputedStyle(viewport).paddingBottom)) / photoHeight)
-      : Math.max(.5, Math.min(4, value));
+            : (viewport.clientHeight - parseFloat(getComputedStyle(viewport).paddingTop) - parseFloat(getComputedStyle(viewport).paddingBottom)) / photoHeight );
+    const minimum = $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(min-width: 701px)').matches ? Math.min(.5, fitZoom) : .5;
+    photoZoom = fit ? fitZoom : Math.max(minimum, Math.min(4, value));
     const media = viewport.firstElementChild;
     if(media) media.style.width = (photoWidth * photoZoom) + 'px';
     viewport.classList.toggle('can-pan', $('zoomDialog').classList.contains('cheat-viewer') && matchMedia('(min-width: 701px)').matches &&
       (viewport.scrollWidth > viewport.clientWidth + 1 || viewport.scrollHeight > viewport.clientHeight + 1));
     $('zoomLevel').textContent = Number((photoZoom * 100).toFixed(1)) + '%';
-    $('zoomOut').disabled = photoZoom <= .5;
+    $('zoomOut').disabled = photoZoom <= minimum + .000001;
     $('zoomIn').disabled = photoZoom >= 4;
     $('zoomFit').setAttribute('aria-pressed', String(fit));
     $('zoom50').setAttribute('aria-pressed', String(!fit && photoZoom === .5));
@@ -733,7 +735,7 @@ function buildDetailedExplanation(q){
     viewport.innerHTML = markup;
     viewport.classList.remove('can-pan');
     dialog.querySelector('.zoom-hint').textContent = cheat && !mobileCheat
-      ? '100% — исходный размер. На ПК зажми левую кнопку мыши и перетаскивай изображение; также доступна прокрутка.'
+      ? 'Колесо — масштаб вокруг курсора. Зажми левую кнопку мыши и перемещай изображение. Ctrl+колесо — масштаб браузера.'
       : '100% — исходный размер изображения. Увеличивай кнопкой +, перемещай прокруткой.';
     // Every opening starts fresh, including while the new image is decoding.
     photoZoom = 1; photoWidth = 0; photoHeight = 0; photoFit = true;
@@ -799,6 +801,22 @@ function buildDetailedExplanation(q){
   photoViewport.addEventListener('dragstart', event => {
     if (photoViewport.classList.contains('can-pan')) event.preventDefault();
   });
+  photoViewport.addEventListener('wheel', event => {
+    if (!$('zoomDialog').classList.contains('cheat-viewer') ||
+        !matchMedia('(min-width: 701px)').matches || event.ctrlKey || event.metaKey || event.altKey ||
+        !photoWidth || !photoHeight || !event.deltaY) return;
+    const media = photoViewport.firstElementChild;
+    if (!media || media.style.visibility === 'hidden') return;
+    event.preventDefault();
+    const before = media.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (event.clientX - before.left) / before.width));
+    const y = Math.max(0, Math.min(1, (event.clientY - before.top) / before.height));
+    const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? photoViewport.clientHeight : 1);
+    setPhotoZoom(photoZoom * Math.exp(-Math.max(-300, Math.min(300, delta)) / 600));
+    const after = media.getBoundingClientRect();
+    photoViewport.scrollLeft += after.left + x * after.width - event.clientX;
+    photoViewport.scrollTop += after.top + y * after.height - event.clientY;
+  }, { passive: false });
   window.addEventListener('blur', stopPhotoPan);
   $('zoomIn').onclick = () => setPhotoZoom((Math.floor(photoZoom * 2 + .000001) + 1) / 2);
   $('zoomOut').onclick = () => setPhotoZoom((Math.ceil(photoZoom * 2 - .000001) - 1) / 2);
