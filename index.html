@@ -291,7 +291,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
           </select>
         </div>
         <button id="startButton" class="primary-button" type="button">Начать экзамен</button>
-        <p id="questionCount" class="available"></p>
+        <p id="questionCount" class="available" role="status"></p>
       </div>
     </section>
 
@@ -563,7 +563,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
 
   function getPool(mode) {
     if (mode === 'mistakes') return QuizEngine.mistakes(bank,loadStats());
-    return mode === 'mixed' ? bank.filter(q=>q.group!=='visual-l1') : bank.filter(q => q.group === mode);
+    return QuizEngine.pool(bank,mode);
   }
 
   function pickQuestions(mode) { return mode === 'mistakes' ? shuffle(getPool(mode)).slice(0,10) : QuizEngine.pick(bank,mode,loadStats()); }
@@ -571,9 +571,17 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
   function startQuiz(mode = $('modeSelect').value) {
     if ($('quizScreen').classList.contains('active')) return false;
     const pool = getPool(mode);
-    if (!pool.length || (pool.length < QUIZ_SIZE && mode !== 'mixed' && mode !== 'mistakes')) return false;
+    if (mode !== 'mixed' && (!pool.length || (pool.length < QUIZ_SIZE && mode !== 'mistakes'))) return false;
     state.mode = mode;
-    state.questions = pickQuestions(mode).map(question => {
+    let picked;
+    try { picked=pickQuestions(mode); } catch(error) {
+      if(!['MIXED_POOL_INSUFFICIENT','MIXED_SEARCH_LIMIT'].includes(error.code)) throw error;
+      showScreen('startScreen');
+      $('modeSelect').value=mode;
+      $('questionCount').textContent=error.message;
+      return false;
+    }
+    state.questions = picked.map(question => {
       const answerOrder = shuffle(question.answers.map((text, original) => ({ text, original })));
       return { ...question, answerOrder };
     });
@@ -1021,7 +1029,7 @@ function buildDetailedExplanation(q){
   function renderTopicResults() {
     const byGroup = {};
     state.answers.forEach(item => {
-      const key = item.question.group;
+      const key = state.mode === 'mixed' ? QuizEngine.mixedGroup(item.question) : item.question.group;
       byGroup[key] ||= { right: 0, total: 0 };
       byGroup[key].total += 1;
       if (item.isCorrect) byGroup[key].right += 1;
@@ -1110,7 +1118,7 @@ function buildDetailedExplanation(q){
       if(!count && $('modeSelect').value === 'mistakes') $('modeSelect').value='mixed';
     }
     const mode = $('modeSelect').value;
-    $('questionCount').textContent = mode === 'mixed' ? `${getPool(mode).length} текстовых вопросов · отдельно ${bank.filter(q=>q.group==='visual-l1').length} с фотографиями` : `${getPool(mode).length} вопросов в этой теме`;
+    $('questionCount').textContent = mode === 'mixed' ? `${getPool(mode).length} доступных вопросов · 6 учебных групп · минимум 1 фото L1 в экзамене` : `${getPool(mode).length} вопросов в этой теме`;
   }
 
   $('startButton').addEventListener('click', () => startQuiz());
