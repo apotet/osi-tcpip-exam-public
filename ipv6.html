@@ -107,7 +107,7 @@ const compressPairs=[
 const concepts=[
  {q:'Что в IPv6 выполняет задачи, похожие на ARP?',a:'NDP',opts:['NDP','DNS','NAT','STP'],e:'NDP (Neighbor Discovery Protocol) работает через ICMPv6 и помогает находить соседей и их канальные адреса.'},
  {q:'Что позволяет хосту получить IPv6-адрес без обязательного DHCPv6?',a:'SLAAC',opts:['SLAAC','ARP','PAT','VTP'],e:'SLAAC использует Router Advertisement и позволяет хосту самостоятельно сформировать адрес.'},
- {q:'Как роутер сообщает хостам IPv6-префикс сети?',a:'Router Advertisement',opts:['Router Advertisement','ARP Reply','TCP SYN','DNS Response'],e:'RA — сообщение ICMPv6 от маршрутизатора с префиксом и другими параметрами.'},
+ {q:'В каком сообщении хост получает информацию о префиксе для SLAAC?',a:'Router Advertisement',opts:['Router Advertisement','ARP Reply','TCP SYN','DNS Response'],e:'Router Advertisement (RA) отправляет IPv6-маршрутизатор. RA может содержать опцию информации о префиксе; A=1 в этой опции разрешает использовать пригодный префикс для SLAAC.'},
  {q:'Есть ли в IPv6 broadcast?',a:'Нет',opts:['Нет','Да, только /64','Да, только локальный','Только через DHCPv6'],e:'Broadcast в IPv6 убран. Вместо него используются multicast и другие механизмы.'},
  {q:'Что такое Dual Stack?',a:'Одновременная работа IPv4 и IPv6',opts:['Одновременная работа IPv4 и IPv6','Два IPv6-адреса на интерфейсе','Два маршрутизатора','Шифрование IPv6'],e:'Dual Stack означает, что устройство или сеть одновременно поддерживает оба стека.'}
 ];
