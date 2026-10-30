@@ -276,7 +276,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
         </div>
       </div>
 
-      <div id="resumeNotice" class="setup-card" hidden><p>Есть незавершённая сессия.</p><button id="resumeStart" class="primary-button" type="button">Продолжить</button><button id="discardStart" class="secondary-button" type="button">Сбросить сессию</button></div>
+      <div id="resumeNotice" class="setup-card" hidden><p>Есть незавершённая сессия. При продолжении сохраняются исходные вопросы и результаты, включая задания прежнего состава. Новые сессии используют только начальные и прикладные вопросы.</p><button id="resumeStart" class="primary-button" type="button">Продолжить</button><button id="discardStart" class="secondary-button" type="button">Сбросить сессию</button></div>
       <div class="setup-card">
         <label for="modeSelect">Режим</label>
         <div class="select-wrap">
@@ -566,12 +566,15 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
     return QuizEngine.pool(bank,mode);
   }
 
-  function pickQuestions(mode) { return mode === 'mistakes' ? shuffle(getPool(mode)).slice(0,10) : QuizEngine.pick(bank,mode,loadStats()); }
+  function pickQuestions(mode) { return mode === 'mistakes' ? shuffle(getPool(mode)).filter((q,i,all)=>all.findIndex(other=>QuizEngine.family(other)===QuizEngine.family(q))===i).slice(0,10) : QuizEngine.pick(bank,mode,loadStats()); }
 
   function startQuiz(mode = $('modeSelect').value) {
     if ($('quizScreen').classList.contains('active')) return false;
     const pool = getPool(mode);
-    if (mode !== 'mixed' && (!pool.length || (pool.length < QUIZ_SIZE && mode !== 'mistakes'))) return false;
+    if (mode !== 'mixed' && (!pool.length || (pool.length < QUIZ_SIZE && mode !== 'mistakes'))) {
+      $('questionCount').textContent = `Недостаточно допустимых вопросов: ${pool.length}. Сложные задания не добавляются.`;
+      return false;
+    }
     state.mode = mode;
     let picked;
     try { picked=pickQuestions(mode); } catch(error) {
@@ -581,6 +584,7 @@ dialog::backdrop { background: #020711c9; backdrop-filter: blur(4px); }
       $('questionCount').textContent=error.message;
       return false;
     }
+    if(mode !== 'mistakes' && picked.length < QUIZ_SIZE) { $('questionCount').textContent='Недостаточно допустимых семейств с учётом ограничения шаблонных вопросов. Сложные задания не добавляются.'; return false; }
     state.questions = picked.map(question => {
       const answerOrder = shuffle(question.answers.map((text, original) => ({ text, original })));
       return { ...question, answerOrder };

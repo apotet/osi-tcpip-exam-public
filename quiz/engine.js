@@ -9,7 +9,8 @@ function weight(q,s,now){const p=s.questions[q.id]||{};let w=p.seen?1:2;if(p.wro
 function family(q){return q.family||q.id}
 // Mixed uses six curriculum groups, not inferred OSI levels.
 const MIXED_GROUPS=['l1-l2','l3','l4','l5-l7','tcpip','troubleshooting'];
-function pool(bank,mode,visit=()=>{}){return bank.filter(q=>{visit();return mode==='mixed'?(q.group==='visual-l1'?Boolean(q.image):MIXED_GROUPS.includes(q.group)&&(q.group!=='l1-l2'||!q.image)):q.group===mode;});}
+function ordinary(q){return q.difficulty==='beginner'||q.difficulty==='applied';}
+function pool(bank,mode,visit=()=>{}){return bank.filter(q=>{visit();if(!ordinary(q))return false;return mode==='mixed'?(q.group==='visual-l1'?Boolean(q.image):MIXED_GROUPS.includes(q.group)&&(q.group!=='l1-l2'||!q.image)):q.group===mode;});}
 function mixedGroup(q){return q.group==='visual-l1'?'l1-l2':q.group;}
 function shuffled(xs,rng){const out=xs.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;}
 function pickMixed(bank,s,rng,now,size){
@@ -43,7 +44,7 @@ function pickMixed(bank,s,rng,now,size){
 }
 function pick(bank,mode,s,rng=Math.random,now=Date.now(),size=10){
  if(mode==='mixed')return pickMixed(bank,s,rng,now,size);
- const pool=bank.filter(q=>mode==='mixed'?q.group!=='visual-l1':q.group===mode),chosen=[],families=new Set(),counts={},groups=[...new Set(pool.map(q=>q.group))];let templates=0;
+ const pool=bank.filter(ordinary).filter(q=>mode==='mixed'?q.group!=='visual-l1':q.group===mode),chosen=[],families=new Set(),counts={},groups=[...new Set(pool.map(q=>q.group))];let templates=0;
  function take(group){const eligible=pool.filter(q=>!families.has(family(q))&&(!group||q.group===group)&&(!q.template||templates<(mode==='mixed'?2:4))&&(mode!=='mixed'||(counts[q.group]||0)<Math.ceil(size/groups.length)));if(!eligible.length)return false;const weights=eligible.map(q=>weight(q,s,now)),total=weights.reduce((a,b)=>a+b,0);let r=rng()*total,index=weights.length-1;for(let i=0;i<weights.length;i++){r-=weights[i];if(r<0){index=i;break}}const q=eligible[index];chosen.push(q);families.add(family(q));counts[q.group]=(counts[q.group]||0)+1;if(q.template)templates++;return true}
  if(mode==='mixed')for(const group of groups)take(group);
  while(chosen.length<size){const least=Math.min(...groups.filter(g=>pool.some(q=>q.group===g&&!families.has(family(q)))).map(g=>counts[g]||0));const candidates=groups.filter(g=>(counts[g]||0)===least);let added=false;for(let i=candidates.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]]}for(const g of candidates){if(take(g)){added=true;break}}if(!added&&!take())break}
@@ -53,7 +54,7 @@ function pick(bank,mode,s,rng=Math.random,now=Date.now(),size=10){
 const MODES=['mixed','visual-l1','l1-l2','l3','l4','l5-l7','tcpip','troubleshooting','mistakes'];
 const object=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
 const count=x=>Number.isSafeInteger(x)&&x>=0;
-function mistakes(bank,s){return bank.filter(q=>s.questions[q.id]?.wrong>0 && (s.questions[q.id].streak||0)<2)}
+function mistakes(bank,s){return bank.filter(ordinary).filter(q=>s.questions[q.id]?.wrong>0 && (s.questions[q.id].streak||0)<2)}
 function progress(raw,bank,strict=false){
  if(!object(raw)||!Array.isArray(raw.attempts)||!object(raw.questions))throw Error('Некорректные данные прогресса');
  const ids=new Set(bank.map(q=>q.id)),out={attempts:[],questions:{}};
@@ -111,6 +112,6 @@ function session(raw,bank,now=Date.now()){
   return {version:1,mode:s.mode,questionIds:[...s.questionIds],orders:s.orders.map(o=>[...o]),index:s.index,answers,score,timestamp:s.timestamp};
  }catch{return null}
 }
-const api={pool,mixedGroup,stats,shown,answered,weight,pick,family,mistakes,migrate,exportProgress,importProgress,session};root.QuizEngine=api;if(typeof module!=='undefined')module.exports=api;
+const api={ordinary,pool,mixedGroup,stats,shown,answered,weight,pick,family,mistakes,migrate,exportProgress,importProgress,session};root.QuizEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
 
